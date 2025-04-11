@@ -22,7 +22,7 @@ function showLoadingModal() {
    // Criar o conteúdo do modal
    const modalContent = document.createElement('div');
    modalContent.style.cssText = `
-       background-color: white;
+       background-color: rgba(0, 0, 0, 0);
        padding: 20px;
        border-radius: 10px;
        text-align: center;
@@ -32,7 +32,7 @@ function showLoadingModal() {
    const logo = document.createElement('img');
    logo.src = '../../libraries/assets/goeat-logo.svg';
    logo.style.cssText = `
-       height: 80px;
+       height: 120px;
        margin-bottom: 15px;
        animation: spin 2s linear infinite;
    `;
