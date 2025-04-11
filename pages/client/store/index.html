@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg" href="../../../libraries/assets/goeat-ico.svg">
+    <link rel="stylesheet" href="../../../libraries/styles/store.css">
+    <link rel="stylesheet" href="../../../libraries/styles/cart.css">
+    <link rel="stylesheet" href="../../../libraries/styles/colors.css">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Carregando...</title>
+</head>
+<body>
+    <div id="container">
+        <div class="store-header">
+            <a href="../index.html" class="back-button">
+                <i class="fa fa-arrow-left"></i> Voltar
+            </a>
+            <img id="partner-logo" src="../../../libraries/assets/partner.png" alt="Logo do restaurante">
+            <h1 id="partner-name">Carregando...</h1>
+            <!-- Status do parceiro (aberto/fechado) será inserido aqui via JavaScript -->
+        </div>
+
+        <div id="container-products">
+            <!-- Produtos serão inseridos aqui via JavaScript -->
+            <div class="loading-container">
+                <i class="fa fa-spinner fa-pulse fa-3x"></i>
+                <p>Carregando produtos...</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <img id="footer-logo" src="../../../libraries/assets/goeat-logo.svg" alt="Goeat Logo">
+        <p>© Copyright 2024 - Goeat - Todos os direitos reservados</p>
+        <p>Vitório Batistti, nº 1856, Jardim Eldorado, Caxias do Sul/RS</p>
+    </footer>
+
+    <script src="../../../libraries/scripts/utilities.js"></script>
+    <script src="../../../libraries/scripts/routes.js"></script>
+    <script src="../../../libraries/scripts/store.js"></script>
+    <script src="../../../libraries/scripts/cart.js"></script>
+</body>
+</html>

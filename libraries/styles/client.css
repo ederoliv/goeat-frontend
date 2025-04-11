@@ -1,0 +1,353 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Lato", sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* Estilos para o logo no sidebar */
+.sidebar__img {
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+#goeat-logo {
+  height: 40px;
+  transition: transform 0.3s ease;
+}
+
+#goeat-logo:hover {
+  transform: scale(1.05);
+}
+
+/* Container principal */
+#container {
+  max-width: 1200px;
+  margin: 80px auto 40px auto;
+  padding: 0 20px;
+}
+
+#container h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+#container h1::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background-color: var(--goeat-primary);
+}
+
+/* Barra de pesquisa */
+.search-container {
+  display: flex;
+  max-width: 600px;
+  margin: 0 auto 30px auto;
+}
+
+.search-input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px 0 0 8px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--goeat-primary);
+}
+
+.search-button {
+  background-color: var(--goeat-primary);
+  color: white;
+  border: none;
+  border-radius: 0 8px 8px 0;
+  padding: 0 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.search-button:hover {
+  background-color: #3aa9d8;
+}
+
+.search-button i {
+  font-size: 18px;
+}
+
+/* Categorias de restaurantes */
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.category-pill {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 30px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.category-pill:hover, .category-pill.active {
+  background-color: var(--goeat-primary);
+  color: white;
+  border-color: var(--goeat-primary);
+}
+
+/* Grid de parceiros */
+#partners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+/* Estilos do card do parceiro */
+.partner-card {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  position: relative;
+}
+
+.partner-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.partner-card-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.partner-logo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 120px;
+  left: 20px;
+  z-index: 1; /* Garante que o logo está acima de outros elementos */
+}
+
+.partner-card-content {
+  padding: 20px;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.partner-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.partner-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 5px;
+  margin-top: 0;
+}
+
+.partner-card-category {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.partner-card-rating {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  background-color: #fff9e9;
+  padding: 5px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.partner-card-rating i {
+  color: #ffcc00;
+  margin-right: 5px;
+}
+
+.partner-card-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: auto; /* Empurra para o final do card */
+  width: 100%;
+}
+
+.partner-card-delivery {
+  display: flex;
+  flex-direction: column;
+}
+
+.delivery-time {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.delivery-fee {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+
+.partner-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.partner-status.open {
+  background-color: #e6f7f0;
+  color: var(--goeat-green);
+}
+
+.partner-status.closed {
+  background-color: #ffe5e5;
+  color: var(--goeat-red);
+}
+
+/* Mensagem de sem resultados */
+.no-results {
+  text-align: center;
+  padding: 30px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+}
+
+.no-results i {
+  font-size: 48px;
+  color: #ddd;
+  margin-bottom: 15px;
+}
+
+.no-results h3 {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.no-results p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Rodapé */
+footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 20px;
+  background-color: #222;
+  color: white;
+  text-align: center;
+  margin-top: 50px;
+}
+
+#footer-logo {
+  width: 120px;
+  margin-bottom: 20px;
+}
+
+footer p {
+  font-size: 14px;
+  color: #ccc;
+  margin-bottom: 10px;
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+  #container {
+    margin-top: 60px;
+  }
+
+  #partners-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+  
+  .partner-card-image {
+    height: 130px;
+  }
+  
+  .partner-logo {
+    width: 60px;
+    height: 60px;
+    top: 100px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  #container h1 {
+    font-size: 24px;
+  }
+
+  #partners-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .search-input {
+    font-size: 14px;
+  }
+  
+  .partner-card-content {
+    padding: 15px;
+    padding-top: 30px;
+  }
+}

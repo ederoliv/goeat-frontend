@@ -1,0 +1,37 @@
+/*estilo para gerar um table com cantos arredondados*/
+
+table {
+    margin-top: 30px;
+    border-collapse: separate; /* Para garantir que o border-radius funcione */
+    border-spacing: 0; /* Remove espaços entre as células */
+    border-radius: 8px; /* Arredonda os cantos da tabela */
+    overflow: hidden; /* Garante que os cantos arredondados apareçam */
+    border: 1px solid #ccc; /* Adiciona uma borda para visualizar o arredondamento */
+  }
+  
+  th, td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  thead {
+    background-color: var(--goeat-primary);
+    color: var(--goeat-secondary);
+  }
+  
+  thead tr:first-child th:first-child {
+    border-top-left-radius: 8px; /* Arredonda o canto superior esquerdo */
+  }
+  
+  thead tr:first-child th:last-child {
+    border-top-right-radius: 8px; /* Arredonda o canto superior direito */
+  }
+  
+  tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 8px; /* Arredonda o canto inferior esquerdo */
+  }
+  
+  tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 8px; /* Arredonda o canto inferior direito */
+  }
+  

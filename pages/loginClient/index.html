@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Client Login</title>
+	<link rel="icon" type="image/svg" href="../../libraries/assets/goeat-ico.svg">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="/libraries/styles/auth-responsivity.css">
+	<link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/a81368914c.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+	<div class="container">
+	
+		<div id="modal" class="modal">
+			<div class="modal-content">
+			  <span class="close">&times;</span>
+				<div class="modal-inputs">
+					<p>Usuário incorreto e/ou inexistente!</p>
+				<input id="deleteButton" class="input-modal" type="button" value="OK" onclick="fechar()">
+				</div>
+			</div>
+		</div>
+		
+		<div class="img">
+			<img src="/libraries/assets/banner.svg">
+		</div>
+		<div class="login-content">
+			<form action="index.html">
+				<img class="logo" src="/libraries/assets/goeat-logo-pg.svg">
+
+				<input id="email" type="text" class="input" placeholder="E-mail">
+
+				<input id="password" type="password" class="input" placeholder="Senha">
+        
+            	<a  id="forgot" href="../forgotPassword/index.html">Esqueceu a senha ?</a>
+            	<input type="button" class="btn" value="Acessar como Cliente" onclick="login()">
+				<a href="../registerClient/index.html">ou então Cadastre-se</a>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript" src="script.js"></script>
+</body>
+</html>

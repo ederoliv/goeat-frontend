@@ -1,0 +1,364 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Overlay do Modal */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal do Carrinho */
+.modal {
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Header do Modal */
+.modal-header {
+  background: var(--goeat-primary);
+  padding: 18px 20px;
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 12px 12px 0 0;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.modal-header .close-button {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: white;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.modal-header .close-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Conteúdo do Modal */
+.modal-content {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Mensagem de carrinho vazio */
+.empty-cart-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 0;
+  color: #777;
+  text-align: center;
+}
+
+.empty-cart-message i {
+  font-size: 48px;
+  color: #ddd;
+  margin-bottom: 15px;
+}
+
+.empty-cart-message p {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.empty-cart-message button {
+  background-color: var(--goeat-primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.empty-cart-message button:hover {
+  background-color: #3aa9d8;
+}
+
+/* Item do Carrinho */
+.cart-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background-color: white;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.cart-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.cart-card-details {
+  display: flex;
+  padding: 12px;
+  width: 100%;
+}
+
+.cart-card-product-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.cart-card-product-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.cart-card-product-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.cart-card-product-price {
+  color: var(--goeat-green);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.cart-card-div-quantity {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.cart-card-quantity-button, .cart-card-quantity-field {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  transition: all 0.2s;
+}
+
+.cart-card-quantity-button {
+  background-color: #f0f0f0;
+  color: var(--goeat-primary);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.cart-card-quantity-button:hover {
+  background-color: var(--goeat-primary);
+  color: #fff;
+}
+
+.cart-card-quantity-field {
+  background-color: #fff;
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  border: 1px solid #ddd;
+  margin: 0 5px;
+}
+
+.cart-card-quantity-field:focus {
+  outline: none;
+  border-color: var(--goeat-primary);
+}
+
+.remove-to-cart-button {
+  width: 40px;
+  height: 84px;
+  background-color: #f9f9f9;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.remove-to-cart-button:hover {
+  background-color: #ffe5e5;
+}
+
+.remove-to-cart-button-icon {
+  color: var(--goeat-red);
+  font-size: 18px;
+}
+
+/* Footer do Modal */
+.modal-footer {
+  padding: 15px 20px;
+  background: #f9f9f9;
+  border-top: 1px solid #eee;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-footer .cancel-button {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.modal-footer .cancel-button:hover {
+  background-color: #f0f0f0;
+}
+
+.modal-footer .save-button {
+  background: var(--goeat-green);
+  color: white;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-footer .save-button::before {
+  content: '\f07a';
+  font-family: FontAwesome;
+}
+
+.modal-footer .save-button:hover {
+  background-color: #05b07e;
+}
+
+/* Resumo do pedido */
+.cart-summary {
+  margin-top: 10px;
+  padding-top: 15px;
+  border-top: 1px dashed #ddd;
+}
+
+.cart-summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.cart-summary-row.total {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.cart-total-value {
+  color: var(--goeat-green);
+}
+
+/* Responsividade */
+@media screen and (max-width: 480px) {
+  .modal {
+    width: 95%;
+    max-height: 85vh;
+  }
+  
+  .cart-card-product-image {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .cart-card-product-name {
+    font-size: 14px;
+  }
+  
+  .cart-card-product-price {
+    font-size: 14px;
+  }
+  
+  .cart-card-quantity-button, .cart-card-quantity-field {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  
+  .remove-to-cart-button {
+    width: 36px;
+    height: 74px;
+  }
+  
+  .modal-footer .save-button,
+  .modal-footer .cancel-button {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+}

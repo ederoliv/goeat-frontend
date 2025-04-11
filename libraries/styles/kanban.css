@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--goeat-tertiary);
+}
+
+main {
+  background: #f3f4f6;
+  grid-area: main;
+  overflow-y: auto;
+  
+  display: flex;
+  justify-content: center; /* Alinha horizontalmente no centro */
+  align-items: flex-start; /* Alinha no início do contêiner verticalmente (próximo ao topo) */
+  padding-top: 20px; /* Ajusta a distância dos itens em relação ao topo */
+}
+
+.kanban-container {
+  display: flex;
+  gap: 20px;
+  margin: 20px;
+}
+
+.kanban-column {
+  position: relative;
+  width: 15vw;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 5px;
+  margin: 15px;
+}
+
+/* Esconde o fundo da coluna */
+.kanban-column::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  z-index: -1;
+}
+
+.kanban-category {
+  padding: 10px;
+  color: var(--goeat-secondary);
+  text-align: center;
+  font-weight: bold;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  box-shadow: 0px 6px 2px rgba(0, 0, 0, 0.25); /* Sombra dos cards fixos */
+  width: 100%; /* O card fixo ocupa toda a largura da coluna */
+}
+
+/* Cores das categorias */
+#em-espera-category {
+  background-color: var(--goeat-red);
+}
+
+#preparando-category {
+  background-color: var(--goeat-blue);
+}
+
+#a-caminho-category {
+  background-color: var(--goeat-yellow);
+}
+
+#finalizado-category {
+  background-color: var(--goeat-green);
+}
+
+.kanban-item {
+  background-color: var(--goeat-secondary);
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px; /* Adicionando border-radius aos cards móveis */
+  cursor: grab;
+  box-shadow: 0px 6px 2px rgba(0, 0, 0, 0.25); /* Sombra dos cards móveis */
+  width: 100%; /* Card móvel ocupa toda a largura */
+}
+
+.kanban-item-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.kanban-item-title span {
+  font-weight: 600;
+  margin-right: 5px;
+}
+
+/* Coloração do número do pedido por categoria */
+#em-espera-column .kanban-item-title span {
+  color: var(--goeat-red);
+}
+
+#preparando-column .kanban-item-title span {
+  color:var(--goeat-blue);
+}
+
+#a-caminho-column .kanban-item-title span {
+  color: var(--goeat-yellow);
+}
+
+#finalizado-column .kanban-item-title span {
+  color: var(--goeat-green);
+}
+
+/* Lista de itens do pedido */
+.kanban-item ul {
+  padding-left: 20px;
+  font-size: 14px;
+}
+
+.kanban-column.dragover {
+  background-color: rgba(0, 0, 0, 0); /* Coluna invisível ao arrastar */
+}

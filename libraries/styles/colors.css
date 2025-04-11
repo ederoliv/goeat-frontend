@@ -1,0 +1,11 @@
+:root {
+  /*brand colors*/
+    --goeat-primary: #623CA7;
+    --goeat-secondary: #FFFFFF;
+    --goeat-tertiary: #06CF90;
+  /*kanban colors*/
+    --goeat-red: #FF5555;
+    --goeat-blue: #53BDEB;
+    --goeat-yellow: #FCCC48;
+    --goeat-green: #06CF90;
+  }

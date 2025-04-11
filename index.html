@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg" href="/libraries/assets/goeat-ico.svg">
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
+  <link
+    rel="stylesheet"
+    href="libraries/styles/colors.css"
+  />
+    <title>Goeat by Eder Oliveira</title>
+    <style>
+        body {
+            background-color: var(--goeat-primary);
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        img {
+            height: 100px;
+            margin-bottom: 50px;
+        }
+
+        .button {
+            background-color: transparent;
+            border: 2px solid var(--goeat-tertiary);
+            color: var(--goeat-tertiary);
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+            text-decoration: none;
+        }
+        
+        i {
+            color: var(--goeat-secondary);
+        }
+
+        .button:hover {
+            background-color: var(--goeat-tertiary);
+            color: var(--goeat-secondary);
+        }
+    </style>
+</head>
+<body>
+    <img class="animate__animated animate__bounceInLeft" src="libraries/assets/goeat-logo.svg">
+    <i>Comida é vida!</i>
+    <a class="button" href="pages/loginPartner/index.html">Login como Parceiro</a>
+    <a class="button" href="pages/client/index.html">Sou cliente</a>
+</html>

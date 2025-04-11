@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg" href="../../../libraries/assets/goeat-ico.svg">
+    <link rel="stylesheet" href="../../../libraries/styles/store.css">
+    <link rel="stylesheet" href="../../../libraries/styles/checkout.css">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+      crossorigin="anonymous"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+      rel="stylesheet"
+      href="../../../libraries/styles/colors.css"
+    />
+    <title>Finalizar Pedido - Goeat</title>
+</head>
+<body>
+    <div id="container">
+        <div class="checkout-header">
+            <img src="../../../libraries/assets/goeat-logo.svg" alt="Goeat Logo" class="checkout-logo">
+            <h1>Finalizar Pedido</h1>
+        </div>
+
+        <div class="checkout-steps">
+            <div class="step active" id="step-login">
+                <span class="step-number">1</span>
+                <span class="step-text">Identificação</span>
+            </div>
+            <div class="step" id="step-address">
+                <span class="step-number">2</span>
+                <span class="step-text">Endereço</span>
+            </div>
+            <div class="step" id="step-payment">
+                <span class="step-number">3</span>
+                <span class="step-text">Pagamento</span>
+            </div>
+            <div class="step" id="step-confirmation">
+                <span class="step-number">4</span>
+                <span class="step-text">Confirmação</span>
+            </div>
+        </div>
+
+        <!-- Seção de login/cadastro/sem login -->
+        <div id="login-section" class="checkout-section active">
+            <h2>Como deseja prosseguir?</h2>
+            
+            <div class="login-options">
+                <button id="btn-login" class="checkout-button">
+                    <i class="fa fa-user"></i>
+                    <span>Fazer pedido com login</span>
+                </button>
+                
+                <button id="btn-guest" class="checkout-button">
+                    <i class="fa fa-shopping-cart"></i>
+                    <span>Fazer pedido sem cadastro</span>
+                </button>
+            </div>
+
+            <!-- Formulário de compra como convidado (oculto inicialmente) -->
+            <div id="guest-form" class="form-container" style="display: none;">
+                <h3>Seus dados para contato</h3>
+                <form>
+                    <div class="form-group">
+                        <label for="guest-name">Nome completo</label>
+                        <input type="text" id="guest-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="guest-email">E-mail</label>
+                        <input type="email" id="guest-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="guest-phone">Telefone (com DDD)</label>
+                        <input type="tel" id="guest-phone" placeholder="(XX) XXXXX-XXXX" required>
+                    </div>
+                    <button type="button" id="continue-guest" class="action-button">Continuar</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Seção de endereço (oculta inicialmente) -->
+        <div id="address-section" class="checkout-section">
+            <h2>Como você quer receber seu pedido?</h2>
+            
+            <div class="delivery-options">
+                <div class="delivery-option" id="option-delivery">
+                    <input type="radio" name="delivery-type" id="delivery" value="delivery" checked>
+                    <label for="delivery">
+                        <i class="fa fa-motorcycle"></i>
+                        <span>Entrega</span>
+                    </label>
+                </div>
+                
+                <div class="delivery-option" id="option-pickup">
+                    <input type="radio" name="delivery-type" id="pickup" value="pickup">
+                    <label for="pickup">
+                        <i class="fa fa-store"></i>
+                        <span>Retirar no local</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Formulário de endereço (mostrado quando Entrega for selecionada) -->
+            <div id="delivery-form" class="delivery-details">
+                <h3>Endereço de entrega</h3>
+                <form id="address-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cep">CEP</label>
+                            <input type="text" id="cep" placeholder="00000-000" required>
+                            <small>Preencha o CEP para buscar o endereço automaticamente</small>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" id="search-cep" class="secondary-button">Buscar</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="street">Rua</label>
+                        <input type="text" id="street" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="number">Número</label>
+                            <input type="text" id="number" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="complement">Complemento</label>
+                            <input type="text" id="complement" placeholder="Opcional">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="neighborhood">Bairro</label>
+                            <input type="text" id="neighborhood" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="city">Cidade</label>
+                            <input type="text" id="city" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="state">Estado</label>
+                            <input type="text" id="state" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reference">Ponto de referência</label>
+                        <input type="text" id="reference" placeholder="Opcional">
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Informações para retirada (mostrado quando Retirada for selecionada) -->
+            <div id="pickup-info" class="delivery-details" style="display: none;">
+                <h3>Retirada no estabelecimento</h3>
+                <div class="pickup-details">
+                    <p><i class="fa fa-info-circle"></i> Seu pedido ficará disponível para retirada em aproximadamente 30 minutos.</p>
+                    <p><i class="fa fa-map-marker"></i> <strong>Endereço para retirada:</strong></p>
+                    <p class="pickup-address" id="pickup-address">Vitório Batistti, nº 1856, Jardim Eldorado, Caxias do Sul/RS</p>
+                    <p><i class="fa fa-clock-o"></i> <strong>Horário de funcionamento:</strong></p>
+                    <p>Segunda a Sábado: 11:00 às 23:00</p>
+                    <p>Domingo: 11:00 às 22:00</p>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" id="back-to-login" class="back-button">
+                    <i class="fa fa-arrow-left"></i> Voltar
+                </button>
+                <button type="button" id="continue-to-payment" class="action-button">Continuar</button>
+            </div>
+        </div>
+
+        <!-- Seção de pagamento (oculta inicialmente) -->
+        <div id="payment-section" class="checkout-section">
+            <h2>Forma de pagamento</h2>
+            
+            <div class="payment-summary">
+                <h3>Resumo do pedido</h3>
+                <div id="order-items">
+                    <!-- Itens do pedido serão inseridos aqui via JavaScript -->
+                </div>
+                <div class="order-total">
+                    <span>Total:</span>
+                    <span id="order-total-value">R$ 0,00</span>
+                </div>
+            </div>
+            
+            <div class="payment-methods">
+                <h3>Escolha como pagar</h3>
+                
+                <div class="payment-method-options">
+                    <div class="payment-option" data-method="online">
+                        <input type="radio" name="payment-method" id="online" value="online">
+                        <label for="online">
+                            <i class="fa fa-credit-card"></i>
+                            <span>Pagar online (Cartão/PIX)</span>
+                        </label>
+                    </div>
+                    
+                    <div class="payment-option" data-method="on-delivery">
+                        <input type="radio" name="payment-method" id="on-delivery" value="on-delivery" checked>
+                        <label for="on-delivery">
+                            <i class="fa fa-money"></i>
+                            <span>Pagar na entrega/retirada</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Opções de pagamento na entrega/retirada -->
+                <div id="on-delivery-form" class="payment-details">
+                    <div class="form-group">
+                        <label>Método de pagamento na entrega/retirada:</label>
+                        <div class="payment-submethod">
+                            <input type="radio" name="on-delivery-method" id="on-delivery-card" value="card" checked>
+                            <label for="on-delivery-card">Cartão (débito/crédito)</label>
+                        </div>
+                        <div class="payment-submethod">
+                            <input type="radio" name="on-delivery-method" id="on-delivery-cash" value="cash">
+                            <label for="on-delivery-cash">Dinheiro</label>
+                        </div>
+                        <div class="payment-submethod">
+                            <input type="radio" name="on-delivery-method" id="on-delivery-pix" value="pix">
+                            <label for="on-delivery-pix">PIX</label>
+                        </div>
+                    </div>
+                    
+                    <!-- Opção de troco (mostrado apenas quando dinheiro for selecionado) -->
+                    <div id="change-form" style="display: none;">
+                        <div class="form-group">
+                            <label for="change-amount">Troco para quanto?</label>
+                            <input type="number" id="change-amount" min="0" step="0.01">
+                            <small>Deixe em branco se não precisar de troco</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" id="back-to-address" class="back-button">
+                        <i class="fa fa-arrow-left"></i> Voltar
+                    </button>
+                    <button type="button" id="place-order" class="action-button">Finalizar pedido</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de confirmação (oculta inicialmente) -->
+        <div id="confirmation-section" class="checkout-section">
+            <div class="confirmation-content">
+                <i class="fa fa-check-circle confirmation-icon"></i>
+                <h2>Pedido realizado com sucesso!</h2>
+                <p>Seu pedido foi recebido e está sendo preparado.</p>
+                <div class="order-details">
+                    <p>Número do pedido: <span id="order-number">123456</span></p>
+                    <p>Acompanhe seu pedido pelo WhatsApp.</p>
+                </div>
+                <button id="back-to-store" class="action-button">Voltar para a loja</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <img id="footer-logo" src="../../../libraries/assets/goeat-logo.svg">
+        <p>© Copyright 2024 - Goeat - Todos os direitos reservados</p>
+        <p>Vitório Batistti, nº 1856, Jardim Eldorado, Caxias do Sul/RS</p>
+    </footer>
+
+    <script src="../../../libraries/scripts/routes.js"></script>
+    <script src="../../../libraries/scripts/utilities.js"></script>
+    <script src="../../../libraries/scripts/checkout.js"></script>
+</body>
+</html>
