@@ -1,7 +1,7 @@
 const userDataString = sessionStorage.getItem("userData")
 const userData = JSON.parse(userDataString)
 const defaultProductsUrl = `${API_BASE_URL}/products/`
-const urlWithUserId = `${defaultProductsUrl}${userData.partnerId}`
+const urlWithUserId = `${defaultProductsUrl}${userData.id}`
 
 window.onload = () => {
   if (userDataString) {
@@ -148,7 +148,7 @@ function editProduct(product) {
 
 // Função para carregar categorias no dropdown
 function loadCategories(categorySelect, selectedCategoryId = null) {
-  fetch(`${API_BASE_URL}/menus/${userData.partnerId}/categories`, {
+  fetch(`${API_BASE_URL}/menus/${userData.id}/categories`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -322,7 +322,7 @@ function loadCategoryList(container) {
   container.appendChild(table)
 
   // Buscar categorias da API
-  fetch(`${API_BASE_URL}/menus/${userData.partnerId}/categories`, {
+  fetch(`${API_BASE_URL}/menus/${userData.id}/categories`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -382,27 +382,26 @@ function loadCategoryList(container) {
 
 // Função para adicionar uma nova categoria
 function addCategory(name, callback) {
-  fetch(`${API_BASE_URL}/menus/${userData.partnerId}/categories`, {
+  fetch(`${API_BASE_URL}/menus/${userData.id}/categories`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       name: name,
-      partnerId: userData.partnerId,
+      id: userData.id,
     }),
   })
     .then((response) => {
       if (response.status === 201) {
-        alert("Categoria adicionada com sucesso!")
+        goeatAlert("success", "Categoria adicionada com sucesso!")
         if (callback) callback()
         return
       }
       throw new Error("Falha ao adicionar categoria")
     })
     .catch((error) => {
-      console.error("Erro ao adicionar categoria:", error)
-      alert("Erro ao adicionar categoria. Tente novamente.")
+      goeatAlert("error", "Erro ao adicionar categoria: " + error)
     })
 }
 
@@ -410,7 +409,7 @@ function addCategory(name, callback) {
 function editCategory(id, currentName, callback) {
   const newName = prompt("Digite o novo nome da categoria:", currentName)
   if (newName && newName !== currentName) {
-    fetch(`${API_BASE_URL}/menus/${userData.partnerId}/categories/${id}`, {
+    fetch(`${API_BASE_URL}/menus/${userData.id}/categories/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -422,34 +421,17 @@ function editCategory(id, currentName, callback) {
       .then((response) => {
         if (!response.ok) {
           throw new Error(
-                      Swal.fire({
-            position: "center",
-            icon: "error",
-            title: "Erro ao editar categoria",
-            showConfirmButton: false,
-            timer: 2000
-          }))
+                      goeatAlert("error", "Erro ao editar categoria")
+          )
         }
         return response.json()
       })
       .then(() => {
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: "Categoria atualizada com sucesso!",
-          showConfirmButton: false,
-          timer: 2000
-        });
+        goeatAlert("success", "Categoria editada com sucesso!")
         if (callback) callback()
       })
       .catch((error) => {
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          title: "Erro ao editar categoria",
-          showConfirmButton: false,
-          timer: 2000
-        });
+        goeatAlert("error", "Erro ao editar categoria: " + error)
       })
   }
 }
@@ -457,7 +439,7 @@ function editCategory(id, currentName, callback) {
 // Função para excluir uma categoria
 function deleteCategory(id, callback) {
   if (confirm("Tem certeza que deseja excluir esta categoria?")) {
-    fetch(`${API_BASE_URL}/menus/${userData.partnerId}/categories/${id}`, {
+    fetch(`${API_BASE_URL}/menus/${userData.id}/categories/${id}`, {
       method: "DELETE",
     })
       .then((response) => {
@@ -495,7 +477,7 @@ function addProduct() {
     description,
     price,
     imageUrl,
-    menuId: userData.partnerId,
+    menuId: userData.id,
     categoryId: categoryId || null
   }
 
@@ -539,7 +521,7 @@ function updateProduct(productId) {
     description,
     price,
     imageUrl,
-    menuId: userData.partnerId,
+    menuId: userData.id,
     categoryId: categoryId || null
   }
 
@@ -668,22 +650,10 @@ async function deleteProduct(productId) {
   if (confirm("Tem certeza que deseja excluir este produto?")) {
     const response = await fetch(`${API_BASE_URL}/products/${productId}`, { method: "DELETE" })
     if (response.ok) {
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Produto excluído com sucesso!",
-        showConfirmButton: false,
-        timer: 1500
-      });
+      goeatAlert("success", "Produto excluído com sucesso!")
       listProducts()
     } else {
-      Swal.fire({
-        position: "top-end",
-        icon: "error",
-        title: "Erro ao excluir produto",
-        showConfirmButton: false,
-        timer: 1500
-      });
+      goeatAlert("error", "Erro ao excluir produto")
     }
   }
 }
@@ -698,7 +668,7 @@ async function registerProduct() {
     description: description.value,
     price: price.value,
     imageUrl: "link da imagem",
-    menuId: userData.partnerId,
+    menuId: userData.id,
   }
 
   const response = await fetch(defaultProductsUrl, {
@@ -708,10 +678,6 @@ async function registerProduct() {
   })
 
   if (response.ok) {
-    alertaSucesso()
+    goeatAlert("success", "Produto cadastrado com sucesso!")
   }
-}
-
-function alertaSucesso() {
-  document.getElementById("modal").style.display = "block"
 }

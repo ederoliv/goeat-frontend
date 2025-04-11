@@ -12,7 +12,7 @@ function showLoadingModal() {
        left: 0;
        width: 100%;
        height: 100%;
-       background-color: rgba(0, 0, 0, 0.5);
+       background-color: var(--goeat-primary);
        display: flex;
        justify-content: center;
        align-items: center;

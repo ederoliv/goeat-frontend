@@ -25,15 +25,14 @@ function login() {
     window.location.replace('../partner/acompanhar/index.html');
     
     } else {
-      alertaErroLogin();
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Usuário incorreto e/ou inexistente!",
+        footer: '<a  id="forgot" href="../forgotPassword/index.html">Esqueceu a senha ?</a>'
+      });
     }
   };
-}
-
-
-//modal
-function alertaErroLogin() {
-  document.getElementById("modal").style.display = "block";
 }
 
 var span = document.getElementsByClassName("close")[0];
