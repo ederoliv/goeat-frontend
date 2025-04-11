@@ -30,7 +30,7 @@ function showLoadingModal() {
 
    // Adicionar a logo
    const logo = document.createElement('img');
-   logo.src = '../../libraries/assets/goeat-logo.svg';
+   logo.src = `${routes.assets}goeat-logo.svg`;
    logo.style.cssText = `
        height: 120px;
        margin-bottom: 15px;
