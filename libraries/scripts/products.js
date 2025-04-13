@@ -1,7 +1,7 @@
 const userDataString = sessionStorage.getItem("userData")
 const userData = JSON.parse(userDataString)
 const defaultProductsUrl = `${API_BASE_URL}/products/`
-const urlWithUserId = `${defaultProductsUrl}${userData.id}`
+
 
 window.onload = () => {
   if (userDataString) {
@@ -386,6 +386,7 @@ function addCategory(name, callback) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${userData.token}`
     },
     body: JSON.stringify({
       name: name,
@@ -413,6 +414,7 @@ function editCategory(id, currentName, callback) {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${userData.token}`
       },
       body: JSON.stringify({
         name: newName,
@@ -441,6 +443,10 @@ function deleteCategory(id, callback) {
   if (confirm("Tem certeza que deseja excluir esta categoria?")) {
     fetch(`${API_BASE_URL}/menus/${userData.id}/categories/${id}`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${userData.token}`
+      },
     })
       .then((response) => {
         if (response.status === 204) {
@@ -459,7 +465,6 @@ function deleteCategory(id, callback) {
   }
 }
 
-// Função para adicionar um produto
 function addProduct() {
   const name = document.getElementById("nameInput").value
   const description = document.getElementById("descriptionInput").value
@@ -481,10 +486,11 @@ function addProduct() {
     categoryId: categoryId || null
   }
 
-  fetch(`${API_BASE_URL}/products`, {
+  fetch(`${API_BASE_URL}/partners/${userData.id}/products`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${userData.token}`
     },
     body: JSON.stringify(productData),
   })
@@ -494,16 +500,21 @@ function addProduct() {
         document.getElementById("modal").style.display = "none"
         // Atualizar a lista de produtos
         listProducts()
-        return response.json()
+        // Não processamos o response.json() se não precisamos dos dados
+        // return response.json() - removido para evitar erros
+      } else {
+        // Se a resposta não for 200 ou 201, lançar um erro
+        goeatAlert("error", "Falha ao adicionar produto")
+        throw new Error("Falha ao adicionar produto")
       }
-      throw new Error(goeatAlert("error", "Falha ao adicionar produto"))
     })
     .catch((error) => {
+      console.error("Erro completo:", error)
       goeatAlert("error", "Erro ao adicionar produto")
     })
 }
 
-// Função para atualizar um produto existente
+
 function updateProduct(productId) {
   const name = document.getElementById("nameInput").value
   const description = document.getElementById("descriptionInput").value
@@ -525,10 +536,11 @@ function updateProduct(productId) {
     categoryId: categoryId || null
   }
 
-  fetch(`${API_BASE_URL}/products/${productId}`, {
+  fetch(`${API_BASE_URL}/partners/${userData.id}/products/${productId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${userData.token}`
     },
     body: JSON.stringify(productData),
   })
@@ -582,7 +594,7 @@ async function listProducts() {
   tbody.innerHTML = "" // Limpa o conteúdo existente
 
   try {
-    const response = await fetch(urlWithUserId)
+    const response = await fetch(`${API_BASE_URL}/partners/${userData.id}/products`)
     if (!response.ok) {
       throw new Error("Falha ao carregar produtos")
     }
@@ -647,8 +659,28 @@ async function listProducts() {
 }
 
 async function deleteProduct(productId) {
-  if (confirm("Tem certeza que deseja excluir este produto?")) {
-    const response = await fetch(`${API_BASE_URL}/products/${productId}`, { method: "DELETE" })
+  // Usa o Swal.fire para mostrar uma caixa de confirmação
+  const result = await Swal.fire({
+    title: 'Tem certeza?',
+    text: "Você está prestes a excluir este produto!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sim, excluir!',
+    cancelButtonText: 'Cancelar'
+  });
+
+  // Se o usuário confirmou a exclusão
+  if (result.isConfirmed) {
+    const response = await fetch(`${API_BASE_URL}/partners/${userData.id}/products/${productId}`, { 
+      method: "DELETE", 
+      headers: { 
+        "Content-Type": "application/json", 
+        "Authorization" : `Bearer ${userData.token}` 
+      } 
+    });
+    
     if (response.ok) {
       goeatAlert("success", "Produto excluído com sucesso!")
       listProducts()
