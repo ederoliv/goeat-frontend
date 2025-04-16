@@ -1,4 +1,9 @@
 window.onload = function () {
+
+    if(!isAuthenticatedClient()){
+        // Se o usuário estiver autenticado, atualiza o navbar
+        setAuthenticatedNavbar();
+    }
     // Mostra loading enquanto carrega os dados
     showLoadingModal();
     

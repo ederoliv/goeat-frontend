@@ -1,11 +1,261 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <title>Goeat - Meu Perfil</title>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/svg" href="../../../libraries/assets/goeat-ico.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"/>
+  <link rel="stylesheet" href="../../../libraries/styles/client.css">
+  <link rel="stylesheet" href="../../../libraries/styles/colors.css">
+  <link rel="stylesheet" href="../../../libraries/styles/navbar.css">
+  <link rel="stylesheet" href="../../../libraries/styles/profile.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+      <div class="navbar-left">
+          <a href="../index.html" class="back-link">
+              <i class="fa fa-arrow-left"></i> Voltar
+          </a>
+      </div>
+      <div class="navbar-logo">
+          <img src="../../../libraries/assets/goeat-logo-pg.svg" alt="Goeat Logo">
+      </div>
+      <div>
+          <a href="../../loginClient/index.html" id="logout-button" class="session-button">Sair</a>
+      </div>
+    </div>
+
+<div id="container">
+  <h1>Meu Perfil</h1>
+  
+  <div class="profile-container">
+    <!-- Aba de navegação -->
+    <div class="profile-tabs">
+      <button class="tab-button active" data-tab="profile-info">Informações</button>
+      <button class="tab-button" data-tab="orders-history">Histórico de Pedidos</button>
+      <button class="tab-button" data-tab="addresses">Meus Endereços</button>
+      <button class="tab-button" data-tab="settings">Configurações</button>
+    </div>
     
+    <!-- Conteúdo da aba Informações -->
+    <div class="tab-content active" id="profile-info">
+      <div class="profile-header">
+        <div class="profile-avatar">
+          <i class="fa fa-user-circle-o"></i>
+        </div>
+        <div class="profile-details">
+          <h2 id="user-name">João da Silva</h2>
+          <p id="user-email">joao.silva@email.com</p>
+          <p id="user-phone">(54) 99999-8888</p>
+        </div>
+      </div>
+      
+      <div class="profile-form">
+        <h3>Informações Pessoais</h3>
+        <div class="form-group">
+          <label for="name">Nome completo</label>
+          <input type="text" id="name" value="João da Silva">
+        </div>
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" value="joao.silva@email.com">
+        </div>
+        <div class="form-group">
+          <label for="phone">Telefone</label>
+          <input type="tel" id="phone" value="(54) 99999-8888">
+        </div>
+        <div class="form-group">
+          <label for="cpf">CPF</label>
+          <input type="text" id="cpf" value="123.456.789-00">
+        </div>
+        <div class="form-group">
+          <label for="birthdate">Data de nascimento</label>
+          <input type="date" id="birthdate" value="1990-05-15">
+        </div>
+        
+        <button class="save-button">Salvar alterações</button>
+      </div>
+    </div>
+    
+    <!-- Conteúdo da aba Histórico de Pedidos -->
+    <div class="tab-content" id="orders-history">
+      <h3>Histórico de Pedidos</h3>
+      
+      <div class="orders-list">
+        <!-- Pedido 1 -->
+        <div class="order-card">
+          <div class="order-header">
+            <div class="order-info">
+              <h4>Pedido #12345</h4>
+              <p class="order-date">15/04/2025 - 19:30</p>
+            </div>
+            <div class="order-status delivered">
+              <span>Entregue</span>
+            </div>
+          </div>
+          
+          <div class="order-restaurant">
+            <img src="../../../libraries/assets/partner.png" alt="Logo do restaurante">
+            <p>Restaurante do Zé</p>
+          </div>
+          
+          <div class="order-items">
+            <p>1x Hambúrguer Artesanal</p>
+            <p>1x Batata Frita Grande</p>
+            <p>1x Refrigerante 2L</p>
+          </div>
+          
+          <div class="order-footer">
+            <span class="order-total">Total: R$ 79,90</span>
+            <button class="order-details-button">Ver detalhes</button>
+          </div>
+        </div>
+        
+        <!-- Pedido 2 -->
+        <div class="order-card">
+          <div class="order-header">
+            <div class="order-info">
+              <h4>Pedido #12344</h4>
+              <p class="order-date">10/04/2025 - 20:15</p>
+            </div>
+            <div class="order-status delivered">
+              <span>Entregue</span>
+            </div>
+          </div>
+          
+          <div class="order-restaurant">
+            <img src="../../../libraries/assets/partner.png" alt="Logo do restaurante">
+            <p>Pizzaria Bella Napoli</p>
+          </div>
+          
+          <div class="order-items">
+            <p>1x Pizza Grande Calabresa</p>
+            <p>1x Refrigerante 2L</p>
+          </div>
+          
+          <div class="order-footer">
+            <span class="order-total">Total: R$ 69,90</span>
+            <button class="order-details-button">Ver detalhes</button>
+          </div>
+        </div>
+        
+        <!-- Pedido 3 -->
+        <div class="order-card">
+          <div class="order-header">
+            <div class="order-info">
+              <h4>Pedido #12343</h4>
+              <p class="order-date">03/04/2025 - 12:45</p>
+            </div>
+            <div class="order-status delivered">
+              <span>Entregue</span>
+            </div>
+          </div>
+          
+          <div class="order-restaurant">
+            <img src="../../../libraries/assets/partner.png" alt="Logo do restaurante">
+            <p>Rei do Xis</p>
+          </div>
+          
+          <div class="order-items">
+            <p>2x Xis Completo</p>
+            <p>1x Batata Frita Média</p>
+            <p>2x Refrigerante Lata</p>
+          </div>
+          
+          <div class="order-footer">
+            <span class="order-total">Total: R$ 89,80</span>
+            <button class="order-details-button">Ver detalhes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Conteúdo da aba Meus Endereços -->
+    <div class="tab-content" id="addresses">
+      <div class="addresses-header">
+        <h3>Meus Endereços</h3>
+        <button class="add-address-button"><i class="fa fa-plus"></i> Adicionar endereço</button>
+      </div>
+      
+      <div class="addresses-list">
+        <!-- Endereço 1 -->
+        <div class="address-card">
+          <div class="address-tag">Principal</div>
+          <div class="address-content">
+            <h4>Casa</h4>
+            <p>Rua das Flores, 123 - Apto 302</p>
+            <p>Jardim Primavera, Caxias do Sul - RS</p>
+            <p>CEP: 95010-000</p>
+          </div>
+          <div class="address-actions">
+            <button class="address-edit-button"><i class="fa fa-pencil"></i></button>
+            <button class="address-delete-button"><i class="fa fa-trash"></i></button>
+          </div>
+        </div>
+        
+        <!-- Endereço 2 -->
+        <div class="address-card">
+          <div class="address-content">
+            <h4>Trabalho</h4>
+            <p>Av. Júlio de Castilhos, 456 - Sala 701</p>
+            <p>Centro, Caxias do Sul - RS</p>
+            <p>CEP: 95020-000</p>
+          </div>
+          <div class="address-actions">
+            <button class="address-edit-button"><i class="fa fa-pencil"></i></button>
+            <button class="address-delete-button"><i class="fa fa-trash"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Conteúdo da aba Configurações -->
+    <div class="tab-content" id="settings">
+      <h3>Configurações</h3>
+      
+      <div class="settings-section">
+        <h4>Notificações</h4>
+        <div class="settings-option">
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="slider round"></span>
+          </label>
+          <p>Receber e-mails sobre ofertas e promoções</p>
+        </div>
+        <div class="settings-option">
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="slider round"></span>
+          </label>
+          <p>Receber notificações de status dos pedidos</p>
+        </div>
+      </div>
+      
+      <div class="settings-section">
+        <h4>Segurança</h4>
+        <button class="change-password-button">Alterar senha</button>
+        <button class="delete-account-button">Excluir conta</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <img id="footer-logo" src="../../../libraries/assets/goeat-logo.svg">
+  <p>© Copyright 2025 - Goeat - Todos os direitos reservados</p>
+  <p>Vitório Batistti, nº 1856, Jardim Eldorado, Caxias do Sul/RS</p>
+</footer>
+
+<script src="../../../libraries/scripts/utilities.js"></script>
+<script src="../../../libraries/scripts/routes.js"></script>
+<script src="../../../libraries/scripts/clientSessionHandler.js"></script>
+<script src="../../../libraries/scripts/profile.js"></script>
 </body>
 </html>

@@ -2,16 +2,8 @@ const sessionButton = document.getElementById("session-button");//used into clie
 
 function setAuthenticatedNavbar() {
 
-    alert("Authenticated")
-    sessionButton.TextContent = "Seu perfil";
-    sessionButton.href = "profile/index.html";
+    sessionButton.textContent = "Seu perfil - não esquecer de mudar a negação...";
+    sessionButton.href = `${root}${routes.profile}`;
 
-    
-}
 
-function setUnauthenticatedNavbar() {
-
-    alert("Unauthenticated")
-    sessionButton.innerHTML = "Fazer Login1";
-    sessionButton.href = "profile/index.html";
 }

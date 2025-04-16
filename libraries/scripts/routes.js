@@ -21,6 +21,8 @@ routes = {
 
     //ASSETS
     assets : '/libraries/assets/',
+
+    profile : '/pages/client/profile/index.html',
     
 }
 

@@ -29,3 +29,14 @@ function setAuthenticatedClient(userData){
     clientData = userData;
     sessionStorage.setItem('clientData', JSON.stringify(clientData));
 }
+
+function logoutClient() {
+    // Limpa os dados do cliente do sessionStorage
+    const clientData = {
+        isAuthenticated: false,
+        id: null,
+        username: null,
+        token: null,
+    };
+    sessionStorage.setItem('clientData', JSON.stringify(clientData));
+}
