@@ -43,8 +43,18 @@ function login() {
       // Salva os dados no sessionStorage
       sessionStorage.setItem('clientData', JSON.stringify(userData));
 
-      // Redireciona para a página principal
-      window.location.replace('../client/index.html');
+      // Verifica se deve retornar para o checkout
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnTo = urlParams.get('returnTo');
+      const partnerId = urlParams.get('partnerId');
+      
+      if (returnTo === 'checkout' && partnerId) {
+          // Redireciona para a página de checkout com o partnerId
+          window.location.replace(`../client/store/checkout.html?partnerId=${partnerId}`);
+      } else {
+          // Redireciona para a página principal
+          window.location.replace('../client/index.html');
+      }
   })
   .catch(error => {
       console.error('Erro no login:', error);

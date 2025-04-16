@@ -15,41 +15,66 @@ let orderData = {
 
 // Inicializa o checkout quando a página carrega
 document.addEventListener('DOMContentLoaded', function() {
-    // Verifica se existe carrinho em sessionStorage
-    const cartFromStorage = sessionStorage.getItem('cart');
+    // Tenta restaurar o estado do checkout se estiver vindo de um retorno de login
+    const stateRestored = restoreCheckoutState();
     
-    // Se não existir carrinho, redireciona para a página do restaurante
-    if (!cartFromStorage || JSON.parse(cartFromStorage).length === 0) {
-        Swal.fire({
-            title: 'Carrinho vazio',
-            text: 'Seu carrinho está vazio! Adicione itens antes de finalizar a compra.',
-            icon: 'warning',
-            confirmButtonColor: '#06CF90'
-        }).then(() => {
-            window.location.href = '../index.html';
-        });
-        return;
+    // Se não conseguiu restaurar o estado, carrega normalmente
+    if (!stateRestored) {
+        // Verifica se existe carrinho em sessionStorage
+        const cartFromStorage = sessionStorage.getItem('cart');
+        
+        // Se não existir carrinho, redireciona para a página do restaurante
+        if (!cartFromStorage || JSON.parse(cartFromStorage).length === 0) {
+            Swal.fire({
+                title: 'Carrinho vazio',
+                text: 'Seu carrinho está vazio! Adicione itens antes de finalizar a compra.',
+                icon: 'warning',
+                confirmButtonColor: '#06CF90'
+            }).then(() => {
+                window.location.href = '../index.html';
+            });
+            return;
+        }
+        
+        // Carrega os dados do carrinho para o orderData
+        orderData.items = JSON.parse(cartFromStorage);
+        orderData.total = calculateCartTotalPrice(orderData.items);
+        
+        // Obtém o partnerId da URL
+        const urlParams = new URLSearchParams(window.location.search);
+        orderData.partnerId = urlParams.get('partnerId');
+        
+        // Se não tiver partnerId, redireciona para a página principal
+        if (!orderData.partnerId) {
+            Swal.fire({
+                title: 'Erro',
+                text: 'Erro ao identificar o restaurante!',
+                icon: 'error',
+                confirmButtonColor: '#06CF90'
+            }).then(() => {
+                window.location.href = '../index.html';
+            });
+            return;
+        }
     }
     
-    // Carrega os dados do carrinho para o orderData
-    orderData.items = JSON.parse(cartFromStorage);
-    orderData.total = calculateCartTotalPrice(orderData.items);
-    
-    // Obtém o partnerId da URL
-    const urlParams = new URLSearchParams(window.location.search);
-    orderData.partnerId = urlParams.get('partnerId');
-    
-    // Se não tiver partnerId, redireciona para a página principal
-    if (!orderData.partnerId) {
-        Swal.fire({
-            title: 'Erro',
-            text: 'Erro ao identificar o restaurante!',
-            icon: 'error',
-            confirmButtonColor: '#06CF90'
-        }).then(() => {
-            window.location.href = '../index.html';
-        });
-        return;
+    // Verifica se o usuário já está autenticado
+    if (isAuthenticatedClient()) {
+        // Se estiver logado, pula a etapa de login e vai direto para a etapa de endereço
+        const userData = getAuthenticatedClient();
+        
+        // Preenche os dados do cliente com as informações da sessão
+        orderData.customer = {
+            name: userData.username,
+            email: userData.email,
+            phone: userData.phone || ""
+        };
+        
+        // Vai direto para a seção de endereço
+        goToSection('address');
+    } else {
+        // Se não estiver logado, mostra as opções de login ou compra como convidado
+        goToSection('login');
     }
     
     // Inicializa os eventos dos botões
@@ -113,15 +138,7 @@ function formatPrice(price) {
 // Função para inicializar todos os eventos
 function initializeEvents() {
     // Botões da seção de identificação
-    document.getElementById('btn-login').addEventListener('click', function() {
-        Swal.fire({
-            title: 'Funcionalidade não disponível',
-            text: 'O pedido com login ainda não está implementado. Por favor, use a opção "Fazer pedido sem cadastro".',
-            icon: 'info',
-            confirmButtonColor: '#06CF90'
-        });
-    });
-    
+    document.getElementById('btn-login').addEventListener('click', handleLoginOption);
     document.getElementById('btn-guest').addEventListener('click', showGuestForm);
     document.getElementById('continue-guest').addEventListener('click', processGuestInfo);
     
@@ -176,6 +193,67 @@ function initializeEvents() {
     
     // Botão para voltar à loja após confirmação
     document.getElementById('back-to-store').addEventListener('click', returnToStore);
+}
+
+// Função para redirecionar para o login
+function handleLoginOption() {
+    // Salva o estado atual do checkout e os dados do carrinho no sessionStorage
+    saveCheckoutState();
+    
+    // Redireciona para a página de login, incluindo um parâmetro para retornar ao checkout
+    window.location.href = `../../loginClient/index.html?returnTo=checkout&partnerId=${orderData.partnerId}`;
+}
+
+// Função para salvar o estado do checkout
+function saveCheckoutState() {
+    const checkoutState = {
+        partnerId: orderData.partnerId,
+        // Salva também os items do carrinho no caso deles mudarem
+        items: orderData.items,
+        total: orderData.total,
+        // Se houver dados parciais já preenchidos no formulário de convidado, também poderia salvá-los
+        customer: orderData.customer
+    };
+    
+    sessionStorage.setItem('checkoutState', JSON.stringify(checkoutState));
+}
+
+// Função para recuperar o estado do checkout
+function restoreCheckoutState() {
+    const checkoutStateStr = sessionStorage.getItem('checkoutState');
+    
+    if (checkoutStateStr) {
+        try {
+            const checkoutState = JSON.parse(checkoutStateStr);
+            
+            // Restaura os dados relevantes
+            if (checkoutState.partnerId) {
+                orderData.partnerId = checkoutState.partnerId;
+            }
+            
+            if (checkoutState.items) {
+                orderData.items = checkoutState.items;
+            }
+            
+            if (checkoutState.total) {
+                orderData.total = checkoutState.total;
+            }
+            
+            if (checkoutState.customer) {
+                orderData.customer = checkoutState.customer;
+            }
+            
+            // Limpa o estado salvo após restaurá-lo
+            sessionStorage.removeItem('checkoutState');
+            
+            return true;
+        } catch (error) {
+            console.error('Erro ao restaurar estado do checkout:', error);
+            return false;
+        }
+    }
+    
+    return false;
 }
 
 function showGuestForm() {
