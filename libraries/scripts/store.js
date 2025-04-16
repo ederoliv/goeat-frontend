@@ -1,6 +1,6 @@
 window.onload = function () {
 
-    if(!isAuthenticatedClient()){
+    if(isAuthenticatedClient()){
         // Se o usuário estiver autenticado, atualiza o navbar
         setAuthenticatedNavbar();
     }
