@@ -1,5 +1,5 @@
 window.onload = function() {
-    if (isAuthenticatedClient()) {
+    if (!isAuthenticatedClient()) {
         // Se o usuário não estiver autenticado, redireciona para a página de login
         window.location.href = "../../loginClient/index.html";
     }

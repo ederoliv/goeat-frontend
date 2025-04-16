@@ -666,3 +666,7 @@ input:checked + .slider:before {
     font-size: 14px;
   }
 }
+
+#logout-button {
+  background-color: var(--goeat-red);
+}
