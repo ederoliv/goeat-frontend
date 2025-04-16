@@ -1,0 +1,94 @@
+/* Estilos para a barra de navegação */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    height: 70px;
+}
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-logo img {
+    height: 40px;
+    margin-left: 15px;
+}
+
+.navbar-menu {
+    display: flex;
+    align-items: center;
+}
+
+.menu-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 15px;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.back-link {
+    color: var(--goeat-blue);
+    text-decoration: none;
+    margin-right: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.back-link i {
+    margin-right: 5px;
+}
+
+.session-button {
+    background-color: var(--goeat-tertiary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.session-button:hover {
+    background-color: #05b07e;
+}
+
+/* Ajustes para o container principal para compensar a navbar */
+#container {
+    padding-top: 90px;
+    margin-top: 0;
+}
+
+/* Responsividade */
+@media screen and (max-width: 600px) {
+    .navbar {
+        padding: 10px;
+    }
+    
+    .session-button {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+    
+    .navbar-logo img {
+        height: 32px;
+    }
+}

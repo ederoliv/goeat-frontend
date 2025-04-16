@@ -11,26 +11,25 @@
     integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"/>
   <link rel="stylesheet" href="../../libraries/styles/client.css">
   <link rel="stylesheet" href="../../libraries/styles/colors.css">
+  <link rel="stylesheet" href="../../libraries/styles/navbar.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
-<!-- Sidebar (hidden by default) -->
-<nav class="w3-sidebar w3-bar-block w3-card w3-top w3-xlarge w3-animate-left" style="display:none;z-index:2;width:40%;min-width:300px" id="mySidebar">
-  <a href="javascript:void(0)" onclick="w3_close()" class="w3-bar-item w3-button"><i class="fa fa-times"></i></a>
-  <a href="#food" onclick="w3_close()" class="w3-bar-item w3-button">Restaurantes</a>
-  <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button">Sobre</a>
-</nav>
-
-<!-- Top menu -->
-<div class="w3-top">
-  <div class="w3-white w3-xlarge" style="max-width:1200px;margin:auto">
-    <div class="w3-button w3-padding-16 w3-left" onclick="w3_open()"><i class="fa fa-bars"></i></div>    
-    <div class="sidebar__img w3-center">
-      <img id="goeat-logo" src="../../libraries/assets/goeat-logo-pg.svg" alt="logo" />
-    </div>
+    <!-- Navbar -->
+    <div class="navbar">
+      <div class="navbar-left">
+          <a href="../../index.html" class="back-link">
+              <i class="fa fa-arrow-left"></i> Voltar
+          </a>
+      </div>
+      <div class="navbar-logo">
+          <img src="../../../libraries/assets/goeat-logo-pg.svg" alt="Goeat Logo">
+      </div>
+      <div>
+          <a href="../loginClient/index.html"  id="session-button" class="session-button">Fazer Login</a>
+      </div>
   </div>
-</div>
 
 <div id="container">
   <h1>Explore Restaurantes</h1>
@@ -44,17 +43,8 @@
   <p>Vitório Batistti, nº 1856, Jardim Eldorado, Caxias do Sul/RS</p>
 </footer>
 
-<script>
-  // W3.CSS Sidebar functionality
-  function w3_open() {
-    document.getElementById("mySidebar").style.display = "block";
-  }
-   
-  function w3_close() {
-    document.getElementById("mySidebar").style.display = "none";
-  }
-</script>
-
+<script src="../../libraries/scripts/navbar.js"></script>
+<script src="../../libraries/scripts/clientSessionHandler.js"></script>
 <script src="../../libraries/scripts/utilities.js"></script>
 <script src="../../libraries/scripts/routes.js"></script>
 <script src="../../libraries/scripts/client.js"></script>

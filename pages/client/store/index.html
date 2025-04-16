@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../../../libraries/styles/store.css">
     <link rel="stylesheet" href="../../../libraries/styles/cart.css">
     <link rel="stylesheet" href="../../../libraries/styles/colors.css">
+    <link rel="stylesheet" href="../../../libraries/styles/navbar.css">
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
@@ -17,11 +18,23 @@
     <title>Carregando...</title>
 </head>
 <body>
-    <div id="container">
-        <div class="store-header">
-            <a href="../index.html" class="back-button">
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="navbar-left">
+            <a href="../index.html" class="back-link">
                 <i class="fa fa-arrow-left"></i> Voltar
             </a>
+        </div>
+        <div class="navbar-logo">
+            <img src="../../../libraries/assets/goeat-logo-pg.svg" alt="Goeat Logo">
+        </div>
+        <div>
+            <a href="../../loginClient/index.html" id="session-button" class="session-button">Fazer Login</a>
+        </div>
+    </div>
+    
+    <div id="container">
+        <div class="store-header">
             <img id="partner-logo" src="../../../libraries/assets/partner.png" alt="Logo do restaurante">
             <h1 id="partner-name">Carregando...</h1>
             <!-- Status do parceiro (aberto/fechado) será inserido aqui via JavaScript -->
@@ -42,6 +55,8 @@
         <p>Vitório Batistti, nº 1856, Jardim Eldorado, Caxias do Sul/RS</p>
     </footer>
 
+    <script src="../../../libraries/scripts/navbar.js"></script>
+    <script src="../../../libraries/scripts/clientSessionHandler.js"></script>
     <script src="../../../libraries/scripts/utilities.js"></script>
     <script src="../../../libraries/scripts/routes.js"></script>
     <script src="../../../libraries/scripts/store.js"></script>

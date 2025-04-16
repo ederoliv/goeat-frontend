@@ -2,6 +2,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mostra loading enquanto carrega os dados
     showLoadingModal();
     
+    if(!isAuthenticatedClient()){
+        // Se o usuário estiver autenticado, atualiza o navbar
+        setAuthenticatedNavbar();
+    }
     // Carrega os parceiros
     loadPartners()
         .finally(() => {
