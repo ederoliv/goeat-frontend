@@ -58,6 +58,7 @@ function login() {
     console.error("Detalhes completos do erro:", error);
     alert("Erro no login: " + error.message);
 });
+
       
       // Salva os dados no sessionStorage
       sessionStorage.setItem('clientData', JSON.stringify(userData));
