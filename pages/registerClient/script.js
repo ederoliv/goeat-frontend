@@ -37,7 +37,7 @@ function registerClient() {
     // Debuggando para entender o que está sendo enviado
     console.log('Enviando dados:', registrationData);
 
-    // Faz a requisição para a API - vamos tentar com o endpoint correto
+    // Faz a requisição para a API - 
     fetch(`${API_BASE_URL}/clients`, {
         method: 'POST',
         headers: {
