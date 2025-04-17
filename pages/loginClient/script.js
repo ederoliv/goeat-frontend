@@ -17,29 +17,47 @@ function login() {
   };
 
   fetch(`${API_BASE_URL}/clients/login`, {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: JSON.stringify(credentials)
-  })
-  .then(response => {
-      if (!response.ok) {
-          throw new Error('Falha no login');
-      }
-      return response.json();
-  })
-  .then(clientData => {
-      // Em caso de sucesso
-      // Prepara os dados para salvar no session storage
-      const userData = {
-        isAuthenticated: true,
-        id: clientData.id,
-        username: clientData.name,
-        email: clientData.email,
-        token: clientData.token
-      };
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json'
+    },
+    body: JSON.stringify(credentials)
+})
+.then(response => {
+    // Vamos capturar e mostrar mais detalhes sobre a resposta
+    console.log('Status da resposta:', response.status);
+    console.log('Headers:', [...response.headers.entries()]);
+    
+    // Vamos tentar ler o corpo da resposta mesmo se for um erro
+    return response.text().then(text => {
+        try {
+            // Tenta converter para JSON se possível
+            const data = JSON.parse(text);
+            console.log('Corpo da resposta:', data);
+            
+            if (!response.ok) {
+                throw new Error(`Erro ${response.status}: ${data.message || text}`);
+            }
+            
+            return data; // retorna os dados se for sucesso
+        } catch (e) {
+            console.log('Resposta não-JSON:', text);
+            if (!response.ok) {
+                throw new Error(`Erro ${response.status}: ${text}`);
+            }
+            return JSON.parse(text);
+        }
+    });
+})
+.then(clientData => {
+    // código de sucesso existente
+})
+.catch(error => {
+    console.error("Detalhes completos do erro:", error);
+    alert("Erro no login: " + error.message);
+});
       
       // Salva os dados no sessionStorage
       sessionStorage.setItem('clientData', JSON.stringify(userData));
