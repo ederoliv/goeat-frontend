@@ -20,7 +20,7 @@ function login() {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest',
+          'X-Requested-With': 'XMLHttpRequest'
       },
       body: JSON.stringify(credentials)
   })
