@@ -17,48 +17,47 @@ function login() {
   };
 
   fetch(`${API_BASE_URL}/clients/login`, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Accept': 'application/json'
-    },
-    body: JSON.stringify(credentials)
-})
-.then(response => {
-    // Vamos capturar e mostrar mais detalhes sobre a resposta
-    console.log('Status da resposta:', response.status);
-    console.log('Headers:', [...response.headers.entries()]);
-    
-    // Vamos tentar ler o corpo da resposta mesmo se for um erro
-    return response.text().then(text => {
-        try {
-            // Tenta converter para JSON se possível
-            const data = JSON.parse(text);
-            console.log('Corpo da resposta:', data);
-            
-            if (!response.ok) {
-                throw new Error(`Erro ${response.status}: ${data.message || text}`);
-            }
-            
-            return data; // retorna os dados se for sucesso
-        } catch (e) {
-            console.log('Resposta não-JSON:', text);
-            if (!response.ok) {
-                throw new Error(`Erro ${response.status}: ${text}`);
-            }
-            return JSON.parse(text);
-        }
-    });
-})
-.then(clientData => {
-    // código de sucesso existente
-})
-.catch(error => {
-    console.error("Detalhes completos do erro:", error);
-    alert("Erro no login: " + error.message);
-});
-
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json'
+      },
+      body: JSON.stringify(credentials)
+  })
+  .then(response => {
+      // Registrar o status da resposta para debug
+      console.log('Status HTTP:', response.status);
+      
+      // Tenta obter o corpo da resposta
+      return response.text().then(text => {
+          // Mostra o texto bruto para debug
+          console.log('Resposta bruta:', text);
+          
+          // Se resposta não for ok, lança erro com detalhes
+          if (!response.ok) {
+              throw new Error(`Erro ${response.status}: ${text || 'Sem detalhes'}`);
+          }
+          
+          // Tenta converter para JSON
+          try {
+              return JSON.parse(text);
+          } catch (e) {
+              console.error('Erro ao analisar JSON:', e);
+              throw new Error('Resposta inválida do servidor');
+          }
+      });
+  })
+  .then(clientData => {
+      // Em caso de sucesso
+      // Prepara os dados para salvar no session storage
+      const userData = {
+        isAuthenticated: true,
+        id: clientData.id,
+        username: clientData.name,
+        email: clientData.email,
+        token: clientData.token
+      };
       
       // Salva os dados no sessionStorage
       sessionStorage.setItem('clientData', JSON.stringify(userData));
@@ -77,56 +76,56 @@ function login() {
       }
   })
   .catch(error => {
-      console.error('Erro no login:', error);
-      alertaErroLogin("Usuário incorreto e/ou inexistente!");
+      console.error('Detalhes do erro:', error);
+      alertaErroLogin("Falha no login: " + error.message);
   });
 }
 
 // Função para mostrar o modal de erro
 function alertaErroLogin(mensagem = "Usuário incorreto e/ou inexistente!") {
-const modal = document.getElementById("modal");
-const mensagemElement = modal.querySelector("p");
+  const modal = document.getElementById("modal");
+  const mensagemElement = modal.querySelector("p");
 
-if (mensagemElement) {
-  mensagemElement.textContent = mensagem;
-}
+  if (mensagemElement) {
+    mensagemElement.textContent = mensagem;
+  }
 
-modal.style.display = "block";
+  modal.style.display = "block";
 }
 
 // Função para fechar o modal
 function fechar() {
-document.getElementById("modal").style.display = "none";
+  document.getElementById("modal").style.display = "none";
 }
 
 // Adicionar listener para tecla Enter nos campos de input
 document.addEventListener('DOMContentLoaded', function() {
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
 
-if (emailInput && passwordInput) {
-  emailInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      passwordInput.focus();
-    }
-  });
-  
-  passwordInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      login();
-    }
-  });
-}
+  if (emailInput && passwordInput) {
+    emailInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        passwordInput.focus();
+      }
+    });
+    
+    passwordInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        login();
+      }
+    });
+  }
 
-// Configurar evento para o botão de fechar do modal
-const closeButton = document.querySelector('.close');
-if (closeButton) {
-  closeButton.addEventListener('click', fechar);
-}
+  // Configurar evento para o botão de fechar do modal
+  const closeButton = document.querySelector('.close');
+  if (closeButton) {
+    closeButton.addEventListener('click', fechar);
+  }
 
-// Configurar evento para o botão OK do modal
-const okButton = document.getElementById('deleteButton');
-if (okButton) {
-  okButton.addEventListener('click', fechar);
-}
+  // Configurar evento para o botão OK do modal
+  const okButton = document.getElementById('deleteButton');
+  if (okButton) {
+    okButton.addEventListener('click', fechar);
+  }
 });
