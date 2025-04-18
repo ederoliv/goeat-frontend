@@ -38,7 +38,7 @@ function registerClient() {
     console.log('Enviando dados:', registrationData);
 
     // Faz a requisição para a API - 
-    fetch(`${API_BASE_URL}/clients`, {
+    fetch(`${API_BASE_URL}/clients/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
