@@ -50,7 +50,7 @@ function registerClient() {
         console.log('Headers da resposta:', [...response.headers.entries()]);
         
         // Verifica primeiro se há conteúdo na resposta
-        if (response.status === 204) {
+        if (response.status === 201) {
             // No content - foi bem sucedido mas não retornou dados
             return { success: true, message: 'Cadastro realizado com sucesso!' };
         }
