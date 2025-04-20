@@ -177,44 +177,23 @@
       </div>
     </div>
     
-    <!-- Conteúdo da aba Meus Endereços -->
-    <div class="tab-content" id="addresses">
-      <div class="addresses-header">
-        <h3>Meus Endereços</h3>
-        <button class="add-address-button"><i class="fa fa-plus"></i> Adicionar endereço</button>
+  
+<div class="tab-content" id="addresses">
+  <div class="addresses-header">
+      <h3>Meus Endereços</h3>
+      <button class="add-address-button" onclick="showAddAddressForm()">
+          <i class="fa fa-plus"></i> Adicionar endereço
+      </button>
+  </div>
+  
+  <div class="addresses-list">
+      <!-- Aqui serão carregados os endereços via JavaScript -->
+      <div class="loading-addresses">
+          <i class="fa fa-spinner fa-pulse"></i>
+          <p>Carregando seus endereços...</p>
       </div>
-      
-      <div class="addresses-list">
-        <!-- Endereço 1 -->
-        <div class="address-card">
-          <div class="address-tag">Principal</div>
-          <div class="address-content">
-            <h4>Casa</h4>
-            <p>Rua das Flores, 123 - Apto 302</p>
-            <p>Jardim Primavera, Caxias do Sul - RS</p>
-            <p>CEP: 95010-000</p>
-          </div>
-          <div class="address-actions">
-            <button class="address-edit-button"><i class="fa fa-pencil"></i></button>
-            <button class="address-delete-button"><i class="fa fa-trash"></i></button>
-          </div>
-        </div>
-        
-        <!-- Endereço 2 -->
-        <div class="address-card">
-          <div class="address-content">
-            <h4>Trabalho</h4>
-            <p>Av. Júlio de Castilhos, 456 - Sala 701</p>
-            <p>Centro, Caxias do Sul - RS</p>
-            <p>CEP: 95020-000</p>
-          </div>
-          <div class="address-actions">
-            <button class="address-edit-button"><i class="fa fa-pencil"></i></button>
-            <button class="address-delete-button"><i class="fa fa-trash"></i></button>
-          </div>
-        </div>
-      </div>
-    </div>
+  </div>
+</div>
     
     <!-- Conteúdo da aba Configurações -->
     <div class="tab-content" id="settings">
@@ -253,6 +232,7 @@
   <p>Vitório Batistti, nº 1856, Jardim Eldorado, Caxias do Sul/RS</p>
 </footer>
 
+<script src="../../../libraries/scripts/clientSessionHandler.js"></script>
 <script src="../../../libraries/scripts/utilities.js"></script>
 <script src="../../../libraries/scripts/routes.js"></script>
 <script src="../../../libraries/scripts/clientSessionHandler.js"></script>

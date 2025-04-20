@@ -104,9 +104,17 @@
                 </div>
             </div>
             
+            <!-- Lista de endereços salvos (mostrada quando o cliente estiver logado) -->
+            <div id="address-list-container" class="address-list-container" style="display: none;">
+                <h3>Seus endereços salvos</h3>
+                <div id="address-list" class="address-list">
+                    <!-- Aqui serão inseridos os cards de endereços via JavaScript -->
+                </div>
+            </div>
+            
             <!-- Formulário de endereço (mostrado quando Entrega for selecionada) -->
             <div id="delivery-form" class="delivery-details">
-                <h3>Endereço de entrega</h3>
+                <h3 id="address-form-title">Endereço de entrega</h3>
                 <form id="address-form">
                     <div class="form-row">
                         <div class="form-group">
@@ -154,6 +162,11 @@
                         <label for="reference">Ponto de referência</label>
                         <input type="text" id="reference" placeholder="Opcional">
                     </div>
+                    
+                    <!-- Botão para salvar endereço (só aparece para clientes logados) -->
+                    <button type="button" id="save-new-address" class="secondary-button" style="display: none;">
+                        Salvar este endereço
+                    </button>
                 </form>
             </div>
             

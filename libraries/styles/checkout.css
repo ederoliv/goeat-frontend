@@ -531,3 +531,83 @@ small {
         flex-direction: column;
     }
 }
+
+/* Estilos para lista de endereços */
+.address-list-container {
+    margin-bottom: 30px;
+}
+
+.address-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.address-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.address-card:hover {
+    border-color: var(--goeat-primary);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.address-info {
+    flex: 1;
+}
+
+.address-info h4 {
+    margin: 0 0 5px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.address-info p {
+    margin: 3px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.address-select {
+    display: flex;
+    align-items: center;
+}
+
+.address-select input[type="radio"] {
+    margin-right: 8px;
+}
+
+.add-address-button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background-color: #f5f5f5;
+    border: 1px dashed #ddd;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--goeat-primary);
+    font-size: 16px;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.add-address-button:hover {
+    background-color: #e8e8e8;
+}
+
+.add-address-button i {
+    font-size: 18px;
+}
