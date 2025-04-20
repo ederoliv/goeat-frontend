@@ -365,11 +365,19 @@ function searchCepAddress() {
 
 // Função para validar o endereço e continuar para pagamento
 function validateAddressAndContinue() {
-    // Se for retirada no local, não precisa validar endereço
-    if (orderData.deliveryType === 'pickup') {
+
+      // Se for retirada no local, não precisa validar endereço
+      if (orderData.deliveryType === 'pickup') {
         goToSection('payment');
         return;
     }
+
+    if(isAuthenticatedClient()) {
+        //carregar endereços cadastrados do cliente logado
+        
+    }
+
+  
     
     const street = document.getElementById('street').value;
     const number = document.getElementById('number').value;
