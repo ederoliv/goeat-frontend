@@ -13,7 +13,8 @@
     <link rel="stylesheet" href="../../../libraries/styles/dashboard.css" />
     <link rel="stylesheet" href="../../../libraries/styles/colors.css" />
     <link rel="stylesheet" href="../../../libraries/styles/kanban.css" />
-    <title>Acompanhar - Goeat</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <title>Acompanhar Pedidos - Goeat</title>
   </head>
   <body id="body">
     <div class="container">
@@ -26,8 +27,7 @@
         </div>
         <div class="navbar__right">
           <a href="#">
-            <img width="30" src="assets/avatar.svg" alt="" />
-            <!-- <i class="fa fa-user-circle-o" aria-hidden="true"></i> -->
+            <i class="fa fa-user-circle-o" aria-hidden="true"></i>
           </a>
         </div>
       </nav>
@@ -36,68 +36,24 @@
         <div class="kanban-container">
           <div class="kanban-column" id="em-espera-column">
             <div class="kanban-category" id="em-espera-category">Em Espera</div>
-            <div class="kanban-item" id="tarefa1" draggable="true">
-              <div class="kanban-item-title">
-                <span>#5</span> John Doe
-              </div>
-              <ul>
-                <li>Pizza de Calabresa</li>
-                <li>Refrigerante 2L</li>
-              </ul>
-            </div>
-      
-            <div class="kanban-item" id="tarefa2" draggable="true">
-              <div class="kanban-item-title">
-                <span>#4</span> Maria Oliveira
-              </div>
-              <ul>
-                <li>Hambúrguer</li>
-                <li>Batata Frita</li>
-                <li>Suco de Laranja</li>
-              </ul>
-            </div>
+            <!-- Os pedidos em espera serão carregados aqui via JavaScript -->
           </div> 
       
           <div class="kanban-column" id="preparando-column">
             <div class="kanban-category" id="preparando-category">Preparando</div>
-            <div class="kanban-item" id="tarefa3" draggable="true">
-              <div class="kanban-item-title">
-                <span>#3</span> Pedro Santos
-              </div>
-              <ul>
-                <li>Sushi</li>
-                <li>Temaki</li>
-              </ul>
-            </div>
+            <!-- Os pedidos em preparação serão carregados aqui via JavaScript -->
           </div>
       
           <div class="kanban-column" id="a-caminho-column">
             <div class="kanban-category" id="a-caminho-category">A Caminho</div>
-            <div class="kanban-item" id="tarefa4" draggable="true">
-              <div class="kanban-item-title">
-                <span>#2</span> Ana Paula
-              </div>
-              <ul>
-                <li>Lasanha</li>
-                <li>Refrigerante 600ml</li>
-              </ul>
-            </div>
+            <!-- Os pedidos em entrega serão carregados aqui via JavaScript -->
           </div>
       
           <div class="kanban-column" id="finalizado-column">
             <div class="kanban-category" id="finalizado-category">Finalizado</div>
-            <div class="kanban-item" id="tarefa5" draggable="true">
-              <div class="kanban-item-title">
-                <span>#1</span> Carlos Souza
-              </div>
-              <ul>
-                <li>Pastel de Carne</li>
-                <li>Coca-Cola 350ml</li>
-              </ul>
-            </div>
+            <!-- Os pedidos finalizados serão carregados aqui via JavaScript -->
           </div>
         </div>
-      
       </main>
 
       <div id="sidebar">
@@ -150,12 +106,13 @@
           </div>
           <div class="sidebar__logout">
             <i class="fa fa-power-off"></i>
-            <a href="#">Sair</a>
+            <a href="../../loginPartner/index.html">Sair</a>
           </div>
         </div>
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="../../../libraries/scripts/routes.js"></script>
+    <script src="../../../libraries/scripts/utilities.js"></script>
     <script src="../../../libraries/scripts/dashboard.js"></script>
     <script src="../../../libraries/scripts/kanban.js"></script>
   </body>
