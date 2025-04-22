@@ -84,6 +84,8 @@ main {
   cursor: grab;
   box-shadow: 0px 6px 2px rgba(0, 0, 0, 0.25); /* Sombra dos cards móveis */
   width: 100%; /* Card móvel ocupa toda a largura */
+  display: flex;
+  flex-direction: column;
 }
 
 .kanban-item-title {
@@ -162,4 +164,141 @@ main {
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+}
+
+/* Botão de detalhes */
+.view-details-button {
+  background-color: var(--goeat-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 12px;
+  text-align: center;
+  transition: background-color 0.2s;
+  align-self: center;
+  width: 100%;
+}
+
+.view-details-button:hover {
+  background-color: #4e309e;
+}
+
+.view-details-button i {
+  margin-right: 5px;
+}
+
+/* Estilos para o Modal de Detalhes do Pedido */
+.order-details-modal {
+  border-radius: 10px;
+  max-width: 800px;
+  width: 90%;
+}
+
+.order-details-container {
+  text-align: left;
+  padding: 0 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.details-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.details-section:last-child {
+  border-bottom: none;
+}
+
+.details-section h3 {
+  color: var(--goeat-primary);
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.details-row {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.details-label {
+  font-weight: 600;
+  width: 120px;
+  color: #555;
+}
+
+.details-value {
+  flex: 1;
+}
+
+.details-address {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  border-left: 4px solid var(--goeat-primary);
+  margin-top: 10px;
+}
+
+.details-notes {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  border-left: 4px solid var(--goeat-yellow);
+  margin-top: 10px;
+  white-space: pre-line;
+}
+
+.order-status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.details-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.details-items-table th {
+  background-color: #f0f0f0;
+  padding: 8px;
+  text-align: left;
+  font-weight: 600;
+  color: #555;
+  font-size: 14px;
+}
+
+.details-items-table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.details-items-table tr:last-child td {
+  border-bottom: none;
+}
+
+.no-items {
+  color: #888;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Customizações para o SweetAlert2 */
+.swal2-popup {
+  padding: 1.5em;
+}
+
+.swal2-title {
+  color: var(--goeat-primary) !important;
+  font-size: 24px !important;
 }

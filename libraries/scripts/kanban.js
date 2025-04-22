@@ -18,6 +18,9 @@ const columnToStatusMap = {
   'finalizado-column': 'FINALIZADOS'
 };
 
+// Armazena os dados dos pedidos para uso nos detalhes
+let ordersData = [];
+
 // Carrega os pedidos do restaurante quando a página é carregada
 window.onload = function() {
   // Exibe os dados do usuário
@@ -55,6 +58,9 @@ async function loadOrders() {
     
     const orders = await response.json();
     
+    // Armazena os dados para uso posterior
+    ordersData = orders;
+    
     // Limpa o kanban atual
     clearKanban();
     
@@ -69,6 +75,185 @@ async function loadOrders() {
     alert('Não foi possível carregar os pedidos. Por favor, tente novamente.');
     hideLoading();
   }
+}
+
+// Função para carregar os detalhes do pedido
+async function loadOrderDetails(orderId) {
+  try {
+    // Tenta buscar do array local primeiro
+    const order = ordersData.find(o => o.id == orderId);
+    
+    if (order) {
+      // Se já temos os dados básicos, vamos pedir os detalhes completos
+      const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userData.token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Erro ao buscar detalhes do pedido: ${response.status}`);
+      }
+      
+      const orderDetails = await response.json();
+      
+      // Mostra o modal com os detalhes
+      showOrderDetailsModal(orderDetails, order);
+    } else {
+      throw new Error('Pedido não encontrado nos dados carregados');
+    }
+  } catch (error) {
+    console.error('Falha ao carregar detalhes do pedido:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro ao carregar detalhes',
+      text: 'Não foi possível obter os detalhes deste pedido. Tente novamente.',
+      confirmButtonColor: '#06CF90'
+    });
+  }
+}
+
+// Função para mostrar o modal de detalhes do pedido
+function showOrderDetailsModal(orderDetails, order) {
+  // Formata o preço total
+  const formattedTotalPrice = (order.totalPrice / 100).toFixed(2).replace('.', ',');
+  
+  // Determina se é entrega ou retirada
+  const isPickup = order.deliveryAddress === 'RETIRADA NO LOCAL';
+  
+  // Formata a data do pedido (se disponível)
+  let formattedDate = 'Data não disponível';
+  if (orderDetails.createdAt) {
+    const orderDate = new Date(orderDetails.createdAt);
+    formattedDate = orderDate.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+  
+  // Constrói o HTML dos itens do pedido
+  let itemsHtml = '';
+  
+  if (orderDetails.items && orderDetails.items.length > 0) {
+    itemsHtml = '<table class="details-items-table">';
+    itemsHtml += '<thead><tr><th>Produto</th><th>Qtde</th><th>Preço Unit.</th><th>Total</th></tr></thead><tbody>';
+    
+    orderDetails.items.forEach(item => {
+      const unitPrice = (item.price / 100).toFixed(2).replace('.', ',');
+      const totalPrice = ((item.price * item.quantity) / 100).toFixed(2).replace('.', ',');
+      
+      itemsHtml += `
+        <tr>
+          <td>${item.name}</td>
+          <td>${item.quantity}</td>
+          <td>R$ ${unitPrice}</td>
+          <td>R$ ${totalPrice}</td>
+        </tr>
+      `;
+    });
+    
+    itemsHtml += '</tbody></table>';
+  } else {
+    itemsHtml = '<p class="no-items">Detalhes dos itens não disponíveis</p>';
+  }
+  
+  // Define a cor do status
+  let statusColor = '#888';
+  switch(order.orderStatus) {
+    case 'ESPERANDO':
+      statusColor = '#FF5555'; // vermelho
+      break;
+    case 'PREPARANDO':
+      statusColor = '#53BDEB'; // azul
+      break;
+    case 'ENCAMINHADOS':
+      statusColor = '#FCCC48'; // amarelo
+      break;
+    case 'FINALIZADOS':
+      statusColor = '#06CF90'; // verde
+      break;
+  }
+  
+  // Mostra o modal usando SweetAlert2
+  Swal.fire({
+    title: `Pedido #${order.id}`,
+    html: `
+      <div class="order-details-container">
+        <div class="details-section">
+          <h3>Informações do Pedido</h3>
+          <div class="details-row">
+            <div class="details-label">Status:</div>
+            <div class="details-value"><span class="order-status-badge" style="background-color: ${statusColor};">${getStatusName(order.orderStatus)}</span></div>
+          </div>
+          <div class="details-row">
+            <div class="details-label">Data/Hora:</div>
+            <div class="details-value">${formattedDate}</div>
+          </div>
+          <div class="details-row">
+            <div class="details-label">Total:</div>
+            <div class="details-value">R$ ${formattedTotalPrice}</div>
+          </div>
+          <div class="details-row">
+            <div class="details-label">Tipo:</div>
+            <div class="details-value">${isPickup ? '<i class="fa fa-store"></i> Retirada no local' : '<i class="fa fa-motorcycle"></i> Entrega'}</div>
+          </div>
+        </div>
+        
+        <div class="details-section">
+          <h3>Cliente</h3>
+          <div class="details-row">
+            <div class="details-label">Nome:</div>
+            <div class="details-value">${order.name}</div>
+          </div>
+          ${orderDetails.email ? `
+          <div class="details-row">
+            <div class="details-label">Email:</div>
+            <div class="details-value">${orderDetails.email}</div>
+          </div>` : ''}
+          ${orderDetails.phone ? `
+          <div class="details-row">
+            <div class="details-label">Telefone:</div>
+            <div class="details-value">${orderDetails.phone}</div>
+          </div>` : ''}
+          ${order.clientId ? `
+          <div class="details-row">
+            <div class="details-label">Cliente ID:</div>
+            <div class="details-value">${order.clientId}</div>
+          </div>` : ''}
+        </div>
+        
+        ${!isPickup ? `
+        <div class="details-section">
+          <h3>Endereço de Entrega</h3>
+          <div class="details-address">${order.deliveryAddress}</div>
+        </div>` : ''}
+        
+        <div class="details-section">
+          <h3>Itens do Pedido</h3>
+          ${itemsHtml}
+        </div>
+        
+        ${orderDetails.notes ? `
+        <div class="details-section">
+          <h3>Observações</h3>
+          <div class="details-notes">${orderDetails.notes}</div>
+        </div>` : ''}
+      </div>
+    `,
+    width: '800px',
+    confirmButtonColor: '#06CF90',
+    confirmButtonText: 'Fechar',
+    customClass: {
+      container: 'order-details-modal-container',
+      popup: 'order-details-modal',
+      content: 'order-details-content'
+    }
+  });
 }
 
 // Função para mostrar indicador de carregamento
@@ -143,11 +328,22 @@ function createOrderCard(order) {
       <li>${isPickup ? '<i class="fa fa-store"></i> Retirada no local' : '<i class="fa fa-motorcycle"></i> Entrega'}</li>
       ${!isPickup ? `<li class="address-info">${order.deliveryAddress}</li>` : ''}
     </ul>
+    <button class="view-details-button" data-order-id="${order.id}">
+      <i class="fa fa-info-circle"></i> Detalhes
+    </button>
   `;
   
   // Adiciona o card na coluna correspondente ao status
   const columnId = statusToColumnMap[order.orderStatus] || 'em-espera-column';
   document.getElementById(columnId).appendChild(card);
+  
+  // Adiciona evento de clique ao botão de detalhes
+  const detailsButton = card.querySelector('.view-details-button');
+  detailsButton.addEventListener('click', function(e) {
+    e.stopPropagation(); // Impede que o evento de drag seja acionado
+    const orderId = this.dataset.orderId;
+    loadOrderDetails(orderId);
+  });
 }
 
 // Inicializa eventos de arrastar e soltar
@@ -229,6 +425,12 @@ async function drop(event) {
     
     // Se atualizado com sucesso, move o card
     targetColumn.appendChild(draggable);
+    
+    // Atualiza o status no array local
+    const orderIndex = ordersData.findIndex(o => o.id == orderId);
+    if (orderIndex >= 0) {
+      ordersData[orderIndex].orderStatus = newStatus;
+    }
     
     // Mostra um feedback de sucesso
     showStatusUpdateFeedback(orderId, newStatus, true);
