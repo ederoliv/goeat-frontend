@@ -84,8 +84,11 @@ async function loadOrderDetails(orderId) {
     const order = ordersData.find(o => o.id == orderId);
     
     if (order) {
-      // Se já temos os dados básicos, vamos pedir os detalhes completos
-      const response = await fetch(`${API_BASE_URL}partners/${userData.id}/orders/${orderId}`, {
+      // Mostrar loading
+      showLoadingModal();
+      
+      // Faz a requisição para a API para obter os detalhes completos
+      const response = await fetch(`${API_BASE_URL}/partners/${userData.id}/orders/${orderId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -99,6 +102,9 @@ async function loadOrderDetails(orderId) {
       
       const orderDetails = await response.json();
       
+      // Esconde o loading
+      hideLoadingModal();
+      
       // Mostra o modal com os detalhes
       showOrderDetailsModal(orderDetails, order);
     } else {
@@ -106,6 +112,9 @@ async function loadOrderDetails(orderId) {
     }
   } catch (error) {
     console.error('Falha ao carregar detalhes do pedido:', error);
+    // Esconde o loading se houver erro
+    hideLoadingModal();
+    
     Swal.fire({
       icon: 'error',
       title: 'Erro ao carregar detalhes',
@@ -128,6 +137,16 @@ function showOrderDetailsModal(orderDetails, order) {
   if (orderDetails.createdAt) {
     const orderDate = new Date(orderDetails.createdAt);
     formattedDate = orderDate.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } else {
+    // Se não tiver data na resposta, usa a data atual
+    const now = new Date();
+    formattedDate = now.toLocaleString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -220,11 +239,6 @@ function showOrderDetailsModal(orderDetails, order) {
             <div class="details-label">Telefone:</div>
             <div class="details-value">${orderDetails.phone}</div>
           </div>` : ''}
-          ${order.clientId ? `
-          <div class="details-row">
-            <div class="details-label">Cliente ID:</div>
-            <div class="details-value">${order.clientId}</div>
-          </div>` : ''}
         </div>
         
         ${!isPickup ? `
@@ -237,15 +251,9 @@ function showOrderDetailsModal(orderDetails, order) {
           <h3>Itens do Pedido</h3>
           ${itemsHtml}
         </div>
-        
-        ${orderDetails.notes ? `
-        <div class="details-section">
-          <h3>Observações</h3>
-          <div class="details-notes">${orderDetails.notes}</div>
-        </div>` : ''}
       </div>
     `,
-    width: '800px',
+    width: '600px',
     confirmButtonColor: '#06CF90',
     confirmButtonText: 'Fechar',
     customClass: {
