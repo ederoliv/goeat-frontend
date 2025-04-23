@@ -407,8 +407,8 @@ async function drop(event) {
   
   // Tenta atualizar o status no backend
   try {
-    const response = await fetch(`${API_BASE_URL}/orders/status`, {
-      method: 'POST',
+    const response = await fetch(`${API_BASE_URL}/partners/${userData.id}/orders`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${userData.token}`
@@ -432,48 +432,16 @@ async function drop(event) {
       ordersData[orderIndex].orderStatus = newStatus;
     }
     
-    // Mostra um feedback de sucesso
-    showStatusUpdateFeedback(orderId, newStatus, true);
+
+    goeatAlert('success', `Pedido #${orderId} movido para ${getStatusName(newStatus)}`);
     
   } catch (error) {
-    console.error('Falha ao atualizar status:', error);
     
-    // Mostra feedback de erro
-    showStatusUpdateFeedback(orderId, newStatus, false);
     
-    // Não move o card, mantém na coluna original
+    goeatAlert('error', `Erro ao atualizar status do pedido #${orderId}. Tente novamente.`);
+    
+  
     sourceColumn.appendChild(draggable);
-  }
-}
-
-// Função para mostrar feedback de atualização de status
-function showStatusUpdateFeedback(orderId, newStatus, success) {
-  // Pode usar uma biblioteca como SweetAlert2 ou feedback customizado
-  if (typeof Swal !== 'undefined') {
-    if (success) {
-      Swal.fire({
-        position: 'top-end',
-        icon: 'success',
-        title: `Pedido #${orderId} movido para ${getStatusName(newStatus)}`,
-        showConfirmButton: false,
-        timer: 1500
-      });
-    } else {
-      Swal.fire({
-        position: 'top-end',
-        icon: 'error',
-        title: `Erro ao atualizar status do pedido #${orderId}`,
-        text: 'Tente novamente em alguns instantes',
-        showConfirmButton: true
-      });
-    }
-  } else {
-    // Fallback para alert se SweetAlert não estiver disponível
-    if (success) {
-      alert(`Pedido #${orderId} movido para ${getStatusName(newStatus)}`);
-    } else {
-      alert(`Erro ao atualizar status do pedido #${orderId}. Tente novamente.`);
-    }
   }
 }
 

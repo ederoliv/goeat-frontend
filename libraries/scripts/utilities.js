@@ -63,6 +63,7 @@ function showLoadingModal() {
    document.head.appendChild(style);
 }
 
+
 function hideLoadingModal() {
    const modal = document.getElementById('loading-modal');
    if (modal) {
