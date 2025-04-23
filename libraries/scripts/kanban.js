@@ -85,7 +85,7 @@ async function loadOrderDetails(orderId) {
     
     if (order) {
       // Se já temos os dados básicos, vamos pedir os detalhes completos
-      const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
+      const response = await fetch(`${API_BASE_URL}partners/${userData.id}/orders/${orderId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
