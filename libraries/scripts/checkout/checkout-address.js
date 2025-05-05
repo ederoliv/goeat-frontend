@@ -20,7 +20,34 @@ function updateDeliveryOption(option) {
         document.getElementById('option-pickup').classList.add('selected');
         document.getElementById('option-delivery').classList.remove('selected');
         orderData.deliveryType = 'pickup';
+        
+        // Buscar o endereço real do restaurante
+        fetchPartnerAddress(orderData.partnerId);
     }
+}
+
+// Nova função para buscar o endereço do restaurante
+function fetchPartnerAddress(partnerId) {
+    // Mostrar loading enquanto busca o endereço
+    const pickupAddress = document.getElementById('pickup-address');
+    pickupAddress.innerHTML = '<i class="fa fa-spinner fa-pulse"></i> Carregando endereço...';
+    
+    // Fazer requisição para a API para buscar o endereço do parceiro
+    fetch(`${API_BASE_URL}/partners/${partnerId}/address`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Falha ao buscar endereço do restaurante');
+            }
+            return response.text(); // Retorna como texto pois a API retorna uma string direta
+        })
+        .then(addressData => {
+            // Atualiza o elemento com o endereço retornado da API
+            pickupAddress.textContent = addressData || 'Endereço não disponível';
+        })
+        .catch(error => {
+            console.error('Erro ao buscar endereço do restaurante:', error);
+            pickupAddress.textContent = 'Não foi possível carregar o endereço. Entre em contato com o restaurante.';
+        });
 }
 
 // Função para carregar os endereços do cliente
