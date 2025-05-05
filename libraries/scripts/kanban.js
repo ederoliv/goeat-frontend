@@ -311,6 +311,130 @@ function renderOrders(orders) {
   initDragAndDrop();
 }
 
+// Função para mover o pedido para o próximo status
+async function moveOrderForward(orderId, card) {
+  try {
+    // Obtém o status atual
+    const currentColumn = card.parentNode;
+    const currentStatus = columnToStatusMap[currentColumn.id];
+    
+    // Define o próximo status na sequência
+    let nextStatus;
+    switch(currentStatus) {
+      case 'ESPERANDO':
+        nextStatus = 'PREPARANDO';
+        break;
+      case 'PREPARANDO':
+        nextStatus = 'ENCAMINHADOS';
+        break;
+      case 'ENCAMINHADOS':
+        nextStatus = 'FINALIZADOS';
+        break;
+      case 'FINALIZADOS':
+        // Já está no último status, não faz nada
+        goeatAlert('info', `Pedido #${orderId} já está no último status`);
+        return;
+    }
+    
+    // Obtém a coluna de destino
+    const targetColumn = document.getElementById(statusToColumnMap[nextStatus]);
+    
+    // Tenta atualizar o status no backend
+    const response = await fetch(`${API_BASE_URL}/partners/${userData.id}/orders`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userData.token}`
+      },
+      body: JSON.stringify({
+        id: parseInt(orderId),
+        status: nextStatus
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Erro ao atualizar status: ${response.status}`);
+    }
+    
+    // Se atualizado com sucesso, move o card
+    targetColumn.appendChild(card);
+    
+    // Atualiza o status no array local
+    const orderIndex = ordersData.findIndex(o => o.id == orderId);
+    if (orderIndex >= 0) {
+      ordersData[orderIndex].orderStatus = nextStatus;
+    }
+    
+    goeatAlert('success', `Pedido #${orderId} movido para ${getStatusName(nextStatus)}`);
+    
+  } catch (error) {
+    goeatAlert('error', `Erro ao atualizar status do pedido #${orderId}. Tente novamente.`);
+    console.error('Erro ao mover pedido:', error);
+  }
+}
+
+// Função para mover o pedido para o status anterior
+async function moveOrderBack(orderId, card) {
+  try {
+    // Obtém o status atual
+    const currentColumn = card.parentNode;
+    const currentStatus = columnToStatusMap[currentColumn.id];
+    
+    // Define o status anterior na sequência
+    let previousStatus;
+    switch(currentStatus) {
+      case 'FINALIZADOS':
+        previousStatus = 'ENCAMINHADOS';
+        break;
+      case 'ENCAMINHADOS':
+        previousStatus = 'PREPARANDO';
+        break;
+      case 'PREPARANDO':
+        previousStatus = 'ESPERANDO';
+        break;
+      case 'ESPERANDO':
+        // Já está no primeiro status, não faz nada
+        goeatAlert('info', `Pedido #${orderId} já está no primeiro status`);
+        return;
+    }
+    
+    // Obtém a coluna de destino
+    const targetColumn = document.getElementById(statusToColumnMap[previousStatus]);
+    
+    // Tenta atualizar o status no backend
+    const response = await fetch(`${API_BASE_URL}/partners/${userData.id}/orders`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userData.token}`
+      },
+      body: JSON.stringify({
+        id: parseInt(orderId),
+        status: previousStatus
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Erro ao atualizar status: ${response.status}`);
+    }
+    
+    // Se atualizado com sucesso, move o card
+    targetColumn.appendChild(card);
+    
+    // Atualiza o status no array local
+    const orderIndex = ordersData.findIndex(o => o.id == orderId);
+    if (orderIndex >= 0) {
+      ordersData[orderIndex].orderStatus = previousStatus;
+    }
+    
+    goeatAlert('success', `Pedido #${orderId} movido para ${getStatusName(previousStatus)}`);
+    
+  } catch (error) {
+    goeatAlert('error', `Erro ao atualizar status do pedido #${orderId}. Tente novamente.`);
+    console.error('Erro ao mover pedido:', error);
+  }
+}
+
 // Função para criar um card de pedido
 function createOrderCard(order) {
   // Criar o elemento do card
@@ -336,9 +460,19 @@ function createOrderCard(order) {
       <li>${isPickup ? '<i class="fa fa-store"></i> Retirada no local' : '<i class="fa fa-motorcycle"></i> Entrega'}</li>
       ${!isPickup ? `<li class="address-info">${order.deliveryAddress}</li>` : ''}
     </ul>
-    <button class="view-details-button" data-order-id="${order.id}">
-      <i class="fa fa-info-circle"></i> Detalhes
-    </button>
+    <div class="card-buttons">
+      <button class="view-details-button" data-order-id="${order.id}">
+        <i class="fa fa-info-circle"></i> Detalhes
+      </button>
+      <div class="status-buttons">
+        <button class="move-back-button" data-order-id="${order.id}" title="Voltar status">
+          <i class="fa fa-arrow-left"></i>
+        </button>
+        <button class="move-forward-button" data-order-id="${order.id}" title="Avançar status">
+          <i class="fa fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
   `;
   
   // Adiciona o card na coluna correspondente ao status
@@ -352,6 +486,31 @@ function createOrderCard(order) {
     const orderId = this.dataset.orderId;
     loadOrderDetails(orderId);
   });
+  
+  // Adiciona evento de clique ao botão de avançar status
+  const moveForwardButton = card.querySelector('.move-forward-button');
+  moveForwardButton.addEventListener('click', function(e) {
+    e.stopPropagation(); // Impede que o evento de drag seja acionado
+    const orderId = this.dataset.orderId;
+    moveOrderForward(orderId, card);
+  });
+  
+  // Adiciona evento de clique ao botão de voltar status
+  const moveBackButton = card.querySelector('.move-back-button');
+  moveBackButton.addEventListener('click', function(e) {
+    e.stopPropagation(); // Impede que o evento de drag seja acionado
+    const orderId = this.dataset.orderId;
+    moveOrderBack(orderId, card);
+  });
+  
+  // Desabilita botões conforme a posição no fluxo
+  if (order.orderStatus === 'ESPERANDO') {
+    moveBackButton.disabled = true;
+    moveBackButton.classList.add('disabled-button');
+  } else if (order.orderStatus === 'FINALIZADOS') {
+    moveForwardButton.disabled = true;
+    moveForwardButton.classList.add('disabled-button');
+  }
 }
 
 // Inicializa eventos de arrastar e soltar
@@ -440,15 +599,31 @@ async function drop(event) {
       ordersData[orderIndex].orderStatus = newStatus;
     }
     
+    // Atualiza estado dos botões após a mudança de status
+    const moveForwardButton = draggable.querySelector('.move-forward-button');
+    const moveBackButton = draggable.querySelector('.move-back-button');
+    
+    // Reset classes de desativação
+    moveForwardButton.classList.remove('disabled-button');
+    moveBackButton.classList.remove('disabled-button');
+    moveForwardButton.disabled = false;
+    moveBackButton.disabled = false;
+    
+    // Ajusta conforme a nova coluna
+    if (newStatus === 'ESPERANDO') {
+        moveBackButton.disabled = true;
+        moveBackButton.classList.add('disabled-button');
+    } else if (newStatus === 'FINALIZADOS') {
+        moveForwardButton.disabled = true;
+        moveForwardButton.classList.add('disabled-button');
+    }
 
     goeatAlert('success', `Pedido #${orderId} movido para ${getStatusName(newStatus)}`);
     
   } catch (error) {
     
-    
     goeatAlert('error', `Erro ao atualizar status do pedido #${orderId}. Tente novamente.`);
     
-  
     sourceColumn.appendChild(draggable);
   }
 }

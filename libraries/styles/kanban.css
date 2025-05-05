@@ -166,6 +166,15 @@ main {
   -webkit-box-orient: vertical;
 }
 
+/* Organização dos botões do card */
+.card-buttons {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 8px;
+  margin-top: 10px;
+}
+
 /* Botão de detalhes */
 .view-details-button {
   background-color: var(--goeat-primary);
@@ -173,12 +182,10 @@ main {
   border: none;
   border-radius: 4px;
   padding: 6px 12px;
-  margin-top: 10px;
   cursor: pointer;
   font-size: 12px;
   text-align: center;
   transition: background-color 0.2s;
-  align-self: center;
   width: 100%;
 }
 
@@ -188,6 +195,50 @@ main {
 
 .view-details-button i {
   margin-right: 5px;
+}
+
+/* Botões de navegação de status */
+.status-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.move-back-button,
+.move-forward-button {
+  flex: 1;
+  background-color: #f8f9fa;
+  color: #555;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 0;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.move-back-button:hover {
+  background-color: var(--goeat-red);
+  color: white;
+  border-color: var(--goeat-red);
+}
+
+.move-forward-button:hover {
+  background-color: var(--goeat-green);
+  color: white;
+  border-color: var(--goeat-green);
+}
+
+/* Estilo para botões desabilitados */
+.disabled-button {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+.disabled-button:hover {
+  background-color: #f8f9fa !important;
+  color: #aaa !important;
+  border-color: #ddd !important;
 }
 
 /* Estilos para o Modal de Detalhes do Pedido */
