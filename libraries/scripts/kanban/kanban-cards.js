@@ -7,10 +7,9 @@ function createOrderCard(order) {
   card.setAttribute('draggable', 'true');
   card.dataset.orderId = order.id;
   
-  // Determina se é entrega ou retirada
   const isPickup = order.deliveryAddress === 'RETIRADA NO LOCAL';
   
-  // Cria o conteúdo do card inicialmente com o placeholder
+
   card.innerHTML = `
     <div class="kanban-item-title">
       <span>#${order.id}</span> ${order.name}
@@ -36,7 +35,6 @@ function createOrderCard(order) {
     </div>
   `;
   
-  // Adiciona o card na coluna correspondente ao status
   const columnId = statusToColumnMap[order.orderStatus] || 'em-espera-column';
   document.getElementById(columnId).appendChild(card);
   
@@ -78,7 +76,7 @@ function createOrderCard(order) {
   
   return card;
 }
-  
+
 // Função para carregar os itens do pedido via endpoint específico
 async function fetchOrderItems(orderId, cardElement) {
   try {

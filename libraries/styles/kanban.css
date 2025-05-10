@@ -392,3 +392,16 @@ main {
     width: 90%;
   }
 }
+
+/* Lista de itens no modal de detalhes */
+.details-items-list {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 10px 0;
+  font-size: 15px;
+}
+
+.details-items-list li {
+  margin-bottom: 6px;
+  line-height: 1.3;
+}

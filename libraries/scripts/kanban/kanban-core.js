@@ -1,8 +1,8 @@
-// Obtém os dados do usuário (restaurante) do sessionStorage
+
 const userDataString = sessionStorage.getItem('userData');
 const userData = userDataString ? JSON.parse(userDataString) : null;
 
-// Mapeamento de statusType para IDs das colunas
+
 const statusToColumnMap = {
   'ESPERANDO': 'em-espera-column',
   'PREPARANDO': 'preparando-column',
@@ -10,7 +10,7 @@ const statusToColumnMap = {
   'FINALIZADOS': 'finalizado-column'
 };
 
-// Mapeamento reverso: coluna para status
+
 const columnToStatusMap = {
   'em-espera-column': 'ESPERANDO',
   'preparando-column': 'PREPARANDO',
@@ -18,29 +18,29 @@ const columnToStatusMap = {
   'finalizado-column': 'FINALIZADOS'
 };
 
-// Armazena os dados dos pedidos para uso nos detalhes
+
 let ordersData = [];
 
-// Carrega os pedidos do restaurante quando a página é carregada
+
 window.onload = function() {
-  // Exibe os dados do usuário
+ 
   if (userDataString) {
     const userData = JSON.parse(userDataString);
     document.getElementById('userName').textContent = userData.name;
     
-    // Busca os pedidos do restaurante
+
     loadOrders();
   } else {
-    // Redireciona para o login se não estiver autenticado
+
     alert('Você precisa estar logado para acessar essa página');
     window.location.href = '../../loginPartner/index.html';
   }
 };
 
-// Função para carregar os pedidos da API
+
 async function loadOrders() {
   try {
-    // Exibir loading ou mensagem de carregamento
+
     showLoading();
     
     // Faz a requisição para a API
