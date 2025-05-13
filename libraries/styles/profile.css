@@ -670,3 +670,17 @@ input:checked + .slider:before {
 #logout-button {
   background-color: var(--goeat-red);
 }
+
+/* Adicione ao final do seu profile.css ou em um local apropriado */
+
+.form-group input:disabled {
+  background-color: #e9ecef; /* Cor de fundo para campos desabilitados */
+  cursor: not-allowed;
+}
+
+.readonly-field-message {
+  font-size: 0.85em;
+  color: #6c757d; /* Cinza um pouco mais escuro */
+  display: block;
+  margin-top: 4px;
+}
