@@ -54,6 +54,9 @@ async function loadSupportTickets(userData, API_BASE_URL) {
         }
 
         // Cria a tabela para exibir os chamados
+        const tableWrapper = document.createElement('div');
+        tableWrapper.className = 'table-responsive'; // Adicionando wrapper responsivo
+        
         const table = document.createElement('table');
         table.className = 'support-tickets-table'; // Adiciona uma classe para estilização
 
@@ -113,7 +116,8 @@ async function loadSupportTickets(userData, API_BASE_URL) {
             tbody.appendChild(row);
         });
         table.appendChild(tbody);
-        ticketsContainer.appendChild(table);
+        tableWrapper.appendChild(table);
+        ticketsContainer.appendChild(tableWrapper);
 
     } catch (error) {
         console.error('Falha ao carregar chamados:', error);
@@ -151,6 +155,10 @@ function createStatusBadge(status) {
 function openNewSupportTicketPage() {
     // Ajuste o caminho conforme a estrutura do seu projeto
     // window.location.href = 'creation.html'; 
-    console.log('Redirecionar para a página de criação de novo chamado.');
-    alert('A funcionalidade de criar novo chamado será implementada em breve.');
+    Swal.fire({
+        title: 'Funcionalidade em desenvolvimento',
+        text: 'A criação de novos chamados será implementada em breve!',
+        icon: 'info',
+        confirmButtonColor: '#06CF90'
+    });
 }

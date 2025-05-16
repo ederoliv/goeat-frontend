@@ -13,51 +13,85 @@
     
     <link rel="stylesheet" href="../../../libraries/styles/dashboard.css" />
     <link rel="stylesheet" href="../../../libraries/styles/colors.css" />
-    <link rel="stylesheet" href="../../../libraries/styles/support/support-cards.css" /> <title>Suporte - Goeat</title>
+    <link rel="stylesheet" href="../../../libraries/styles/support/support-cards.css" />
+    <link rel="stylesheet" href="../../../libraries/styles/support/support-cards.css" /> 
+    <title>Suporte - Goeat</title>
     <style>
-        /* Estilos gerais da página (podem ir para um support-page.css ou similar) */
+        /* Estilos específicos para a página */
+        /* Corrigir o layout para centralizar todo o conteúdo */
         main {
-            padding: 20px;
+            padding: 0 !important;
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            margin: 0 !important;
+            overflow-y: auto !important;
+        }
+
+        .main-content-wrapper {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 20px !important;
+            box-sizing: border-box !important;
         }
 
         .support-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px; /* Aumenta um pouco a margem */
+            width: 100% !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-bottom: 25px !important;
         }
 
         .support-header h1 {
-            margin: 0;
-            font-size: 1.6em; /* Aumenta um pouco o título */
-            color: #333;
+            margin: 0 !important;
+            font-size: 1.6em !important;
+            color: #333 !important;
         }
         
         .support-header h1 #total-tickets {
-            color: var(--goeat-primary);
+            color: var(--goeat-primary) !important;
         }
 
         .create-ticket-button {
-            background-color: var(--goeat-tertiary);
-            color: white;
-            border: none;
-            padding: 12px 20px; /* Aumenta o padding */
-            border-radius: 6px; /* Bordas mais suaves */
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 500; /* Deixa a fonte um pouco mais forte */
-            transition: background-color 0.3s, transform 0.2s;
-            display: flex; /* Para alinhar ícone e texto */
-            align-items: center; /* Para alinhar ícone e texto */
+            background-color: var(--goeat-tertiary) !important;
+            color: white !important;
+            border: none !important;
+            padding: 12px 20px !important;
+            border-radius: 6px !important;
+            cursor: pointer !important;
+            font-size: 1em !important;
+            font-weight: 500 !important;
+            transition: background-color 0.3s, transform 0.2s !important;
+            display: flex !important;
+            align-items: center !important;
         }
 
         .create-ticket-button:hover {
-            background-color: #05b07e;
-            transform: translateY(-1px); /* Efeito sutil ao passar o mouse */
+            background-color: #05b07e !important;
+            transform: translateY(-1px) !important;
         }
         
         .create-ticket-button i {
-            margin-right: 8px;
+            margin-right: 8px !important;
+        }
+        
+        #tickets-list-container {
+            width: 100% !important;
+        }
+        
+        .table-responsive {
+            width: 100% !important;
+            overflow-x: auto !important;
+            margin-bottom: 20px !important;
+            -webkit-overflow-scrolling: touch !important;
+        }
+        
+        /* Garantir que a tabela ocupe todo o espaço */
+        .support-tickets-table {
+            width: 100% !important;
         }
     </style>
   </head>
@@ -78,15 +112,18 @@
       </nav>
 
       <main>
-        <div class="support-header">
-          <h1>Meus Chamados (Total: <span id="total-tickets">0</span>)</h1>
-          <button class="create-ticket-button" onclick="openNewSupportTicketPage()">
-            <i class="fa fa-plus-circle"></i>Abrir Novo Chamado
-          </button>
-        </div>
-
-        <div id="tickets-list-container">
+        <div class="main-content-wrapper">
+          <div class="support-header">
+            <h1>Meus Chamados (Total: <span id="total-tickets">0</span>)</h1>
+            <button class="create-ticket-button" onclick="openNewSupportTicketPage()">
+              <i class="fa fa-plus-circle"></i>Abrir Novo Chamado
+            </button>
           </div>
+
+          <div id="tickets-list-container">
+            <!-- Aqui serão carregados os chamados -->
+          </div>
+        </div>
       </main>
 
       <div id="sidebar">
