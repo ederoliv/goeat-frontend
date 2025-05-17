@@ -11,89 +11,13 @@
       crossorigin="anonymous"
     />
     
-    <link rel="stylesheet" href="../../../libraries/styles/dashboard.css" />
-    <link rel="stylesheet" href="../../../libraries/styles/colors.css" />
-    <link rel="stylesheet" href="../../../libraries/styles/support/support-cards.css" />
-    <link rel="stylesheet" href="../../../libraries/styles/support/support-cards.css" /> 
+    <link rel="stylesheet" href="/libraries/styles/product.css"/>
+    <link rel="stylesheet" href="/libraries/styles/tables.css"/>
+    <link rel="stylesheet" href="/libraries/styles/colors.css"/>
+    <link rel="stylesheet" href="/libraries/styles/dashboard.css"/>
+    <link rel="stylesheet" href="/libraries/styles/support/support-main.css"/>
+    <link rel="stylesheet" href="/libraries/styles/support/support-card.css"/>
     <title>Suporte - Goeat</title>
-    <style>
-        /* Estilos específicos para a página */
-        /* Corrigir o layout para centralizar todo o conteúdo */
-        main {
-            padding: 0 !important;
-            width: 100% !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: flex-start !important;
-            margin: 0 !important;
-            overflow-y: auto !important;
-        }
-
-        .main-content-wrapper {
-            width: 100% !important;
-            margin: 0 !important;
-            padding: 20px !important;
-            box-sizing: border-box !important;
-        }
-
-        .support-header {
-            width: 100% !important;
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            margin-bottom: 25px !important;
-        }
-
-        .support-header h1 {
-            margin: 0 !important;
-            font-size: 1.6em !important;
-            color: #333 !important;
-        }
-        
-        .support-header h1 #total-tickets {
-            color: var(--goeat-primary) !important;
-        }
-
-        .create-ticket-button {
-            background-color: var(--goeat-tertiary) !important;
-            color: white !important;
-            border: none !important;
-            padding: 12px 20px !important;
-            border-radius: 6px !important;
-            cursor: pointer !important;
-            font-size: 1em !important;
-            font-weight: 500 !important;
-            transition: background-color 0.3s, transform 0.2s !important;
-            display: flex !important;
-            align-items: center !important;
-        }
-
-        .create-ticket-button:hover {
-            background-color: #05b07e !important;
-            transform: translateY(-1px) !important;
-        }
-        
-        .create-ticket-button i {
-            margin-right: 8px !important;
-        }
-        
-        #tickets-list-container {
-            width: 100% !important;
-        }
-        
-        .table-responsive {
-            width: 100% !important;
-            overflow-x: auto !important;
-            margin-bottom: 20px !important;
-            -webkit-overflow-scrolling: touch !important;
-        }
-        
-        /* Garantir que a tabela ocupe todo o espaço */
-        .support-tickets-table {
-            width: 100% !important;
-        }
-    </style>
   </head>
   <body id="body">
     <div class="container">
@@ -102,26 +26,34 @@
           <i class="fa fa-bars" aria-hidden="true"></i>
         </div>
         <div class="navbar__left">
-          <p id="userName">Carregando...</p>
+          <p id="userName"></p>
         </div>
         <div class="navbar__right">
+          <a href="#" onclick="loadSupportTickets()">
+            <i class="fa fa-refresh" aria-hidden="true" title="Atualizar chamados"></i>
+          </a>
           <a href="#">
-            <img width="30" src="../../../libraries/assets/avatar.svg" alt="Avatar do usuário" />
+            <i class="fa fa-user-circle-o" aria-hidden="true"></i>
           </a>
         </div>
       </nav>
 
       <main>
-        <div class="main-content-wrapper">
-          <div class="support-header">
-            <h1>Meus Chamados (Total: <span id="total-tickets">0</span>)</h1>
-            <button class="create-ticket-button" onclick="openNewSupportTicketPage()">
-              <i class="fa fa-plus-circle"></i>Abrir Novo Chamado
+        <div class="product-container">
+          <div class="search-container">
+            <input type="button" class="input" id="productButton" value="Novo Chamado" onclick="openNewSupportTicketPage()">
+            <input type="text" class="input" id="searchInput" placeholder="Pesquisar chamados">
+            <button type="button" class="search-icon-button" id="searchButton" onclick="searchTickets()">
+              <i class="fa fa-search"></i>
             </button>
           </div>
 
+          <div class="support-header">
+            <h2>Meus Chamados (<span id="total-tickets">0</span>)</h2>
+          </div>
+
           <div id="tickets-list-container">
-            <!-- Aqui serão carregados os chamados -->
+            <!-- Aqui serão carregados os tickets -->
           </div>
         </div>
       </main>
@@ -129,7 +61,7 @@
       <div id="sidebar">
         <div class="sidebar__title">
           <div class="sidebar__img">
-            <img src="../../../libraries/assets/goeat-logo.svg" alt="logo Goeat" />
+            <img src="../../../libraries/assets/goeat-logo.svg" alt="logo" />
           </div>
           <i
             onclick="closeSidebar()"
@@ -179,22 +111,11 @@
         </div>
       </div>
     </div>
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../../../libraries/scripts/utilities.js"></script>
     <script src="../../../libraries/scripts/routes.js"></script>
     <script src="../../../libraries/scripts/dashboard.js"></script>
+    <script src="../../../libraries/scripts/support/support-card.js"></script>
     <script src="../../../libraries/scripts/support/support-main.js"></script>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const userDataString = sessionStorage.getItem('userData');
-        if (userDataString) {
-          const userData = JSON.parse(userDataString);
-          const userNameElement = document.getElementById('userName');
-          if (userNameElement && userData.name) {
-            userNameElement.textContent = userData.name;
-          }
-        }
-      });
-    </script>
   </body>
 </html>

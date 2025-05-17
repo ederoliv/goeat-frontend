@@ -1,0 +1,151 @@
+#tickets-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.ticket-card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.ticket-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.ticket-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.ticket-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+    flex: 1;
+}
+
+.ticket-description {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 10px 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.ticket-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #777;
+}
+
+.ticket-dates {
+    display: flex;
+    gap: 15px;
+}
+
+.ticket-dates span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.ticket-dates i {
+    color: var(--goeat-primary);
+}
+
+.ticket-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.view-button {
+    background-color: var(--goeat-primary);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.view-button:hover {
+    background-color: #532D9E;
+}
+
+/* Status badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.status-open, .status-aberto {
+    background-color: var(--goeat-blue);
+    color: white;
+}
+
+.status-in-progress, .status-em_andamento {
+    background-color: var(--goeat-yellow);
+    color: #333;
+}
+
+.status-resolved, .status-resolvido {
+    background-color: var(--goeat-green);
+    color: white;
+}
+
+.status-closed, .status-fechado {
+    background-color: #6c757d;
+    color: white;
+}
+
+.status-default {
+    background-color: #adb5bd;
+    color: white;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .ticket-card {
+        width: 100%;
+    }
+    
+    .ticket-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .ticket-dates {
+        flex-direction: column;
+        gap: 5px;
+    }
+}
