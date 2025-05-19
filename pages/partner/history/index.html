@@ -15,7 +15,9 @@
     <link rel="stylesheet" href="/libraries/styles/tables.css"/>
     <link rel="stylesheet" href="/libraries/styles/colors.css"/>
     <link rel="stylesheet" href="/libraries/styles/dashboard.css"/>
-    <title>Acompanhar - Goeat</title>
+    <link rel="stylesheet" href="styles/styles.css"/>
+    
+    <title>Histórico de Pedidos - Goeat</title>
   </head>
   <body id="body">
     <div class="container">
@@ -27,23 +29,37 @@
           <p id="userName"></p>
         </div>
         <div class="navbar__right">
+          <a href="#" onclick="loadOrderHistory()">
+            <i class="fa fa-refresh" aria-hidden="true" title="Atualizar histórico"></i>
+          </a>
           <a href="#">
-            <img width="30" src="/libraries/assets/avatar.svg" alt="" />
+            <i class="fa fa-user-circle-o" aria-hidden="true"></i>
           </a>
         </div>
       </nav>
 
       <main>
         <div class="product-container">
-          <div class="search-container">
-            <input type="text" class="input" id="searchInput" placeholder="Pesquisar produtos">
-            <input type="button" class="input" id="searchButton" value="Pesquisar">
-            <input type="button" class="input" id="productButton" value="Adicionar produto" onclick="_addProductModal()">
+          <h2 style="margin-bottom: 20px;">Histórico de Pedidos</h2>
+          
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nº Pedido</th>
+                  <th>Data</th>
+                  <th>Cliente</th>
+                  <th>Itens</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="orderTableBody">
+                <!-- Os dados da tabela serão preenchidos via JavaScript -->
+              </tbody>
+            </table>
           </div>
-
-          <table>  
-            <tbody id="tbody"></tbody>
-          </table>
         </div>
       </main>
 
@@ -69,9 +85,9 @@
             <i class="fa fa-home"></i>
             <a class="link-text" href="../acompanhar/index.html">Acompanhar</a>
           </div>
-          <div class="sidebar__link">
+          <div class="sidebar__link active_menu_linke">
             <i class="fa fa-calendar-check-o"></i>
-            <a class="link-text" href="../history/index.html">Histórico</a>
+            <a class="link-text" href="index.html">Histórico</a>
           </div>
           <div class="sidebar__link">
             <i class="fa fa-money"></i>
@@ -89,22 +105,22 @@
             <i class="fa fa-wrench"></i>
             <a class="link-text" href="#">Configurações</a>
           </div>
-          <div class="sidebar__link active_menu_linke">
+          <div class="sidebar__link">
             <i class="fa fa-archive"></i>
             <a class="link-text" href="../meuProdutos/index.html">Meus produtos</a>
           </div>
           <div class="sidebar__logout">
             <i class="fa fa-power-off"></i>
-            <a href="#">Sair</a>
+            <a href="../../loginPartner/index.html">Sair</a>
           </div>
         </div>
       </div>
     </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../../../libraries/scripts/utilities.js"></script>
     <script src="../../../libraries/scripts/routes.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="../../../libraries/scripts/products.js"></script>]
     <script src="../../../libraries/scripts/dashboard.js"></script>
+    <script src="scripts/script.js"></script>
   </body>
 </html>

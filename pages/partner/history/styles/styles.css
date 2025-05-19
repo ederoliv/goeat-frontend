@@ -1,0 +1,99 @@
+/* Estilos para a página de histórico de pedidos */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 0;
+}
+
+th {
+  background-color: var(--goeat-primary);
+  color: white;
+  padding: 12px 10px;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+}
+
+tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Estilos para os status, iguais ao kanban */
+.status-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.status-finalizados {
+  background-color: var(--goeat-green);
+  color: white;
+}
+
+.status-cancelados {
+  background-color: var(--goeat-red);
+  color: white;
+}
+
+.status-encaminhados {
+  background-color: var(--goeat-yellow);
+  color: #333;
+}
+
+.status-preparando {
+  background-color: var(--goeat-blue);
+  color: white;
+}
+
+.status-esperando {
+  background-color: var(--goeat-red);
+  color: white;
+}
+
+.action-button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--goeat-blue);
+}
+
+.action-button:hover {
+  background-color: rgba(83, 189, 235, 0.1);
+}
+
+.loading-message {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.loading-message i {
+  margin-right: 10px;
+  color: var(--goeat-primary);
+}
