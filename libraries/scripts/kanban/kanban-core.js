@@ -40,10 +40,8 @@ window.onload = function() {
 
 async function loadOrders() {
   try {
-
     showLoading();
     
-    // Faz a requisição para a API
     const response = await fetch(`${API_BASE_URL}/partners/${userData.id}/orders`, {
       method: 'GET',
       headers: {
@@ -52,26 +50,26 @@ async function loadOrders() {
       }
     });
     
+    console.log('1 - Response status:', response.status);
+    
     if (!response.ok) {
       throw new Error(`Erro ao buscar pedidos: ${response.status}`);
     }
     
-    const orders = await response.json();
+    // Vamos ver o que tá vindo como texto primeiro
+    const responseText = await response.text();
     
-    // Armazena os dados para uso posterior
+    // Agora tenta parsear o JSON
+    const orders = JSON.parse(responseText);
+
+    
     ordersData = orders;
     
-    // Limpa o kanban atual
     clearKanban();
-    
-    // Renderiza os pedidos no kanban
     renderOrders(orders);
-    
-    // Oculta loading
     hideLoading();
     
   } catch (error) {
-    console.error('Falha ao carregar pedidos:', error);
     alert('Não foi possível carregar os pedidos. Por favor, tente novamente.');
     hideLoading();
   }
@@ -121,7 +119,7 @@ function renderOrders(orders) {
   });
   
   // Após criar todos os cards, inicializa o arrastar e soltar
-  initDragAndDrop();
+  //initDragAndDrop();
 }
 
 // Adiciona botão de atualização manual

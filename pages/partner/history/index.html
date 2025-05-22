@@ -15,9 +15,9 @@
     <link rel="stylesheet" href="/libraries/styles/tables.css"/>
     <link rel="stylesheet" href="/libraries/styles/colors.css"/>
     <link rel="stylesheet" href="/libraries/styles/dashboard.css"/>
-    <link rel="stylesheet" href="styles/styles.css"/>
+    <link rel="stylesheet" href="styles/style.css"/>
     
-    <title>Histórico de Pedidos - Goeat</title>
+    <title>Financeiro - Goeat</title>
   </head>
   <body id="body">
     <div class="container">
@@ -29,8 +29,8 @@
           <p id="userName"></p>
         </div>
         <div class="navbar__right">
-          <a href="#" onclick="loadOrderHistory()">
-            <i class="fa fa-refresh" aria-hidden="true" title="Atualizar histórico"></i>
+          <a href="#" onclick="refreshFinancialData()">
+            <i class="fa fa-refresh" aria-hidden="true" title="Atualizar dados financeiros"></i>
           </a>
           <a href="#">
             <i class="fa fa-user-circle-o" aria-hidden="true"></i>
@@ -40,25 +40,33 @@
 
       <main>
         <div class="product-container">
-          <h2 style="margin-bottom: 20px;">Histórico de Pedidos</h2>
+          <h2 style="margin-bottom: 20px;">Painel Financeiro</h2>
           
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nº Pedido</th>
-                  <th>Data</th>
-                  <th>Cliente</th>
-                  <th>Itens</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="orderTableBody">
-                <!-- Os dados da tabela serão preenchidos via JavaScript -->
-              </tbody>
-            </table>
+          <div class="finance-cards-container">
+            <div class="finance-card">
+              <h3>Hoje</h3>
+              <p class="amount" id="finance-today">
+                <i class="fa fa-spinner fa-pulse"></i>
+              </p>
+            </div>
+            <div class="finance-card">
+              <h3>Esta semana</h3>
+              <p class="amount" id="finance-week">
+                <i class="fa fa-spinner fa-pulse"></i>
+              </p>
+            </div>
+            <div class="finance-card">
+              <h3>Este mês</h3>
+              <p class="amount" id="finance-month">
+                <i class="fa fa-spinner fa-pulse"></i>
+              </p>
+            </div>
+          </div>
+          
+          <div class="report-button-container">
+            <button class="report-button" onclick="navigateToDetails()">
+              <i class="fa fa-bar-chart"></i> Relatório completo
+            </button>
           </div>
         </div>
       </main>
@@ -85,13 +93,13 @@
             <i class="fa fa-home"></i>
             <a class="link-text" href="../acompanhar/index.html">Acompanhar</a>
           </div>
-          <div class="sidebar__link active_menu_linke">
-            <i class="fa fa-calendar-check-o"></i>
-            <a class="link-text" href="index.html">Histórico</a>
-          </div>
           <div class="sidebar__link">
+            <i class="fa fa-calendar-check-o"></i>
+            <a class="link-text" href="../history/index.html">Histórico</a>
+          </div>
+          <div class="sidebar__link active_menu_linke">
             <i class="fa fa-money"></i>
-            <a class="link-text" href="../finance/index.html">Financeiro</a>
+            <a class="link-text" href="index.html">Financeiro</a>
           </div>
           <div class="sidebar__link">
             <i class="fa fa-pie-chart"></i>
