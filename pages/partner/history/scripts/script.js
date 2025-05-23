@@ -153,9 +153,6 @@ function createOrderRow(order) {
         <button class="action-button view-button" onclick="viewOrderDetails(${order.id})" title="Ver detalhes">
           <i class="fa fa-eye"></i>
         </button>
-        <button class="action-button print-button" onclick="printOrder(${order.id})" title="Imprimir">
-          <i class="fa fa-print"></i>
-        </button>
       </div>
     </td>
   `;
@@ -264,7 +261,7 @@ function filterByPeriod(period) {
       const startOfWeek = new Date(now);
       startOfWeek.setDate(now.getDate() - 7);
       filtered = allOrders.filter(order => {
-        const orderDate = order.createdAt ? new User(order.createdAt) : new Date(0);
+        const orderDate = order.createdAt ? new Date(order.createdAt) : new Date(0);
         return orderDate >= startOfWeek;
       });
       break;
@@ -461,20 +458,6 @@ function showOrderDetailsModal(orderDetails, order) {
       content: 'order-details-content'
     }
   });
-}
-
-/**
- * Função para imprimir um pedido (funcionalidade básica)
- */
-function printOrder(orderId) {
-  goeatAlert('info', `Funcionalidade de impressão do pedido #${orderId} será implementada em breve.`);
-}
-
-/**
- * Exporta o histórico de pedidos (funcionalidade básica)
- */
-function exportOrderHistory() {
-  goeatAlert('info', 'Funcionalidade de exportação será implementada em breve.');
 }
 
 /**

@@ -40,22 +40,26 @@
 
       <main>
         <div class="product-container">
+          <!-- Título da página -->
+          <h2 class="page-title">Histórico de Pedidos</h2>
+          
+          <!-- Container de pesquisa -->
           <div class="search-container">
             <input type="text" class="input" id="searchInput" placeholder="Pesquisar por pedido, cliente...">
-            <input type="button" class="input" id="searchButton" value="Pesquisar" onclick="searchOrders()">
-            <input type="button" class="input" id="exportButton" value="Exportar dados" onclick="exportOrderHistory()">
+            <button type="button" class="search-button" id="searchButton" onclick="searchOrders()">
+              Pesquisar
+            </button>
           </div>
 
-          <div class="history-header">
-            <h2>Histórico de Pedidos</h2>
-            <div class="period-filters">
-              <button class="period-button active" data-period="all" onclick="filterByPeriod('all')">Todos</button>
-              <button class="period-button" data-period="today" onclick="filterByPeriod('today')">Hoje</button>
-              <button class="period-button" data-period="week" onclick="filterByPeriod('week')">Esta Semana</button>
-              <button class="period-button" data-period="month" onclick="filterByPeriod('month')">Este Mês</button>
-            </div>
+          <!-- Filtros de período -->
+          <div class="period-filters">
+            <button class="period-button active" data-period="all" onclick="filterByPeriod('all')">Todos</button>
+            <button class="period-button" data-period="today" onclick="filterByPeriod('today')">Hoje</button>
+            <button class="period-button" data-period="week" onclick="filterByPeriod('week')">Esta Semana</button>
+            <button class="period-button" data-period="month" onclick="filterByPeriod('month')">Este Mês</button>
           </div>
 
+          <!-- Tabela de pedidos -->
           <div class="table-container">
             <table>
               <thead>

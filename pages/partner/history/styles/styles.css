@@ -1,25 +1,55 @@
 /* Estilos específicos para a página de histórico de pedidos */
 
-/* Cabeçalho da página */
-.history-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 20px 0;
-  padding-bottom: 15px;
-  border-bottom: 2px solid #eee;
-}
-
-.history-header h2 {
-  margin: 0;
+/* Título da página */
+.page-title {
+  margin: 20px 0 30px 0;
   color: #333;
   font-size: 24px;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Container de pesquisa simplificado */
+.search-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+  width: 100%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.search-container .input {
+  flex: 1;
+  margin: 0;
+}
+
+.search-button {
+  background-color: var(--goeat-blue);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 12px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.search-button:hover {
+  background-color: #3aa9d8;
 }
 
 /* Filtros de período */
 .period-filters {
   display: flex;
-  gap: 8px;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
 }
 
 .period-button {
@@ -31,6 +61,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   color: #666;
+  font-weight: 500;
 }
 
 .period-button:hover {
@@ -180,10 +211,9 @@ tr:last-child td {
   color: white;
 }
 
-/* Botões de ação */
+/* Botões de ação simplificados */
 .action-buttons {
   display: flex;
-  gap: 8px;
   justify-content: center;
 }
 
@@ -207,14 +237,6 @@ tr:last-child td {
 
 .view-button:hover {
   background-color: rgba(83, 189, 235, 0.1);
-}
-
-.print-button {
-  color: var(--goeat-green);
-}
-
-.print-button:hover {
-  background-color: rgba(6, 207, 144, 0.1);
 }
 
 /* Estados especiais */
@@ -291,25 +313,6 @@ tr:last-child td {
 .loading-message i {
   margin-right: 10px;
   color: var(--goeat-primary);
-}
-
-/* Estilos para os botões de busca e exportação */
-#exportButton {
-  background-color: var(--goeat-green);
-  color: white;
-}
-
-#exportButton:hover {
-  background-color: #05b07e;
-}
-
-#searchButton {
-  background-color: var(--goeat-blue);
-  color: white;
-}
-
-#searchButton:hover {
-  background-color: #3aa9d8;
 }
 
 /* Modal de detalhes do pedido - reutilizando estilos do kanban */
@@ -400,21 +403,37 @@ tr:last-child td {
 }
 
 /* Responsividade */
-@media screen and (max-width: 1200px) {
-  .history-header {
+@media screen and (max-width: 768px) {
+  .page-title {
+    font-size: 20px;
+    margin: 15px 0 20px 0;
+  }
+  
+  .search-container {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
+    gap: 10px;
+    max-width: 100%;
+  }
+  
+  .search-container .input {
+    width: 100%;
+  }
+  
+  .search-button {
+    width: 100%;
+    padding: 12px;
   }
   
   .period-filters {
-    width: 100%;
-    justify-content: flex-start;
-    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
   }
-}
-
-@media screen and (max-width: 768px) {
+  
+  .period-button {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+  
   .table-container {
     overflow-x: scroll;
     -webkit-overflow-scrolling: touch;
@@ -433,20 +452,10 @@ tr:last-child td {
     max-width: 100px;
   }
   
-  .action-buttons {
-    flex-direction: column;
-    gap: 4px;
-  }
-  
   .action-button {
     width: 28px;
     height: 28px;
     font-size: 14px;
-  }
-  
-  .period-button {
-    padding: 6px 12px;
-    font-size: 13px;
   }
 }
 
@@ -455,18 +464,8 @@ tr:last-child td {
     width: 95%;
   }
   
-  .search-container {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .search-container .input {
-    width: 100%;
-    margin: 0;
-  }
-  
-  .history-header h2 {
-    font-size: 20px;
+  .page-title {
+    font-size: 18px;
   }
   
   .period-filters {
@@ -477,5 +476,11 @@ tr:last-child td {
     flex: 1;
     text-align: center;
     min-width: 60px;
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+  
+  .search-container {
+    margin-bottom: 15px;
   }
 }
