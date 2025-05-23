@@ -10,9 +10,11 @@
       integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="../../../libraries/styles/colors.css" />
-    <link rel="stylesheet" href="../../../libraries/styles/dashboard.css" />
-    <link rel="stylesheet" href="styles/style.css" />
+    <link rel="stylesheet" href="../../../libraries/styles/product.css"/>
+    <link rel="stylesheet" href="../../../libraries/styles/tables.css"/>
+    <link rel="stylesheet" href="../../../libraries/styles/colors.css"/>
+    <link rel="stylesheet" href="../../../libraries/styles/dashboard.css"/>
+    <link rel="stylesheet" href="styles/style.css"/>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Financeiro - Goeat</title>
   </head>
@@ -37,23 +39,32 @@
 
       <main>
         <div class="product-container">
-            <h2 style="margin-bottom: 20px;">Painel Financeiro</h2>
+            <h2 style="margin-bottom: 30px; text-align: center; color: #333;">Painel Financeiro</h2>
             
             <div class="finance-summary">
-                <div class="summary-card">
-                    <h3>Hoje</h3>
+                <div class="summary-card today-card">
+                    <div class="card-header">
+                        <i class="fa fa-calendar-day"></i>
+                        <h3>Hoje</h3>
+                    </div>
                     <p class="amount" id="finance-today">
                         <i class="fa fa-spinner fa-pulse"></i>
                     </p>
                 </div>
-                <div class="summary-card">
-                    <h3>Esta semana</h3>
+                <div class="summary-card week-card">
+                    <div class="card-header">
+                        <i class="fa fa-calendar-week"></i>
+                        <h3>Esta semana</h3>
+                    </div>
                     <p class="amount" id="finance-week">
                         <i class="fa fa-spinner fa-pulse"></i>
                     </p>
                 </div>
-                <div class="summary-card">
-                    <h3>Este mês</h3>
+                <div class="summary-card month-card">
+                    <div class="card-header">
+                        <i class="fa fa-calendar"></i>
+                        <h3>Este mês</h3>
+                    </div>
                     <p class="amount" id="finance-month">
                         <i class="fa fa-spinner fa-pulse"></i>
                     </p>

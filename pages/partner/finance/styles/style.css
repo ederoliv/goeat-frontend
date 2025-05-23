@@ -1,97 +1,209 @@
-/* Estilos para a página de financeiro */
+/* Estilos específicos para a página financeiro */
 .product-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 90%;
+    max-width: 1200px;
 }
 
-.finance-cards-container {
+/* Container dos cards financeiros */
+.finance-summary {
     display: flex;
     justify-content: space-between;
-    gap: 20px;
+    gap: 25px;
     width: 100%;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
 }
 
-.finance-card {
+/* Cards individuais */
+.summary-card {
     background-color: white;
-    border-radius: 10px;
-    padding: 20px;
+    border-radius: 12px;
+    padding: 25px 20px;
     flex: 1;
     text-align: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     position: relative;
     overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.finance-card:nth-child(1)::before {
+.summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* Barra colorida no topo de cada card */
+.summary-card::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
-    height: 4px;
+    height: 5px;
     width: 100%;
-    background-color: var(--goeat-red);
 }
 
-.finance-card:nth-child(2)::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 4px;
-    width: 100%;
-    background-color: var(--goeat-blue);
+.today-card::before {
+    background: linear-gradient(135deg, var(--goeat-red), #ff7676);
 }
 
-.finance-card:nth-child(3)::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 4px;
-    width: 100%;
-    background-color: var(--goeat-green);
+.week-card::before {
+    background: linear-gradient(135deg, var(--goeat-blue), #6bcbf0);
 }
 
-.finance-card h3 {
+.month-card::before {
+    background: linear-gradient(135deg, var(--goeat-green), #33d9a8);
+}
+
+/* Header do card com ícone */
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     margin-bottom: 15px;
-    font-size: 18px;
-    color: #555;
 }
 
-.finance-card .amount {
-    font-size: 26px;
-    font-weight: bold;
+.card-header i {
+    font-size: 20px;
+}
+
+.today-card .card-header i {
+    color: var(--goeat-red);
+}
+
+.week-card .card-header i {
+    color: var(--goeat-blue);
+}
+
+.month-card .card-header i {
+    color: var(--goeat-green);
+}
+
+.card-header h3 {
     margin: 0;
+    font-size: 16px;
+    color: #555;
+    font-weight: 600;
 }
 
-.report-button-container {
-    margin-top: 10px;
+/* Valores dos cards */
+.summary-card .amount {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    color: #333;
+    line-height: 1.2;
+}
+
+/* Cores específicas para valores positivos/negativos */
+.amount.green {
+    color: var(--goeat-green);
+}
+
+.amount.red {
+    color: var(--goeat-red);
+}
+
+/* Container do botão de relatório */
+.details-button-container {
     text-align: center;
+    width: 100%;
 }
 
-.report-button {
-    background-color: var(--goeat-primary);
+.details-button {
+    background: linear-gradient(135deg, var(--goeat-primary), #7049c4);
     color: white;
     border: none;
-    border-radius: 6px;
-    padding: 12px 25px;
+    border-radius: 8px;
+    padding: 15px 30px;
     font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(98, 60, 167, 0.3);
 }
 
-.report-button:hover {
-    background-color: #532D9E;
+.details-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(98, 60, 167, 0.4);
+    background: linear-gradient(135deg, #532D9E, #6d44b8);
+}
+
+.details-button i {
+    font-size: 18px;
+}
+
+/* Estados de loading */
+.amount i.fa-spinner {
+    color: #ccc;
+    font-size: 20px;
 }
 
 /* Responsividade */
 @media screen and (max-width: 768px) {
-    .finance-cards-container {
+    .finance-summary {
         flex-direction: column;
+        gap: 20px;
+    }
+    
+    .summary-card {
+        min-height: 120px;
+        padding: 20px 15px;
+    }
+    
+    .card-header h3 {
+        font-size: 15px;
+    }
+    
+    .summary-card .amount {
+        font-size: 24px;
+    }
+    
+    .details-button {
+        padding: 12px 25px;
+        font-size: 15px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .product-container {
+        width: 95%;
+    }
+    
+    .summary-card {
+        padding: 18px 12px;
+        min-height: 110px;
+    }
+    
+    .card-header {
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    
+    .card-header i {
+        font-size: 18px;
+    }
+    
+    .card-header h3 {
+        font-size: 14px;
+    }
+    
+    .summary-card .amount {
+        font-size: 22px;
+    }
+    
+    .details-button {
+        width: 100%;
+        padding: 14px 20px;
+        font-size: 14px;
     }
 }

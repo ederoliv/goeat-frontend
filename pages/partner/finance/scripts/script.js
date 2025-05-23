@@ -32,6 +32,8 @@ async function loadFinancialData() {
             fetchReportData('weekly', 'finance-week'),
             fetchReportData('monthly', 'finance-month')
         ]);
+        
+
     } catch (error) {
         console.error('Erro ao carregar dados financeiros:', error);
         goeatAlert('error', 'Não foi possível carregar os dados financeiros. Tente novamente mais tarde.');
@@ -72,6 +74,7 @@ async function fetchReportData(reportType, elementId) {
             element.textContent = formattedValue;
             
             // Adicionar classe de cor com base no valor
+            element.classList.remove('green', 'red'); // Remove classes antigas
             if (data.value > 0) {
                 element.classList.add('green');
             } else if (data.value < 0) {
@@ -83,7 +86,7 @@ async function fetchReportData(reportType, elementId) {
         
     } catch (error) {
         console.error(`Erro ao buscar dados do relatório ${reportType}:`, error);
-        element.innerHTML = 'Erro ao carregar';
+        element.innerHTML = '<span style="color: #ff5555; font-size: 14px;">Erro ao carregar</span>';
     }
 }
 
@@ -113,14 +116,18 @@ function formatCurrency(value) {
  * Atualiza os dados financeiros (chamada do botão de refresh)
  */
 function refreshFinancialData() {
-    // Mostrar alerta de carregamento
-    goeatAlert('info', 'Atualizando dados financeiros...');
+    // Mostrar indicador de carregamento nos cards
+    const elements = ['finance-today', 'finance-week', 'finance-month'];
+    elements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.innerHTML = '<i class="fa fa-spinner fa-pulse"></i>';
+            element.classList.remove('green', 'red');
+        }
+    });
     
     // Recarregar dados
     loadFinancialData()
-        .then(() => {
-            goeatAlert('success', 'Dados financeiros atualizados!');
-        })
         .catch(() => {
             goeatAlert('error', 'Falha ao atualizar dados. Tente novamente.');
         });
@@ -130,6 +137,9 @@ function refreshFinancialData() {
  * Navegação para a página de detalhes financeiros/relatórios
  */
 function navigateToDetails() {
-    // Redirecionar para a página de análises/detalhamento
-    window.location.href = '../analytics/index.html';
+    // Por enquanto mostra um alerta informativo
+    goeatAlert('info', 'Funcionalidade de relatório completo em desenvolvimento! Em breve você terá acesso aos detalhes completos.');
+    
+    // Quando implementar a página de análises, descomente a linha abaixo:
+    // window.location.href = '../analytics/index.html';
 }
