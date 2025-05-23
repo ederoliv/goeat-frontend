@@ -1,13 +1,60 @@
-/* Estilos para a página de histórico de pedidos */
+/* Estilos específicos para a página de histórico de pedidos */
+
+/* Cabeçalho da página */
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #eee;
+}
+
+.history-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 24px;
+}
+
+/* Filtros de período */
+.period-filters {
+  display: flex;
+  gap: 8px;
+}
+
+.period-button {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #666;
+}
+
+.period-button:hover {
+  background-color: #e9e9e9;
+  border-color: var(--goeat-primary);
+}
+
+.period-button.active {
+  background-color: var(--goeat-primary);
+  color: white;
+  border-color: var(--goeat-primary);
+}
+
+/* Container da tabela */
 .table-container {
   width: 100%;
   overflow-x: auto;
   background-color: white;
   border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   margin-top: 20px;
 }
 
+/* Estilos da tabela */
 table {
   width: 100%;
   border-collapse: separate;
@@ -18,39 +65,98 @@ table {
 th {
   background-color: var(--goeat-primary);
   color: white;
-  padding: 12px 10px;
+  padding: 15px 12px;
   text-align: left;
   font-weight: 600;
   white-space: nowrap;
+  font-size: 14px;
+}
+
+th:first-child {
+  border-top-left-radius: 10px;
+}
+
+th:last-child {
+  border-top-right-radius: 10px;
 }
 
 td {
-  padding: 10px;
+  padding: 12px;
   border-bottom: 1px solid #f0f0f0;
   color: #333;
+  font-size: 14px;
+  vertical-align: middle;
 }
 
 tr:hover {
   background-color: #f9f9f9;
 }
 
-/* Estilos para os status, iguais ao kanban */
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* Células específicas */
+.order-id {
+  font-weight: 600;
+  color: var(--goeat-primary);
+}
+
+.order-date {
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.order-customer {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.order-items-count {
+  text-align: center;
+  font-size: 13px;
+  color: #666;
+}
+
+.order-delivery-type {
+  white-space: nowrap;
+}
+
+.delivery-pickup {
+  color: var(--goeat-blue);
+}
+
+.delivery-delivery {
+  color: var(--goeat-green);
+}
+
+.order-total {
+  font-weight: 600;
+  color: var(--goeat-green);
+  text-align: right;
+}
+
+/* Status badges - mantendo consistência com o kanban */
 .status-badge {
   display: inline-block;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
   text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.status-finalizados {
-  background-color: var(--goeat-green);
+.status-esperando {
+  background-color: var(--goeat-red);
   color: white;
 }
 
-.status-cancelados {
-  background-color: var(--goeat-red);
+.status-preparando {
+  background-color: var(--goeat-blue);
   color: white;
 }
 
@@ -59,14 +165,26 @@ tr:hover {
   color: #333;
 }
 
-.status-preparando {
-  background-color: var(--goeat-blue);
+.status-finalizados {
+  background-color: var(--goeat-green);
   color: white;
 }
 
-.status-esperando {
-  background-color: var(--goeat-red);
+.status-cancelados {
+  background-color: #6c757d;
   color: white;
+}
+
+.status-default {
+  background-color: #adb5bd;
+  color: white;
+}
+
+/* Botões de ação */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
 }
 
 .action-button {
@@ -80,20 +198,284 @@ tr:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.view-button {
   color: var(--goeat-blue);
 }
 
-.action-button:hover {
+.view-button:hover {
   background-color: rgba(83, 189, 235, 0.1);
 }
 
-.loading-message {
+.print-button {
+  color: var(--goeat-green);
+}
+
+.print-button:hover {
+  background-color: rgba(6, 207, 144, 0.1);
+}
+
+/* Estados especiais */
+.recent-order {
+  background-color: rgba(6, 207, 144, 0.02);
+  border-left: 3px solid var(--goeat-green);
+}
+
+/* Estados vazios e de erro */
+.loading-message,
+.empty-state,
+.error-state {
   text-align: center;
-  padding: 20px;
+  padding: 40px 20px;
+}
+
+.empty-state-content,
+.error-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.empty-icon,
+.error-icon {
+  font-size: 48px;
+  color: #ddd;
+}
+
+.error-icon {
+  color: var(--goeat-red);
+}
+
+.empty-state-content h3,
+.error-state-content h3 {
+  margin: 0;
   color: #666;
+  font-size: 18px;
+}
+
+.empty-state-content p,
+.error-state-content p {
+  margin: 0;
+  color: #888;
+  font-size: 14px;
+  max-width: 400px;
+  line-height: 1.4;
+}
+
+.retry-button {
+  background-color: var(--goeat-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s;
+}
+
+.retry-button:hover {
+  background-color: #532D9E;
+}
+
+.loading-message {
+  color: #666;
+  font-size: 16px;
 }
 
 .loading-message i {
   margin-right: 10px;
   color: var(--goeat-primary);
+}
+
+/* Estilos para os botões de busca e exportação */
+#exportButton {
+  background-color: var(--goeat-green);
+  color: white;
+}
+
+#exportButton:hover {
+  background-color: #05b07e;
+}
+
+#searchButton {
+  background-color: var(--goeat-blue);
+  color: white;
+}
+
+#searchButton:hover {
+  background-color: #3aa9d8;
+}
+
+/* Modal de detalhes do pedido - reutilizando estilos do kanban */
+.order-details-modal {
+  border-radius: 12px;
+  max-width: 700px;
+  width: 95%;
+}
+
+.order-details-container {
+  text-align: left;
+  padding: 0 10px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.details-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.details-section:last-child {
+  border-bottom: none;
+}
+
+.details-section h3 {
+  color: var(--goeat-primary);
+  margin-bottom: 15px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.details-row {
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
+}
+
+.details-label {
+  font-weight: 600;
+  width: 120px;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.details-value {
+  flex: 1;
+  color: #333;
+}
+
+.details-address {
+  padding: 12px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  border-left: 4px solid var(--goeat-primary);
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.order-status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.details-items-list {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 10px 0;
+  font-size: 15px;
+}
+
+.details-items-list li {
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.no-items {
+  color: #888;
+  text-align: center;
+  font-style: italic;
+  padding: 20px;
+}
+
+/* Responsividade */
+@media screen and (max-width: 1200px) {
+  .history-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .period-filters {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .table-container {
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  table {
+    min-width: 800px;
+  }
+  
+  th, td {
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+  
+  .order-customer {
+    max-width: 100px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .action-button {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+  
+  .period-button {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .product-container {
+    width: 95%;
+  }
+  
+  .search-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .search-container .input {
+    width: 100%;
+    margin: 0;
+  }
+  
+  .history-header h2 {
+    font-size: 20px;
+  }
+  
+  .period-filters {
+    gap: 6px;
+  }
+  
+  .period-button {
+    flex: 1;
+    text-align: center;
+    min-width: 60px;
+  }
 }
