@@ -89,44 +89,46 @@ function createPartnerStatus(isOpen, openingHours) {
     partnerName.parentNode.insertBefore(storeStatus, partnerName.nextSibling);
 }
 
-// Função para listar os produtos do parceiro
+// Função para listar as categorias e produtos do parceiro
 async function listPartnerProducts(partnerId) {
     const container = document.querySelector('#container-products');
 
     try {
-        const response = await fetch(`${API_BASE_URL}/partners/${partnerId}/products`);
+        // Primeiro, busca as categorias do restaurante
+        const categoriesResponse = await fetch(`${API_BASE_URL}/menus/${partnerId}/categories`);
+        let categories = [];
+        
+        if (categoriesResponse.ok) {
+            categories = await categoriesResponse.json();
+        }
 
-        if (!response.ok) {
+        // Depois, busca os produtos
+        const productsResponse = await fetch(`${API_BASE_URL}/partners/${partnerId}/products`);
+
+        if (!productsResponse.ok) {
             throw new Error('Erro ao carregar produtos');
         }
 
-        const data = await response.json();
+        const products = await productsResponse.json();
         
         // Se não houver produtos, mostra mensagem
-        if (data.length === 0) {
+        if (products.length === 0) {
             container.innerHTML = '<p class="error-message">Este restaurante ainda não possui produtos cadastrados.</p>';
             return;
         }
 
-        // Agrupa os produtos por categoria
-        const productsByCategory = groupProductsByCategory(data);
-        
         // Limpa o container
         container.innerHTML = '';
         
-        // Adiciona cada categoria e seus produtos
-        Object.keys(productsByCategory).forEach(category => {
-            // Cria o título da categoria
-            const categoryTitle = document.createElement('h2');
-            categoryTitle.className = 'category-title';
-            categoryTitle.textContent = category;
-            container.appendChild(categoryTitle);
-            
-            // Adiciona os produtos da categoria
-            productsByCategory[category].forEach(product => {
-                createProductCard(product, container);
-            });
-        });
+        // Se há categorias específicas do restaurante, usa essas; senão, agrupa por categoria dos produtos
+        if (categories.length > 0) {
+            // Organiza produtos pelas categorias específicas do restaurante
+            organizeProductsByRestaurantCategories(products, categories, container);
+        } else {
+            // Fallback: agrupa produtos por suas próprias categorias
+            const productsByCategory = groupProductsByCategory(products);
+            displayProductsByCategory(productsByCategory, container);
+        }
 
     } catch (error) {
         console.error('Erro ao carregar produtos:', error);
@@ -134,7 +136,75 @@ async function listPartnerProducts(partnerId) {
     }
 }
 
-// Função para agrupar produtos por categoria
+// Função para organizar produtos pelas categorias específicas do restaurante
+function organizeProductsByRestaurantCategories(products, categories, container) {
+    // Cria um mapa de produtos por categoria
+    const productsMap = new Map();
+    
+    // Inicializa o mapa com as categorias do restaurante
+    categories.forEach(category => {
+        productsMap.set(category.id, {
+            name: category.name,
+            products: []
+        });
+    });
+    
+    // Adiciona categoria para produtos sem categoria específica
+    productsMap.set(null, {
+        name: 'Outros',
+        products: []
+    });
+    
+    // Distribui os produtos pelas categorias
+    products.forEach(product => {
+        const categoryId = product.categoryId;
+        
+        if (productsMap.has(categoryId)) {
+            productsMap.get(categoryId).products.push(product);
+        } else {
+            // Se o produto tem uma categoria não encontrada nas categorias do restaurante,
+            // coloca em "Outros"
+            productsMap.get(null).products.push(product);
+        }
+    });
+    
+    // Renderiza as categorias e produtos na ordem das categorias do restaurante
+    categories.forEach(category => {
+        const categoryData = productsMap.get(category.id);
+        if (categoryData && categoryData.products.length > 0) {
+            renderCategorySection(categoryData.name, categoryData.products, container);
+        }
+    });
+    
+    // Renderiza produtos sem categoria no final, se houver
+    const othersCategory = productsMap.get(null);
+    if (othersCategory && othersCategory.products.length > 0) {
+        renderCategorySection(othersCategory.name, othersCategory.products, container);
+    }
+}
+
+// Função para renderizar uma seção de categoria
+function renderCategorySection(categoryName, products, container) {
+    // Cria o título da categoria
+    const categoryTitle = document.createElement('h2');
+    categoryTitle.className = 'category-title';
+    categoryTitle.textContent = categoryName;
+    container.appendChild(categoryTitle);
+    
+    // Adiciona os produtos da categoria
+    products.forEach(product => {
+        createProductCard(product, container);
+    });
+}
+
+// Função para exibir produtos agrupados por categoria (fallback)
+function displayProductsByCategory(productsByCategory, container) {
+    Object.keys(productsByCategory).forEach(category => {
+        renderCategorySection(category, productsByCategory[category], container);
+    });
+}
+
+// Função para agrupar produtos por categoria (fallback para quando não há categorias específicas)
 function groupProductsByCategory(products) {
     const categories = {};
     
