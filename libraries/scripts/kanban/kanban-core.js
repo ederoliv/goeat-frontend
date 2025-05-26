@@ -50,10 +50,12 @@ async function loadOrders() {
       }
     });
     
-    console.log('1 - Response status:', response.status);
     
     if (!response.ok) {
+      goeatAlert('error', `Não foi possível carregar os pedidos. Por favor, tente novamente.`);
+      getInvalidPartnerToken(response.status);
       throw new Error(`Erro ao buscar pedidos: ${response.status}`);
+       
     }
     
     // Vamos ver o que tá vindo como texto primeiro
@@ -70,7 +72,6 @@ async function loadOrders() {
     hideLoading();
     
   } catch (error) {
-    alert('Não foi possível carregar os pedidos. Por favor, tente novamente.');
     hideLoading();
   }
 }

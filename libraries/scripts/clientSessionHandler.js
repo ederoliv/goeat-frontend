@@ -30,6 +30,39 @@ function setAuthenticatedClient(userData){
     sessionStorage.setItem('clientData', JSON.stringify(clientData));
 }
 
+function getInvalidClientToken(code){
+    // Verifica se o código de erro é 401
+    if (code === 401) {
+        // Limpa os dados do cliente do sessionStorage
+        logoutClient();
+        // Redireciona para a página de login
+        window.location.href = '../../loginClient/index.html';
+    }
+
+}
+
+function getInvalidPartnerToken(code){
+    // Verifica se o código de erro é 401
+    if (code === 401) {
+        // Limpa os dados do parceiro do sessionStorage
+        logoutPartner();
+        // Redireciona para a página de login
+        window.location.href = '../../loginPartner/index.html';
+    }
+
+}
+
+function logoutPartner() {
+    // Limpa os dados do parceiro do sessionStorage
+    const partnerData = {
+        isAuthenticated: false,
+        id: null,
+        name: null,
+        token: null,
+    };
+    sessionStorage.setItem('userData', JSON.stringify(partnerData));
+}
+
 function logoutClient() {
     // Limpa os dados do cliente do sessionStorage
     const clientData = {
