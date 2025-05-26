@@ -1,3 +1,4 @@
+// Arquivo: pages/partner/support/scripts/support-card.js
 /**
  * Renderiza um card de chamado
  * @param {Object} ticket - O objeto contendo dados do chamado
@@ -25,10 +26,15 @@ function renderTicketCard(ticket, container) {
     card.className = 'ticket-card';
     card.dataset.ticketId = ticket.id;
     
-    // Preenche o conteúdo do card - sem ID, com título em destaque e descrição limitada
+    // Preenche o conteúdo do card - sem ID visível, com botão para copiar ID e título em destaque
     card.innerHTML = `
         <div class="ticket-header">
-            <h3 class="ticket-title">${ticket.title}</h3>
+            <div class="title-with-copy">
+                <h3 class="ticket-title">${ticket.title}</h3>
+                <button class="copy-id-mini-button" onclick="copyTicketId('${ticket.id}')" title="Copiar ID do chamado">
+                    <i class="fa fa-copy"></i>
+                </button>
+            </div>
             <span class="status-badge status-${ticket.status.toLowerCase()}">${statusText}</span>
         </div>
         <p class="ticket-description">${description}</p>
@@ -39,7 +45,7 @@ function renderTicketCard(ticket, container) {
             </div>
         </div>
         <div class="ticket-footer">
-            <button class="view-button" onclick="viewTicketDetails('${ticket.id}')">
+            <button class="view-button" onclick="openChatModal('${ticket.id}')">
                 <i class="fa fa-comments-o"></i> Ver Mensagens
             </button>
         </div>
@@ -54,11 +60,52 @@ function renderTicketCard(ticket, container) {
  * @param {string} ticketId - O ID do chamado a ser visualizado
  */
 function viewTicketDetails(ticketId) {
-    // Implementação futura: redirecionamento para página de detalhes do chamado
-    console.log('Visualizar detalhes do chamado:', ticketId);
+    // Redireciona para a função de abrir chat
+    openChatModal(ticketId);
+}
+
+/**
+ * Copia o ID do chamado para a área de transferência
+ * @param {string} ticketId - O ID do chamado
+ */
+function copyTicketId(ticketId) {
+    const textToCopy = `O ID do seu chamado é: ${ticketId}`;
     
-    // Por enquanto, mostra um alert informativo
-    goeatAlert('info', 'Funcionalidade em desenvolvimento! Em breve você poderá visualizar e responder as mensagens.');
+    // Tenta usar a API moderna de clipboard
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            goeatAlert('success', 'ID do chamado copiado!');
+        }).catch(() => {
+            fallbackCopyTextToClipboard(textToCopy);
+        });
+    } else {
+        // Fallback para navegadores mais antigos
+        fallbackCopyTextToClipboard(textToCopy);
+    }
+}
+
+/**
+ * Método alternativo para copiar texto (navegadores antigos)
+ * @param {string} text - Texto a ser copiado
+ */
+function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        goeatAlert('success', 'ID do chamado copiado!');
+    } catch (err) {
+        goeatAlert('error', 'Não foi possível copiar o ID. Copie manualmente: ' + text);
+    }
+    
+    document.body.removeChild(textArea);
 }
 
 /**

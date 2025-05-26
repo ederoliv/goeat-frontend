@@ -1,3 +1,4 @@
+// Arquivo: pages/partner/support/scripts/support-main.js
 document.addEventListener('DOMContentLoaded', function() {
     // Verifica se o usuário (parceiro) está autenticado
     const userDataString = sessionStorage.getItem('userData');
@@ -108,22 +109,18 @@ async function loadSupportTickets() {
 /**
  * Abre a página para criar um novo chamado de suporte
  */
-function openNewSupportTicketPage() {
-    // Implementação futura: redirecionamento ou modal para criação de novo chamado
-    console.log('Abrindo página para criar novo chamado');
-    
-    // Por enquanto, mostra um modal simples com o SweetAlert2
+async function openNewSupportTicketPage() {
     Swal.fire({
         title: 'Novo Chamado de Suporte',
         html: `
             <div style="text-align: left;">
                 <div style="margin-bottom: 15px;">
                     <label for="ticket-title" style="display: block; margin-bottom: 5px; font-weight: bold;">Título:</label>
-                    <input id="ticket-title" class="swal2-input" placeholder="Descreva brevemente o problema">
+                    <input id="ticket-title" class="swal2-input" placeholder="Descreva brevemente o problema" maxlength="100">
                 </div>
                 <div>
                     <label for="ticket-message" style="display: block; margin-bottom: 5px; font-weight: bold;">Mensagem:</label>
-                    <textarea id="ticket-message" class="swal2-textarea" placeholder="Detalhe seu problema ou dúvida" style="height: 150px;"></textarea>
+                    <textarea id="ticket-message" class="swal2-textarea" placeholder="Detalhe seu problema ou dúvida" style="height: 150px;" maxlength="500"></textarea>
                 </div>
             </div>
         `,
@@ -131,22 +128,74 @@ function openNewSupportTicketPage() {
         confirmButtonText: 'Enviar Chamado',
         cancelButtonText: 'Cancelar',
         confirmButtonColor: '#06CF90',
-        preConfirm: () => {
-            const title = document.getElementById('ticket-title').value;
-            const message = document.getElementById('ticket-message').value;
+        width: '500px',
+        preConfirm: async () => {
+            const title = document.getElementById('ticket-title').value.trim();
+            const message = document.getElementById('ticket-message').value.trim();
             
             if (!title || !message) {
                 Swal.showValidationMessage('Por favor, preencha todos os campos');
                 return false;
             }
             
-            return { title, message };
+            if (title.length < 5) {
+                Swal.showValidationMessage('O título deve ter pelo menos 5 caracteres');
+                return false;
+            }
+            
+            if (message.length < 10) {
+                Swal.showValidationMessage('A mensagem deve ter pelo menos 10 caracteres');
+                return false;
+            }
+            
+            try {
+                // Criar o chamado
+                await createNewTicket(title, message);
+                return true;
+            } catch (error) {
+                Swal.showValidationMessage(`Erro ao criar chamado: ${error.message}`);
+                return false;
+            }
         }
     }).then((result) => {
-        if (result.isConfirmed) {
-            goeatAlert('info', 'Funcionalidade em desenvolvimento. Em breve você poderá criar novos chamados.');
+        if (result.isConfirmed && result.value) {
+            goeatAlert('success', 'Chamado criado com sucesso! Você será notificado quando houver uma resposta.');
+            // Recarrega a lista de chamados
+            loadSupportTickets();
         }
     });
+}
+
+/**
+ * Cria um novo chamado de suporte
+ * @param {string} title - Título do chamado
+ * @param {string} message - Primeira mensagem do chamado
+ */
+async function createNewTicket(title, message) {
+    const userData = JSON.parse(sessionStorage.getItem('userData'));
+    
+    if (!userData || !userData.token) {
+        throw new Error('Sessão inválida. Faça login novamente.');
+    }
+    
+    const response = await fetch(`${API_BASE_URL}/supports`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${userData.token}`
+        },
+        body: JSON.stringify({
+            title: title,
+            description: message
+        })
+    });
+    
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Erro ${response.status}: Não foi possível criar o chamado`);
+    }
+    
+    return await response.json();
 }
 
 /**
