@@ -38,27 +38,76 @@ async function fetchSalesTimelineData() {
         throw new Error('Usuário não autenticado');
     }
 
-    // Por enquanto, retorna dados mock - depois substituir por chamada real
-    // const response = await fetch(`${API_BASE_URL}/analytics/sales-timeline?period=30`, {
-    //     method: 'GET',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //         'Authorization': `Bearer ${userData.token}`
-    //     }
-    // });
-    
-    // if (!response.ok) {
-    //     throw new Error(`Erro na API: ${response.status}`);
-    // }
-    
-    // return await response.json();
+    // Pega o período selecionado no dropdown da página
+    const periodSelect = document.getElementById('period-select');
+    const period = periodSelect ? periodSelect.value : '30'; // Default 30 dias se não encontrar
 
-    // Dados mock por enquanto
-    return {
-        labels: ['01/12', '02/12', '03/12', '04/12', '05/12', '06/12', '07/12', '08/12', '09/12', '10/12', '11/12', '12/12', '13/12', '14/12', '15/12'],
-        revenue: [3200, 4100, 3800, 5200, 4900, 6100, 5500, 4800, 5300, 4600, 5800, 6200, 5100, 4900, 5400],
-        orders: [32, 41, 38, 52, 49, 61, 55, 48, 53, 46, 58, 62, 51, 49, 54]
-    };
+    try {
+        // Faz a requisição real para a API
+        const response = await fetch(`${API_BASE_URL}/analytics/sales-timeline?period=${period}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userData.token}`
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Erro na API: ${response.status} ${response.statusText}`);
+        }
+        
+        const apiResponse = await response.json();
+        
+        // Verifica se a resposta tem a estrutura esperada
+        if (!apiResponse.data || !apiResponse.data.labels || !apiResponse.data.revenue || !apiResponse.data.orders) {
+            throw new Error('Estrutura de dados inválida retornada pela API');
+        }
+        
+        return apiResponse.data;
+        
+    } catch (apiError) {
+        console.warn('Erro na API, usando dados mock:', apiError.message);
+        
+        // Fallback para dados mock se a API falhar
+        return getMockDataByPeriod(period);
+    }
+}
+
+/**
+ * Retorna dados mock baseados no período selecionado
+ */
+function getMockDataByPeriod(period) {
+    const periodNum = parseInt(period);
+    
+    if (periodNum <= 7) {
+        // Últimos 7 dias
+        return {
+            labels: ['21/12', '22/12', '23/12', '24/12', '25/12', '26/12', '27/12'],
+            revenue: [4500, 5200, 4800, 6100, 5500, 4900, 5300],
+            orders: [45, 52, 48, 61, 55, 49, 53]
+        };
+    } else if (periodNum <= 30) {
+        // Últimos 30 dias
+        return {
+            labels: ['01/12', '02/12', '03/12', '04/12', '05/12', '06/12', '07/12', '08/12', '09/12', '10/12', '11/12', '12/12', '13/12', '14/12', '15/12'],
+            revenue: [3200, 4100, 3800, 5200, 4900, 6100, 5500, 4800, 5300, 4600, 5800, 6200, 5100, 4900, 5400],
+            orders: [32, 41, 38, 52, 49, 61, 55, 48, 53, 46, 58, 62, 51, 49, 54]
+        };
+    } else if (periodNum <= 90) {
+        // Últimos 90 dias (por semana)
+        return {
+            labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6', 'Sem 7', 'Sem 8', 'Sem 9', 'Sem 10', 'Sem 11', 'Sem 12'],
+            revenue: [15000, 18000, 16500, 19200, 17800, 20100, 18500, 16900, 19800, 17200, 21000, 19500],
+            orders: [150, 180, 165, 192, 178, 201, 185, 169, 198, 172, 210, 195]
+        };
+    } else {
+        // Último ano (por mês)
+        return {
+            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+            revenue: [45000, 52000, 48000, 55000, 51000, 58000, 62000, 59000, 56000, 61000, 64000, 67000],
+            orders: [450, 520, 480, 550, 510, 580, 620, 590, 560, 610, 640, 670]
+        };
+    }
 }
 
 /**

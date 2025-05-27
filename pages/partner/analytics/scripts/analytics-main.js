@@ -68,6 +68,7 @@ function setupEventListeners() {
   const periodSelect = document.getElementById('period-select');
   if (periodSelect) {
     periodSelect.addEventListener('change', function() {
+      console.log('Período alterado para:', this.value);
       refreshAnalytics();
     });
   }
