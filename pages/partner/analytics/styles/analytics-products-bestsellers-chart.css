@@ -1,0 +1,340 @@
+/* Estilos específicos para o gráfico Produtos Mais Vendidos */
+
+.products-bestsellers-container {
+  grid-column: span 6;
+  min-height: 400px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.products-bestsellers-container:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+.products-bestsellers-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 10px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.products-bestsellers-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.products-bestsellers-header h3::before {
+  content: '🏆';
+  font-size: 20px;
+}
+
+.products-bestsellers-controls {
+  display: flex;
+  gap: 5px;
+  background: rgba(6, 207, 144, 0.05);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(6, 207, 144, 0.1);
+}
+
+.products-bestsellers-toggle {
+  background: transparent;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #06CF90;
+  position: relative;
+}
+
+.products-bestsellers-toggle.active {
+  background: #06CF90;
+  color: white;
+  box-shadow: 0 2px 4px rgba(6, 207, 144, 0.3);
+}
+
+.products-bestsellers-toggle:hover:not(.active) {
+  background: rgba(6, 207, 144, 0.1);
+  transform: translateY(-1px);
+}
+
+.products-bestsellers-content {
+  padding: 20px;
+  height: calc(100% - 80px);
+  position: relative;
+  background: linear-gradient(135deg, #fefefe 0%, #f9f9f9 100%);
+  display: flex;
+  flex-direction: column;
+}
+
+#products-bestsellers-chart {
+  width: 100% !important;
+  height: 100% !important;
+  flex: 1;
+}
+
+/* Métricas dos produtos */
+.bestsellers-metrics {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  font-size: 13px;
+}
+
+.bestsellers-metric {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.bestsellers-metric-label {
+  color: #666;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bestsellers-metric-value {
+  color: #06CF90;
+  font-weight: 700;
+  font-size: 16px;
+  text-align: center;
+}
+
+/* Estados especiais */
+.products-bestsellers-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #666;
+  background: #f8f9fa;
+}
+
+.products-bestsellers-loading i {
+  font-size: 32px;
+  color: #06CF90;
+  margin-bottom: 15px;
+  animation: spin 2s linear infinite;
+}
+
+.products-bestsellers-loading p {
+  margin: 0;
+  font-size: 14px;
+  color: #888;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.products-bestsellers-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: #dc3545;
+  background: #fff5f5;
+  border: 1px solid #f8d7da;
+  border-radius: 8px;
+  margin: 20px;
+}
+
+.products-bestsellers-error i {
+  font-size: 32px;
+  margin-bottom: 15px;
+}
+
+.products-bestsellers-error p {
+  margin: 0;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Customização da legenda */
+.products-bestsellers-content .chartjs-legend {
+  margin-top: 20px;
+}
+
+.products-bestsellers-content .chartjs-legend ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.products-bestsellers-content .chartjs-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #333;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.products-bestsellers-content .chartjs-legend li:hover {
+  opacity: 0.8;
+}
+
+.products-bestsellers-content .chartjs-legend li span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Responsividade */
+@media screen and (max-width: 1200px) {
+  .products-bestsellers-container {
+    grid-column: span 12;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .products-bestsellers-container {
+    grid-column: span 1;
+    min-height: 350px;
+  }
+  
+  .products-bestsellers-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+    padding: 15px;
+  }
+  
+  .products-bestsellers-header h3 {
+    font-size: 16px;
+  }
+  
+  .products-bestsellers-controls {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .products-bestsellers-toggle {
+    flex: 1;
+    text-align: center;
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+  
+  .products-bestsellers-content {
+    padding: 15px;
+    height: calc(100% - 100px);
+  }
+  
+  .bestsellers-metrics {
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 15px;
+  }
+  
+  .bestsellers-metric {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .products-bestsellers-header h3 {
+    font-size: 15px;
+  }
+  
+  .products-bestsellers-toggle {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+  
+  .products-bestsellers-content {
+    padding: 12px;
+  }
+  
+  .products-bestsellers-loading,
+  .products-bestsellers-error {
+    height: 250px;
+    margin: 15px;
+  }
+  
+  .products-bestsellers-loading i,
+  .products-bestsellers-error i {
+    font-size: 28px;
+  }
+  
+  .bestsellers-metrics {
+    font-size: 12px;
+  }
+  
+  .bestsellers-metric-value {
+    font-size: 14px;
+  }
+}
+
+/* Animações de entrada */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.products-bestsellers-container {
+  animation: slideInFromRight 0.6s ease-out;
+  animation-delay: 0.2s;
+  animation-fill-mode: both;
+}
+
+/* Efeito hover nos segmentos do gráfico */
+.products-bestsellers-content canvas:hover {
+  cursor: pointer;
+}
+
+/* Destaque do produto líder */
+.bestsellers-leader-highlight {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: linear-gradient(135deg, #06CF90, #05b07e);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(6, 207, 144, 0.3);
+}
+
+.bestsellers-leader-highlight::before {
+  content: '👑';
+  margin-right: 5px;
+}
