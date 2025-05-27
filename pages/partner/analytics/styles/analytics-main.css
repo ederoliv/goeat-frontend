@@ -1,4 +1,17 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 /* Estilos gerais da página de analytics */
+main {
+    grid-area: main;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+}
 
 .analytics-container {
     width: 100%;
