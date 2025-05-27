@@ -1,85 +1,157 @@
-// Variáveis globais
-const userDataString = sessionStorage.getItem('userData');
-const userData = userDataString ? JSON.parse(userDataString) : null;
+/* Estilos gerais da página de analytics */
 
-// Dados mock para demonstração (posteriormente virão da API)
-const mockData = {
-  salesData: {
-    labels: ['01/12', '02/12', '03/12', '04/12', '05/12', '06/12', '07/12', '08/12', '09/12', '10/12'],
-    revenue: [3200, 4100, 3800, 5200, 4900, 6100, 5500, 4800, 5300, 4600],
-    orders: [32, 41, 38, 52, 49, 61, 55, 48, 53, 46]
-  },
-  productsData: [
-    { name: 'Pizza Margherita', quantity: 156, revenue: 18720, percentage: 15.2 },
-    { name: 'Hambúrguer Clássico', quantity: 134, revenue: 16080, percentage: 13.1 },
-    { name: 'Lasanha Bolonhesa', quantity: 98, revenue: 14700, percentage: 11.9 },
-    { name: 'Salada Caesar', quantity: 87, revenue: 10440, percentage: 8.5 },
-    { name: 'Pizza Pepperoni', quantity: 76, revenue: 9120, percentage: 7.4 }
-  ]
-};
+.analytics-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
 
-// Inicialização da página
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('DOM carregado - Iniciando analytics');
-  
-  // Verificar se o usuário está autenticado
-  if (!userData || !userData.token) {
-    console.error('Usuário não autenticado ou token não encontrado');
-    window.location.href = '../../loginPartner/index.html';
-    return;
-  }
-  
-  // Preencher nome do usuário
-  const userNameElement = document.getElementById('userName');
-  if (userNameElement) {
-    userNameElement.textContent = userData.name || 'Parceiro';
-  }
-  
-  // Aguardar um pouco para garantir que todos os elementos estejam no DOM
-  setTimeout(() => {
-    console.log('Inicializando analytics após timeout');
-    initializeAnalytics();
-  }, 100);
-  
-  // Configurar eventos
-  setupEventListeners();
-});
+/* Header da página */
+.analytics-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
 
-/**
- * Inicializa todos os componentes da página
- */
-function initializeAnalytics() {
-  console.log('Iniciando componentes de analytics');
-  
-  // Verificar se os elementos canvas existem antes de inicializar
-  const salesCanvas = document.getElementById('sales-timeline-chart');
-  const bestsellersCanvas = document.getElementById('products-bestsellers-chart');
-  const categoriesCanvas = document.getElementById('products-categories-chart');
-  
-  console.log('Canvas encontrados:', {
-    sales: !!salesCanvas,
-    bestsellers: !!bestsellersCanvas,
-    categories: !!categoriesCanvas
-  });
-  
-  // Inicializar apenas os gráficos cujos canvas existem
-  if (salesCanvas && typeof initializeSalesTimelineChart === 'function') {
-    console.log('Inicializando gráfico de vendas');
-    try {
-      initializeSalesTimelineChart();
-    } catch (error) {
-      console.error('Erro ao inicializar gráfico de vendas:', error);
+.analytics-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* Seletor de período */
+.period-selector {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.period-select {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background-color: white;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.period-select:hover {
+    border-color: var(--goeat-primary);
+}
+
+.period-select:focus {
+    outline: none;
+    border-color: var(--goeat-primary);
+    box-shadow: 0 0 0 2px rgba(98, 60, 167, 0.1);
+}
+
+/* Seção de gráficos */
+.charts-section {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+/* Container genérico de gráfico */
+.chart-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.chart-container:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+}
+
+/* Estados de loading e erro */
+.loading-state,
+.error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    color: #666;
+}
+
+.loading-state i,
+.error-state i {
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.loading-state i {
+    color: var(--goeat-primary);
+    animation: pulse 2s infinite;
+}
+
+.error-state i {
+    color: #dc3545;
+}
+
+.error-state p {
+    margin: 0 0 15px 0;
+    font-size: 14px;
+}
+
+.retry-button {
+    background-color: var(--goeat-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s;
+}
+
+.retry-button:hover {
+    background-color: #532D9E;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
     }
-  } else {
-    console.warn('Canvas de vendas não encontrado ou função não disponível');
-  }
-  
-  if (bestsellersCanvas && typeof initializeProductsBestsellersChart === 'function') {
-    console.log('Inicializando gráfico de produtos mais vendidos');
-    try {
-      initializeProductsBestsellersChart();
-    } catch (error) {
-      console.error('Erro ao inicializar gráfico de produtos mais vendidos:', error);
+    50% {
+        opacity: 0.5;
     }
-  } else {
-    console.warn('Canvas de produtos mais vendidos não encontrado ou função não disponível');
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+    .analytics-container {
+        padding: 15px;
+    }
+    
+    .analytics-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .analytics-header h2 {
+        font-size: 20px;
+    }
+    
+    .period-selector {
+        width: 100%;
+    }
+    
+    .period-select {
+        width: 100%;
+    }
+}

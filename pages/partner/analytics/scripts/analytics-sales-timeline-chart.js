@@ -1,6 +1,5 @@
 /**
  * Gráfico: Vendas ao Longo do Tempo
- * Arquivo: analytics-sales-timeline-chart.js
  */
 
 let salesTimelineChart = null;
@@ -15,9 +14,6 @@ function initializeSalesTimelineChart() {
         return;
     }
 
-    // Mostrar loading
-    showChartLoading('sales-timeline-chart');
-    
     // Fazer requisição para obter dados
     fetchSalesTimelineData()
         .then(data => {
@@ -25,7 +21,19 @@ function initializeSalesTimelineChart() {
         })
         .catch(error => {
             console.error('Erro ao carregar dados do gráfico de vendas:', error);
-            showChartError('sales-timeline-chart', 'Erro ao carregar dados de vendas');
+            // Mostrar mensagem de erro no lugar do gráfico
+            const chartContainer = document.querySelector('.sales-timeline-content');
+            if (chartContainer) {
+                chartContainer.innerHTML = `
+                    <div class="error-state">
+                        <i class="fa fa-exclamation-triangle"></i>
+                        <p>Erro ao carregar dados de vendas</p>
+                        <button class="retry-button" onclick="initializeSalesTimelineChart()">
+                            <i class="fa fa-refresh"></i> Tentar Novamente
+                        </button>
+                    </div>
+                `;
+            }
         });
 }
 
@@ -38,12 +46,11 @@ async function fetchSalesTimelineData() {
         throw new Error('Usuário não autenticado');
     }
 
-    // Pega o período selecionado no dropdown da página
+    // Pega o período selecionado
     const periodSelect = document.getElementById('period-select');
-    const period = periodSelect ? periodSelect.value : '30'; // Default 30 dias se não encontrar
+    const period = periodSelect ? periodSelect.value : '30';
 
     try {
-        // Faz a requisição real para a API
         const response = await fetch(`${API_BASE_URL}/analytics/sales-timeline?period=${period}`, {
             method: 'GET',
             headers: {
@@ -53,60 +60,21 @@ async function fetchSalesTimelineData() {
         });
         
         if (!response.ok) {
-            throw new Error(`Erro na API: ${response.status} ${response.statusText}`);
+            throw new Error(`Erro na API: ${response.status}`);
         }
         
-        const apiResponse = await response.json();
+        const data = await response.json();
         
-        // Verifica se a resposta tem a estrutura esperada
-        if (!apiResponse.data || !apiResponse.data.labels || !apiResponse.data.revenue || !apiResponse.data.orders) {
-            throw new Error('Estrutura de dados inválida retornada pela API');
+        // Valida a estrutura dos dados
+        if (!data.labels || !data.revenue || !data.orders) {
+            throw new Error('Estrutura de dados inválida');
         }
         
-        return apiResponse.data;
+        return data;
         
-    } catch (apiError) {
-        console.warn('Erro na API, usando dados mock:', apiError.message);
-        
-        // Fallback para dados mock se a API falhar
-        return getMockDataByPeriod(period);
-    }
-}
-
-/**
- * Retorna dados mock baseados no período selecionado
- */
-function getMockDataByPeriod(period) {
-    const periodNum = parseInt(period);
-    
-    if (periodNum <= 7) {
-        // Últimos 7 dias
-        return {
-            labels: ['21/12', '22/12', '23/12', '24/12', '25/12', '26/12', '27/12'],
-            revenue: [4500, 5200, 4800, 6100, 5500, 4900, 5300],
-            orders: [45, 52, 48, 61, 55, 49, 53]
-        };
-    } else if (periodNum <= 30) {
-        // Últimos 30 dias
-        return {
-            labels: ['01/12', '02/12', '03/12', '04/12', '05/12', '06/12', '07/12', '08/12', '09/12', '10/12', '11/12', '12/12', '13/12', '14/12', '15/12'],
-            revenue: [3200, 4100, 3800, 5200, 4900, 6100, 5500, 4800, 5300, 4600, 5800, 6200, 5100, 4900, 5400],
-            orders: [32, 41, 38, 52, 49, 61, 55, 48, 53, 46, 58, 62, 51, 49, 54]
-        };
-    } else if (periodNum <= 90) {
-        // Últimos 90 dias (por semana)
-        return {
-            labels: ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6', 'Sem 7', 'Sem 8', 'Sem 9', 'Sem 10', 'Sem 11', 'Sem 12'],
-            revenue: [15000, 18000, 16500, 19200, 17800, 20100, 18500, 16900, 19800, 17200, 21000, 19500],
-            orders: [150, 180, 165, 192, 178, 201, 185, 169, 198, 172, 210, 195]
-        };
-    } else {
-        // Último ano (por mês)
-        return {
-            labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-            revenue: [45000, 52000, 48000, 55000, 51000, 58000, 62000, 59000, 56000, 61000, 64000, 67000],
-            orders: [450, 520, 480, 550, 510, 580, 620, 590, 560, 610, 640, 670]
-        };
+    } catch (error) {
+        console.error('Erro ao buscar dados:', error);
+        throw error;
     }
 }
 
@@ -125,7 +93,7 @@ function createSalesTimelineChart(ctx, data) {
             labels: data.labels,
             datasets: [{
                 label: 'Faturamento (R$)',
-                data: data.revenue.map(value => value / 100), // Converter de centavos
+                data: data.revenue.map(value => value / 100), // Converter de centavos para reais
                 borderColor: '#623CA7',
                 backgroundColor: 'rgba(98, 60, 167, 0.1)',
                 borderWidth: 3,
@@ -179,9 +147,6 @@ function createSalesTimelineChart(ctx, data) {
                     grid: {
                         color: 'rgba(0,0,0,0.1)',
                         lineWidth: 1
-                    },
-                    border: {
-                        color: '#ddd'
                     }
                 },
                 x: {
@@ -193,29 +158,17 @@ function createSalesTimelineChart(ctx, data) {
                     },
                     grid: {
                         display: false
-                    },
-                    border: {
-                        color: '#ddd'
                     }
-                }
-            },
-            elements: {
-                point: {
-                    hoverRadius: 8
                 }
             },
             animation: {
                 duration: 1200,
                 easing: 'easeInOutQuart'
-            },
-            interaction: {
-                intersect: false,
-                mode: 'index'
             }
         }
     });
 
-    // Armazenar dados para toggle
+    // Armazenar dados originais para toggle
     salesTimelineChart.originalData = data;
 }
 
@@ -226,6 +179,12 @@ function toggleSalesTimelineChart(type) {
     if (!salesTimelineChart || !salesTimelineChart.originalData) return;
     
     const data = salesTimelineChart.originalData;
+    
+    // Atualizar botões ativos
+    document.querySelectorAll('.sales-timeline-toggle').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[data-chart="${type}"]`).classList.add('active');
     
     if (type === 'revenue') {
         salesTimelineChart.data.datasets[0] = {
@@ -281,15 +240,13 @@ function toggleSalesTimelineChart(type) {
 }
 
 /**
- * Atualiza o gráfico de vendas (chamado quando período muda)
+ * Atualiza o gráfico de vendas
  */
 function refreshSalesTimelineChart() {
     if (!salesTimelineChart) {
         initializeSalesTimelineChart();
         return;
     }
-    
-    showChartLoading('sales-timeline-chart');
     
     fetchSalesTimelineData()
         .then(data => {
@@ -298,39 +255,5 @@ function refreshSalesTimelineChart() {
         })
         .catch(error => {
             console.error('Erro ao atualizar gráfico de vendas:', error);
-            showChartError('sales-timeline-chart', 'Erro ao atualizar dados');
         });
-}
-
-/**
- * Função auxiliar para mostrar loading específico do gráfico
- */
-function showChartLoading(chartId) {
-    const chartContainer = document.querySelector('.sales-timeline-content');
-    if (chartContainer) {
-        chartContainer.innerHTML = `
-            <div class="sales-timeline-loading">
-                <i class="fa fa-spinner fa-pulse"></i>
-                <p>Carregando dados de vendas...</p>
-            </div>
-        `;
-    }
-}
-
-/**
- * Função auxiliar para mostrar erro específico do gráfico
- */
-function showChartError(chartId, message) {
-    const chartContainer = document.querySelector('.sales-timeline-content');
-    if (chartContainer) {
-        chartContainer.innerHTML = `
-            <div class="sales-timeline-error">
-                <i class="fa fa-exclamation-triangle"></i>
-                <p>${message}</p>
-                <button class="retry-button" onclick="initializeSalesTimelineChart()">
-                    <i class="fa fa-refresh"></i> Tentar Novamente
-                </button>
-            </div>
-        `;
-    }
 }
