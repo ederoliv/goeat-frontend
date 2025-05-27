@@ -55,9 +55,9 @@ async function fetchSalesTimelineData() {
 
     // Dados mock por enquanto
     return {
-        labels: ['01/12', '02/12', '03/12', '04/12', '05/12', '06/12', '07/12', '08/12', '09/12', '10/12'],
-        revenue: [3200, 4100, 3800, 5200, 4900, 6100, 5500, 4800, 5300, 4600],
-        orders: [32, 41, 38, 52, 49, 61, 55, 48, 53, 46]
+        labels: ['01/12', '02/12', '03/12', '04/12', '05/12', '06/12', '07/12', '08/12', '09/12', '10/12', '11/12', '12/12', '13/12', '14/12', '15/12'],
+        revenue: [3200, 4100, 3800, 5200, 4900, 6100, 5500, 4800, 5300, 4600, 5800, 6200, 5100, 4900, 5400],
+        orders: [32, 41, 38, 52, 49, 61, 55, 48, 53, 46, 58, 62, 51, 49, 54]
     };
 }
 
@@ -102,9 +102,15 @@ function createSalesTimelineChart(ctx, data) {
                     bodyColor: '#fff',
                     borderColor: '#623CA7',
                     borderWidth: 1,
+                    cornerRadius: 8,
+                    displayColors: false,
                     callbacks: {
+                        title: function(context) {
+                            return `Data: ${context[0].label}`;
+                        },
                         label: function(context) {
-                            return 'Faturamento: R$ ' + context.parsed.y.toFixed(2);
+                            const value = context.parsed.y;
+                            return `Faturamento: R$ ${value.toFixed(2).replace('.', ',')}`;
                         }
                     }
                 }
@@ -116,18 +122,31 @@ function createSalesTimelineChart(ctx, data) {
                         callback: function(value) {
                             return 'R$ ' + value.toFixed(0);
                         },
-                        color: '#666'
+                        color: '#666',
+                        font: {
+                            size: 12
+                        }
                     },
                     grid: {
-                        color: 'rgba(0,0,0,0.1)'
+                        color: 'rgba(0,0,0,0.1)',
+                        lineWidth: 1
+                    },
+                    border: {
+                        color: '#ddd'
                     }
                 },
                 x: {
                     ticks: {
-                        color: '#666'
+                        color: '#666',
+                        font: {
+                            size: 12
+                        }
                     },
                     grid: {
                         display: false
+                    },
+                    border: {
+                        color: '#ddd'
                     }
                 }
             },
@@ -137,8 +156,12 @@ function createSalesTimelineChart(ctx, data) {
                 }
             },
             animation: {
-                duration: 1000,
+                duration: 1200,
                 easing: 'easeInOutQuart'
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index'
             }
         }
     });
@@ -176,7 +199,8 @@ function toggleSalesTimelineChart(type) {
         };
         
         salesTimelineChart.options.plugins.tooltip.callbacks.label = function(context) {
-            return 'Faturamento: R$ ' + context.parsed.y.toFixed(2);
+            const value = context.parsed.y;
+            return `Faturamento: R$ ${value.toFixed(2).replace('.', ',')}`;
         };
     } else {
         salesTimelineChart.data.datasets[0] = {
@@ -199,7 +223,8 @@ function toggleSalesTimelineChart(type) {
         };
         
         salesTimelineChart.options.plugins.tooltip.callbacks.label = function(context) {
-            return 'Pedidos: ' + context.parsed.y;
+            const value = context.parsed.y;
+            return `Pedidos: ${value}`;
         };
     }
     
@@ -226,4 +251,37 @@ function refreshSalesTimelineChart() {
             console.error('Erro ao atualizar gráfico de vendas:', error);
             showChartError('sales-timeline-chart', 'Erro ao atualizar dados');
         });
+}
+
+/**
+ * Função auxiliar para mostrar loading específico do gráfico
+ */
+function showChartLoading(chartId) {
+    const chartContainer = document.querySelector('.sales-timeline-content');
+    if (chartContainer) {
+        chartContainer.innerHTML = `
+            <div class="sales-timeline-loading">
+                <i class="fa fa-spinner fa-pulse"></i>
+                <p>Carregando dados de vendas...</p>
+            </div>
+        `;
+    }
+}
+
+/**
+ * Função auxiliar para mostrar erro específico do gráfico
+ */
+function showChartError(chartId, message) {
+    const chartContainer = document.querySelector('.sales-timeline-content');
+    if (chartContainer) {
+        chartContainer.innerHTML = `
+            <div class="sales-timeline-error">
+                <i class="fa fa-exclamation-triangle"></i>
+                <p>${message}</p>
+                <button class="retry-button" onclick="initializeSalesTimelineChart()">
+                    <i class="fa fa-refresh"></i> Tentar Novamente
+                </button>
+            </div>
+        `;
+    }
 }

@@ -92,7 +92,9 @@
   justify-content: center;
   height: 300px;
   color: #666;
-  background: #f8f9fa;
+  background: rgba(98, 60, 167, 0.02);
+  border-radius: 8px;
+  margin: 20px;
 }
 
 .sales-timeline-loading i {
@@ -106,6 +108,7 @@
   margin: 0;
   font-size: 14px;
   color: #888;
+  text-align: center;
 }
 
 @keyframes pulse {
@@ -136,8 +139,27 @@
 }
 
 .sales-timeline-error p {
-  margin: 0;
+  margin: 0 0 15px 0;
   font-size: 14px;
+  text-align: center;
+}
+
+.sales-timeline-error .retry-button {
+  background-color: #623CA7;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.3s;
+}
+
+.sales-timeline-error .retry-button:hover {
+  background-color: #532D9E;
 }
 
 /* Indicadores de dados */
@@ -168,6 +190,46 @@
   color: #623CA7;
   font-weight: 700;
   font-size: 16px;
+}
+
+/* Efeitos visuais especiais */
+.sales-timeline-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #623CA7, #06CF90);
+  z-index: 1;
+}
+
+.sales-timeline-header {
+  position: relative;
+}
+
+/* Indicador de performance */
+.performance-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #06CF90;
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0% {
+    box-shadow: 0 0 0 0 rgba(6, 207, 144, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(6, 207, 144, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(6, 207, 144, 0);
+  }
 }
 
 /* Responsividade */
@@ -258,4 +320,30 @@
 
 .sales-timeline-container {
   animation: slideInFromLeft 0.6s ease-out;
+}
+
+/* Efeito hover nos pontos do gráfico */
+.sales-timeline-content canvas:hover {
+  cursor: crosshair;
+}
+
+/* Destaque de picos de vendas */
+.sales-peak-highlight {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: linear-gradient(135deg, #06CF90, #05b07e);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(6, 207, 144, 0.3);
+}
+
+.sales-peak-highlight::before {
+  content: '🔥';
+  margin-right: 4px;
 }

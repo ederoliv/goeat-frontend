@@ -47,9 +47,15 @@ function initializeAnalytics() {
   // Simula carregamento de dados
   setTimeout(() => {
     // Inicializar apenas os gráficos específicos que existem na página
-    initializeSalesTimelineChart();
-    initializeProductsBestsellersChart();
-    initializeProductsCategoriesChart();
+    if (typeof initializeSalesTimelineChart === 'function') {
+      initializeSalesTimelineChart();
+    }
+    if (typeof initializeProductsBestsellersChart === 'function') {
+      initializeProductsBestsellersChart();
+    }
+    if (typeof initializeProductsCategoriesChart === 'function') {
+      initializeProductsCategoriesChart();
+    }
     loadProductsTable();
   }, 1000);
 }
@@ -132,9 +138,15 @@ function refreshAnalytics() {
     // fetchAnalyticsData(period);
     
     // Atualizar gráficos chamando as funções de refresh específicas
-    refreshSalesTimelineChart();
-    refreshProductsBestsellersChart();
-    refreshProductsCategoriesChart();
+    if (typeof refreshSalesTimelineChart === 'function') {
+      refreshSalesTimelineChart();
+    }
+    if (typeof refreshProductsBestsellersChart === 'function') {
+      refreshProductsBestsellersChart();
+    }
+    if (typeof refreshProductsCategoriesChart === 'function') {
+      refreshProductsCategoriesChart();
+    }
     loadProductsTable();
     
     hideLoadingModal();
