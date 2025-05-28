@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="../../../libraries/styles/colors.css"/>
     <link rel="stylesheet" href="styles/analytics-main.css"/>
     <link rel="stylesheet" href="styles/analytics-sales-timeline-chart.css"/>
+    <link rel="stylesheet" href="styles/analytics-products-bestsellers-chart.css"/>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Análises - Goeat</title>
   </head>
@@ -64,6 +65,22 @@
               </div>
               <div class="chart-content sales-timeline-content">
                 <canvas id="sales-timeline-chart" width="800" height="400"></canvas>
+              </div>
+            </div>
+
+            <!-- Novo gráfico - Produtos Mais Vendidos (Rosca) -->
+            <div class="chart-container products-bestsellers-container">
+              <div class="chart-header products-bestsellers-header">
+                <h3>Produtos Mais Vendidos</h3>
+                <div class="chart-controls products-bestsellers-controls">
+                  <button class="chart-toggle products-bestsellers-toggle active" data-chart="quantity" onclick="toggleProductsBestsellersChart('quantity')">Quantidade</button>
+                  <button class="chart-toggle products-bestsellers-toggle" data-chart="revenue" onclick="toggleProductsBestsellersChart('revenue')">Faturamento</button>
+                </div>
+              </div>
+              <div class="chart-content products-bestsellers-content">
+                <div class="products-bestsellers-chart-area">
+                  <canvas id="products-bestsellers-chart" width="400" height="400"></canvas>
+                </div>
               </div>
             </div>
           </div>
@@ -131,5 +148,6 @@
     <script src="../../../libraries/scripts/dashboard.js"></script>
     <script src="scripts/analytics-main.js"></script>
     <script src="scripts/analytics-sales-timeline-chart.js"></script>
+    <script src="scripts/analytics-products-bestsellers-chart.js"></script>
   </body>
 </html>

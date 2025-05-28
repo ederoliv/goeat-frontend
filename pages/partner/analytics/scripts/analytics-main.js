@@ -32,6 +32,11 @@ function initializeAnalytics() {
     if (typeof initializeSalesTimelineChart === 'function') {
         initializeSalesTimelineChart();
     }
+    
+    // Inicializar o gráfico de produtos mais vendidos
+    if (typeof initializeProductsBestsellersChart === 'function') {
+        initializeProductsBestsellersChart();
+    }
 }
 
 /**
@@ -60,6 +65,11 @@ function refreshAnalytics() {
         // Atualizar gráfico de vendas
         if (typeof refreshSalesTimelineChart === 'function') {
             refreshSalesTimelineChart();
+        }
+        
+        // Atualizar gráfico de produtos mais vendidos
+        if (typeof refreshProductsBestsellersChart === 'function') {
+            refreshProductsBestsellersChart();
         }
         
         hideLoadingModal();
