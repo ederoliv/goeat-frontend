@@ -3,7 +3,10 @@
     padding: 0;
     box-sizing: border-box;
 }
-/* Estilos gerais da página de analytics */
+/* Estilos gerais da página de analytics 
+Essa porrinha desse main que faz a baça toda ficar alinhada
+e munitinha*/
+
 main {
     grid-area: main;
     overflow: auto;
@@ -14,7 +17,7 @@ main {
 }
 
 .analytics-container {
-    width: 100%;
+    width: 90%;
     max-width: 1400px;
     margin: 0 auto;
     padding: 20px;

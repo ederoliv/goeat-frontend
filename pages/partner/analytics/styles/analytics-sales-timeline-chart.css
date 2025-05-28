@@ -1,7 +1,7 @@
 /* Estilos específicos para o gráfico Vendas ao Longo do Tempo */
 
 .sales-timeline-container {
-    min-height: 450px;
+    min-height: 400px;
 }
 
 .sales-timeline-header {
@@ -61,8 +61,8 @@
 }
 
 .sales-timeline-content {
-    padding: 20px;
-    height: 400px;
+    padding: 10px;
+    height: 300px;
     position: relative;
     background: linear-gradient(135deg, #fefefe 0%, #f9f9f9 100%);
 }
