@@ -51,7 +51,7 @@ async function fetchProductsBestsellersData() {
     const period = periodSelect ? periodSelect.value : '30';
 
     try {
-        const response = await fetch(`${API_BASE_URL}/analytics/products-bestsellers`, {
+        const response = await fetch(`${API_BASE_URL}/analytics/products-bestsellers?period=${period}`, {
         //const response = await fetch(`${API_BASE_URL}/analytics/products-bestsellers?period=${period}`, {
             method: 'GET',
             headers: {
