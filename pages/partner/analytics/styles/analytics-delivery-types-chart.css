@@ -1,0 +1,377 @@
+/* Estilos específicos para o gráfico Tipos de Entrega */
+
+.delivery-types-container {
+    min-height: 450px;
+    margin-top: 25px;
+}
+
+.delivery-types-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.delivery-types-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.delivery-types-header h3::before {
+    content: '🚚';
+    font-size: 20px;
+}
+
+.delivery-types-controls {
+    display: flex;
+    gap: 5px;
+    background: rgba(83, 189, 235, 0.05);
+    padding: 4px;
+    border-radius: 8px;
+    border: 1px solid rgba(83, 189, 235, 0.1);
+}
+
+.delivery-types-toggle {
+    background: transparent;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #53BDEB;
+}
+
+.delivery-types-toggle.active {
+    background: #53BDEB;
+    color: white;
+    box-shadow: 0 2px 4px rgba(83, 189, 235, 0.3);
+}
+
+.delivery-types-toggle:hover:not(.active) {
+    background: rgba(83, 189, 235, 0.1);
+    transform: translateY(-1px);
+}
+
+.delivery-types-content {
+    padding: 15px;
+    height: 350px;
+    position: relative;
+    background: linear-gradient(135deg, #fefefe 0%, #f9f9f9 100%);
+    display: flex;
+    flex-direction: column;
+}
+
+.delivery-types-chart-area {
+    height: 280px;
+    position: relative;
+    margin-bottom: 15px;
+}
+
+#delivery-types-chart {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Métricas de entrega */
+.delivery-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    font-size: 12px;
+    margin-top: 15px;
+}
+
+.delivery-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+    padding: 8px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+    transition: transform 0.2s ease;
+}
+
+.delivery-metric:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.delivery-metric-label {
+    color: #666;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 11px;
+}
+
+.delivery-metric-value {
+    color: #53BDEB;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+/* Estados especiais */
+.delivery-types-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: #666;
+    background: #f8f9fa;
+}
+
+.delivery-types-loading i {
+    font-size: 32px;
+    color: #53BDEB;
+    margin-bottom: 15px;
+    animation: bounce 2s infinite;
+}
+
+.delivery-types-loading p {
+    margin: 0;
+    font-size: 14px;
+    color: #888;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+.delivery-types-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    color: #dc3545;
+    background: #fff5f5;
+    border: 1px solid #f8d7da;
+    border-radius: 8px;
+    margin: 20px;
+}
+
+.delivery-types-error i {
+    font-size: 32px;
+    margin-bottom: 15px;
+}
+
+.delivery-types-error p {
+    margin: 0;
+    font-size: 14px;
+    text-align: center;
+}
+
+.empty-data-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 280px;
+    color: #999;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #ddd;
+}
+
+.empty-data-state i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: #ccc;
+}
+
+.empty-data-state p {
+    margin: 0;
+    font-size: 16px;
+    text-align: center;
+}
+
+/* Indicadores visuais */
+.delivery-leader-indicator {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #06CF90, #05b07e);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 6px rgba(6, 207, 144, 0.3);
+}
+
+.delivery-leader-indicator.delivery-leader::before {
+    content: '🚚';
+    margin-right: 4px;
+}
+
+.delivery-leader-indicator.pickup-leader::before {
+    content: '🏪';
+    margin-right: 4px;
+}
+
+/* Customizações especiais para o gráfico de pizza */
+.delivery-types-chart-area canvas {
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.1));
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+    .delivery-types-container {
+        min-height: 400px;
+    }
+    
+    .delivery-types-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+        padding: 15px;
+    }
+    
+    .delivery-types-header h3 {
+        font-size: 16px;
+    }
+    
+    .delivery-types-controls {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .delivery-types-toggle {
+        flex: 1;
+        text-align: center;
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+    
+    .delivery-types-content {
+        padding: 12px;
+        height: 320px;
+    }
+    
+    .delivery-types-chart-area {
+        height: 240px;
+        margin-bottom: 12px;
+    }
+    
+    .delivery-metrics {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 12px;
+        margin-top: 12px;
+    }
+    
+    .delivery-metric {
+        flex-direction: row;
+        justify-content: space-between;
+        text-align: left;
+        padding: 10px 12px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .delivery-types-header h3 {
+        font-size: 15px;
+    }
+    
+    .delivery-types-toggle {
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+    
+    .delivery-types-content {
+        padding: 10px;
+    }
+    
+    .delivery-types-loading,
+    .delivery-types-error,
+    .empty-data-state {
+        height: 200px;
+        margin: 15px;
+    }
+    
+    .delivery-types-loading i,
+    .delivery-types-error i,
+    .empty-data-state i {
+        font-size: 36px;
+    }
+    
+    .delivery-metrics {
+        font-size: 11px;
+        padding: 10px;
+    }
+    
+    .delivery-metric-value {
+        font-size: 13px;
+    }
+}
+
+/* Animações de entrada */
+@keyframes slideInFromBottom {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.delivery-types-container {
+    animation: slideInFromBottom 0.6s ease-out;
+    animation-delay: 0.6s;
+    animation-fill-mode: both;
+}
+
+/* Efeito hover nos segmentos do gráfico */
+.delivery-types-content canvas:hover {
+    cursor: pointer;
+}
+
+/* Cores específicas para cada tipo */
+.delivery-segment {
+    color: #06CF90;
+}
+
+.pickup-segment {
+    color: #53BDEB;
+}
+
+/* Indicadores de performance */
+.delivery-performance-high {
+    border-left: 4px solid #06CF90;
+}
+
+.delivery-performance-medium {
+    border-left: 4px solid #FCCC48;
+}
+
+.delivery-performance-low {
+    border-left: 4px solid #FF5555;
+}

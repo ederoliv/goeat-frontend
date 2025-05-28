@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="styles/analytics-main.css"/>
     <link rel="stylesheet" href="styles/analytics-sales-timeline-chart.css"/>
     <link rel="stylesheet" href="styles/analytics-products-bestsellers-chart.css"/>
+    <link rel="stylesheet" href="styles/analytics-delivery-types-chart.css"/>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Análises - Goeat</title>
   </head>
@@ -83,6 +84,25 @@
                 </div>
               </div>
             </div>
+
+            <!-- Novo gráfico - Tipos de Entrega (Pizza) -->
+            <div class="chart-container delivery-types-container">
+              <div class="chart-header delivery-types-header">
+                <h3>Tipos de Entrega</h3>
+                <div class="chart-controls delivery-types-controls">
+                  <button class="chart-toggle delivery-types-toggle active" data-chart="orders" onclick="toggleDeliveryTypesChart('orders')">Pedidos</button>
+                  <button class="chart-toggle delivery-types-toggle" data-chart="revenue" onclick="toggleDeliveryTypesChart('revenue')">Faturamento</button>
+                </div>
+              </div>
+              <div class="chart-content delivery-types-content">
+                <div class="delivery-types-chart-area">
+                  <canvas id="delivery-types-chart" width="400" height="400"></canvas>
+                </div>
+                <div class="delivery-metrics">
+                  <!-- Métricas serão inseridas aqui via JavaScript -->
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
@@ -101,6 +121,10 @@
         </div>
 
         <div class="sidebar__menu">
+          <div class="sidebar__link">
+            <i class="fa fa-search"></i>
+            <a class="link-text" href="#">Pesquisar</a>
+          </div>
           <div class="sidebar__link">
             <i class="fa fa-home"></i>
             <a class="link-text" href="../acompanhar/index.html">Acompanhar</a>
@@ -145,5 +169,6 @@
     <script src="scripts/analytics-main.js"></script>
     <script src="scripts/analytics-sales-timeline-chart.js"></script>
     <script src="scripts/analytics-products-bestsellers-chart.js"></script>
+    <script src="scripts/analytics-delivery-types-chart.js"></script>
   </body>
 </html>

@@ -1,4 +1,12 @@
-// Variáveis globais
+// Atualizar gráfico de produtos mais vendidos
+        if (typeof refreshProductsBestsellersChart === 'function') {
+            refreshProductsBestsellersChart();
+        }
+        
+        // Atualizar gráfico de tipos de entrega
+        if (typeof refreshDeliveryTypesChart === 'function') {
+            refreshDeliveryTypesChart();
+        }// Variáveis globais
 const userDataString = sessionStorage.getItem('userData');
 const userData = userDataString ? JSON.parse(userDataString) : null;
 
@@ -36,6 +44,11 @@ function initializeAnalytics() {
     // Inicializar o gráfico de produtos mais vendidos
     if (typeof initializeProductsBestsellersChart === 'function') {
         initializeProductsBestsellersChart();
+    }
+    
+    // Inicializar o gráfico de tipos de entrega
+    if (typeof initializeDeliveryTypesChart === 'function') {
+        initializeDeliveryTypesChart();
     }
 }
 
