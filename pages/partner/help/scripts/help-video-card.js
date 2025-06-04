@@ -15,7 +15,7 @@ function renderVideoCard(video, container) {
     
     // Preenche o conteúdo do card
     card.innerHTML = `
-        <div class="video-thumbnail ${!thumbnailUrl ? 'no-thumbnail' : ''}" onclick="playVideoInModal(${JSON.stringify(video).replace(/"/g, '&quot;')})">
+        <div class="video-thumbnail ${!thumbnailUrl ? 'no-thumbnail' : ''}" onclick="openVideo('${video.url}', '${video.title}')">
             ${thumbnailUrl ? `<img src="${thumbnailUrl}" alt="${video.title}" loading="lazy">` : ''}
         </div>
         
@@ -37,7 +37,7 @@ function renderVideoCard(video, container) {
                 </div>
                 
                 <div class="video-actions">
-                    <button class="watch-button" onclick="playVideoInModal(${JSON.stringify(video).replace(/"/g, '&quot;')})">
+                    <button class="watch-button" onclick="openVideo('${video.url}', '${video.title}')">
                         <i class="fa fa-play"></i>
                         Assistir
                     </button>
@@ -52,7 +52,14 @@ function renderVideoCard(video, container) {
     
     // Adiciona o card ao container
     container.appendChild(card);
-}
+    
+    // Adiciona evento de clique na thumbnail para reproduzir o vídeo
+    const thumbnail = card.querySelector('.video-thumbnail');
+    if (thumbnail) {
+        thumbnail.addEventListener('click', function() {
+            playVideoInModal(video);
+        });
+    }
 }
 
 /**
@@ -64,11 +71,8 @@ function playVideoInModal(video) {
     const videoId = getYouTubeVideoId(video.url);
     
     if (!videoId) {
-        // Se não conseguir extrair o ID, abre no YouTube com notificação elegante
-        goeatAlert('info', 'Redirecionando para o YouTube...');
-        setTimeout(() => {
-            window.open(video.url, '_blank', 'noopener,noreferrer');
-        }, 500);
+        // Se não conseguir extrair o ID, abre no YouTube
+        openVideo(video.url, video.title);
         return;
     }
     
@@ -139,11 +143,6 @@ function playVideoInModal(video) {
     
     // Fecha o modal com ESC
     document.addEventListener('keydown', handleEscapeKey);
-    
-    // Mostra notificação de sucesso
-    setTimeout(() => {
-        goeatAlert('success', 'Tutorial carregado! Use ESC para fechar.');
-    }, 1000);
 }
 
 /**

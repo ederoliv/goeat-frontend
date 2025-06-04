@@ -1,4 +1,31 @@
 // Arquivo: pages/partner/help/scripts/help-main.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Verifica se o usuário (parceiro) está autenticado
+    const userDataString = sessionStorage.getItem('userData');
+    if (!userDataString) {
+        console.error('Parceiro não autenticado.');
+        window.location.href = '../../loginPartner/index.html'; 
+        return;
+    }
+
+    const userData = JSON.parse(userDataString);
+    
+    // Preenche o nome do usuário
+    document.getElementById('userName').textContent = userData.name || 'Usuário';
+
+    // Carrega os vídeos tutoriais
+    loadHelpVideos();
+
+    // Configura evento de Enter para a busca
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchVideos();
+            }
+        });
+    }
+});
 
 /**
  * Dados dos vídeos tutoriais
@@ -61,44 +88,6 @@ const helpVideos = [
     }
 ];
 
-// Inicialização da página
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Página de ajuda carregada'); // Debug
-    
-    // Verifica se o usuário (parceiro) está autenticado
-    const userDataString = sessionStorage.getItem('userData');
-    if (!userDataString) {
-        console.error('Parceiro não autenticado.');
-        window.location.href = '../../loginPartner/index.html'; 
-        return;
-    }
-
-    const userData = JSON.parse(userDataString);
-    console.log('Usuário autenticado:', userData.name); // Debug
-    
-    // Preenche o nome do usuário
-    const userNameElement = document.getElementById('userName');
-    if (userNameElement) {
-        userNameElement.textContent = userData.name || 'Usuário';
-    }
-
-    // Aguarda um pouco para garantir que todos os scripts foram carregados
-    setTimeout(() => {
-        // Carrega os vídeos tutoriais
-        loadHelpVideos();
-    }, 100);
-
-    // Configura evento de Enter para a busca
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchVideos();
-            }
-        });
-    }
-});
-
 /**
  * Carrega e renderiza todos os vídeos tutoriais
  */
@@ -118,15 +107,13 @@ function loadHelpVideos() {
         </div>
     `;
 
-    // Simula um pequeno delay para mostrar o loading (reduzido para 300ms)
+    // Simula um pequeno delay para mostrar o loading
     setTimeout(() => {
         try {
-            console.log('Carregando vídeos:', helpVideos); // Debug
-            
             // Limpa o container
             videosContainer.innerHTML = '';
 
-            if (!helpVideos || helpVideos.length === 0) {
+            if (helpVideos.length === 0) {
                 videosContainer.innerHTML = `
                     <div class="empty-videos">
                         <i class="fa fa-video-camera"></i>
@@ -138,18 +125,8 @@ function loadHelpVideos() {
             }
 
             // Renderiza cada vídeo
-            helpVideos.forEach((video, index) => {
-                console.log(`Renderizando vídeo ${index + 1}:`, video); // Debug
-                try {
-                    if (typeof renderVideoCard === 'function') {
-                        renderVideoCard(video, videosContainer);
-                    } else {
-                        console.error('Função renderVideoCard não encontrada');
-                        throw new Error('Função renderVideoCard não está disponível');
-                    }
-                } catch (renderError) {
-                    console.error(`Erro ao renderizar vídeo ${index + 1}:`, renderError);
-                }
+            helpVideos.forEach(video => {
+                renderVideoCard(video, videosContainer);
             });
 
             // Adiciona seção de dicas rápidas
@@ -168,7 +145,7 @@ function loadHelpVideos() {
                 </div>
             `;
         }
-    }, 300); // Reduzido de 800ms para 300ms
+    }, 800);
 }
 
 /**
@@ -258,8 +235,10 @@ function refreshHelpPage() {
  * Abre um vídeo no YouTube em uma nova aba
  */
 function openVideo(url, title) {
-    // Abre diretamente o vídeo no YouTube em nova aba
-    window.open(url, '_blank', 'noopener,noreferrer');
+    // Confirma se o usuário quer abrir o link
+    if (confirm(`Abrir o tutorial "${title}" no YouTube?`)) {
+        window.open(url, '_blank', 'noopener,noreferrer');
+    }
 }
 
 /**
