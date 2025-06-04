@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="/libraries/styles/tables.css"/>
     <link rel="stylesheet" href="/libraries/styles/colors.css"/>
     <link rel="stylesheet" href="/libraries/styles/dashboard.css"/>
-    <title>Acompanhar - Goeat</title>
+    <title>Meus Produtos - Goeat</title>
   </head>
   <body id="body">
     <div class="container">
@@ -81,9 +81,6 @@
             <i class="fa fa-comments"></i>
             <a class="link-text" href="../support/index.html">Suporte</a>
           </div>
-          <!--<div class="sidebar__link">
-            <i class="fa fa-wrench"></i>
-            <a class="link-text" href="#">Configurações</a></div>-->
           <div class="sidebar__link active_menu_linke">
             <i class="fa fa-archive"></i>
             <a class="link-text" href="../meuProdutos/index.html">Meus produtos</a>
@@ -95,11 +92,27 @@
         </div>
       </div>
     </div>
+    
+    <!-- Scripts de bibliotecas externas -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    
+    <!-- Scripts utilitários -->
     <script src="../../../libraries/scripts/utilities.js"></script>
     <script src="../../../libraries/scripts/routes.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="scripts/products.js"></script>
     <script src="../../../libraries/scripts/dashboard.js"></script>
+    
+    <!-- Scripts de produtos - ORDEM IMPORTANTE -->
+    <!-- 1. Arquivo principal (deve vir primeiro) -->
+    <script src="scripts/products-main.js"></script>
+    
+    <!-- 2. API operations -->
+    <script src="scripts/products-api.js"></script>
+    
+    <!-- 3. Modal management -->
+    <script src="scripts/products-modal.js"></script>
+    
+    <!-- 4. Categories management -->
+    <script src="scripts/categories-management.js"></script>
   </body>
 </html>
