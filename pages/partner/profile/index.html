@@ -11,15 +11,13 @@
       crossorigin="anonymous"
     />
     
-    <link rel="stylesheet" href="styles/product.css"/>
-    <link rel="stylesheet" href="/libraries/styles/tables.css"/>
-    <link rel="stylesheet" href="/libraries/styles/colors.css"/>
-    <link rel="stylesheet" href="/libraries/styles/dashboard.css"/>
-    <!-- Estilos específicos para a tabela de produtos -->
-    <link rel="stylesheet" href="styles/products-table.css"/>
-    <!-- Estilos específicos para os modais -->
-    <link rel="stylesheet" href="styles/modal-styles.css"/>
-    <title>Meus Produtos - Goeat</title>
+
+    <link rel="stylesheet" href="../../../libraries/styles/tables.css"/>
+    <link rel="stylesheet" href="../../../libraries/styles/colors.css"/>
+    <link rel="stylesheet" href="../../../libraries/styles/dashboard.css"/>
+    <link rel="stylesheet" href="styles/profile-main.css"/>
+    
+    <title>Histórico de Pedidos - Goeat</title>
   </head>
   <body id="body">
     <div class="container">
@@ -31,23 +29,54 @@
           <p id="userName"></p>
         </div>
         <div class="navbar__right">
-          <a href="../profile/index.html">
-            <img width="30" src="/libraries/assets/avatar.svg" alt="" />
+          <a href="#" onclick="loadOrderHistory()">
+            <i class="fa fa-refresh" aria-hidden="true" title="Atualizar histórico"></i>
+          </a>
+          <a href="index=.html">
+            <i class="fa fa-user-circle-o" aria-hidden="true"></i>
           </a>
         </div>
       </nav>
 
       <main>
         <div class="product-container">
+          <!-- Título da página -->
+          <h2 class="page-title">Histórico de Pedidos</h2>
+          
+          <!-- Container de pesquisa -->
           <div class="search-container">
-            <input type="text" class="input" id="searchInput" placeholder="Pesquisar produtos">
-            <input type="button" class="input" id="searchButton" value="Pesquisar">
-            <input type="button" class="input" id="productButton" value="Adicionar produto" onclick="_addProductModal()">
+            <input type="text" class="input" id="searchInput" placeholder="Pesquisar por pedido, cliente...">
+            <button type="button" class="search-button" id="searchButton" onclick="searchOrders()">
+              Pesquisar
+            </button>
           </div>
 
+          <!-- Filtros de período -->
+          <div class="period-filters">
+            <button class="period-button active" data-period="all" onclick="filterByPeriod('all')">Todos</button>
+            <button class="period-button" data-period="today" onclick="filterByPeriod('today')">Hoje</button>
+            <button class="period-button" data-period="week" onclick="filterByPeriod('week')">Esta Semana</button>
+            <button class="period-button" data-period="month" onclick="filterByPeriod('month')">Este Mês</button>
+          </div>
+
+          <!-- Tabela de pedidos -->
           <div class="table-container">
-            <table>  
-              <tbody id="tbody"></tbody>
+            <table>
+              <thead>
+                <tr>
+                  <th>Pedido</th>
+                  <th>Data/Hora</th>
+                  <th>Cliente</th>
+                  <th>Itens</th>
+                  <th>Tipo</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="tbody">
+                <!-- Os pedidos serão inseridos aqui via JavaScript -->
+              </tbody>
             </table>
           </div>
         </div>
@@ -71,9 +100,9 @@
             <i class="fa fa-home"></i>
             <a class="link-text" href="../acompanhar/index.html">Acompanhar</a>
           </div>
-          <div class="sidebar__link">
+          <div class="sidebar__link active_menu_linke">
             <i class="fa fa-calendar-check-o"></i>
-            <a class="link-text" href="../history/index.html">Histórico</a>
+            <a class="link-text" href="index.html">Histórico</a>
           </div>
           <div class="sidebar__link">
             <i class="fa fa-money"></i>
@@ -87,38 +116,25 @@
             <i class="fa fa-comments"></i>
             <a class="link-text" href="../support/index.html">Suporte</a>
           </div>
-          <div class="sidebar__link active_menu_linke">
+          <!--<div class="sidebar__link">
+            <i class="fa fa-wrench"></i>
+            <a class="link-text" href="#">Configurações</a></div>-->
+          <div class="sidebar__link">
             <i class="fa fa-archive"></i>
             <a class="link-text" href="../products/index.html">Meus produtos</a>
           </div>
           <div class="sidebar__logout">
             <i class="fa fa-power-off"></i>
-            <a href="#">Sair</a>
+            <a href="../../loginPartner/index.html">Sair</a>
           </div>
         </div>
       </div>
     </div>
     
-    <!-- Scripts de bibliotecas externas -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    
-    <!-- Scripts utilitários -->
     <script src="../../../libraries/scripts/utilities.js"></script>
     <script src="../../../libraries/scripts/routes.js"></script>
     <script src="../../../libraries/scripts/dashboard.js"></script>
-    
-    <!-- Scripts de produtos - ORDEM IMPORTANTE -->
-    <!-- 1. Arquivo principal (deve vir primeiro) -->
-    <script src="scripts/products-main.js"></script>
-    
-    <!-- 2. API operations -->
-    <script src="scripts/products-api.js"></script>
-    
-    <!-- 3. Modal management -->
-    <script src="scripts/products-modal.js"></script>
-    
-    <!-- 4. Categories management -->
-    <script src="scripts/categories-management.js"></script>
+    <script src="scripts/profile-main.js"></script>
   </body>
 </html>
