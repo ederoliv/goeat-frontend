@@ -1,0 +1,319 @@
+/* Estilos melhorados para a tabela de produtos */
+
+/* Container da tabela com scroll melhorado */
+.table-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+/* Estilos gerais da tabela */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 0;
+  font-family: 'Lato', sans-serif;
+}
+
+/* Cabeçalho da tabela */
+thead th {
+  background: linear-gradient(135deg, var(--goeat-primary) 0%, #532D9E 100%);
+  color: white;
+  padding: 18px 15px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+  position: relative;
+}
+
+thead th:first-child {
+  border-top-left-radius: 12px;
+}
+
+thead th:last-child {
+  border-top-right-radius: 12px;
+}
+
+/* Adiciona um separador sutil entre as colunas do header */
+thead th:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20%;
+  height: 60%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Células do corpo da tabela */
+tbody td {
+  padding: 16px 15px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  font-size: 14px;
+  vertical-align: middle;
+  transition: background-color 0.2s ease;
+}
+
+/* Hover effect nas linhas */
+tbody tr:hover {
+  background-color: #f8f9ff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Remove a borda da última linha */
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Estilo para células de texto longas */
+tbody td:nth-child(2) { /* Descrição */
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+tbody td:nth-child(4) { /* URL da imagem */
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #666;
+}
+
+/* Estilo para o preço */
+tbody td:nth-child(3) {
+  font-weight: 600;
+  color: var(--goeat-green);
+  font-size: 15px;
+}
+
+/* Estilo para a categoria */
+tbody td:nth-child(5) {
+  font-weight: 500;
+  color: var(--goeat-blue);
+}
+
+/* Container dos botões de ação */
+.action-cell {
+  text-align: center;
+  padding: 12px 8px !important;
+  width: 60px;
+}
+
+/* Botões de ação melhorados */
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  margin: 0 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Botão de editar */
+.edit-btn {
+  background: linear-gradient(135deg, var(--goeat-blue) 0%, #3aa9d8 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(83, 189, 235, 0.3);
+}
+
+.edit-btn:hover {
+  background: linear-gradient(135deg, #3aa9d8 0%, var(--goeat-blue) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(83, 189, 235, 0.4);
+}
+
+.edit-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(83, 189, 235, 0.3);
+}
+
+/* Botão de excluir */
+.delete-btn {
+  background: linear-gradient(135deg, var(--goeat-red) 0%, #cc3333 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(255, 85, 85, 0.3);
+}
+
+.delete-btn:hover {
+  background: linear-gradient(135deg, #cc3333 0%, var(--goeat-red) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 85, 85, 0.4);
+}
+
+.delete-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(255, 85, 85, 0.3);
+}
+
+/* Efeito ripple nos botões */
+.action-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transition: width 0.3s, height 0.3s, top 0.3s, left 0.3s;
+  transform: translate(-50%, -50%);
+}
+
+.action-btn:active::before {
+  width: 40px;
+  height: 40px;
+  top: 50%;
+  left: 50%;
+}
+
+/* Tooltips melhorados */
+.action-btn:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  animation: tooltipFadeIn 0.3s ease;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Estados especiais da tabela */
+.empty-table {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.empty-table i {
+  font-size: 48px;
+  color: #ddd;
+  margin-bottom: 15px;
+  display: block;
+}
+
+.loading-table {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--goeat-primary);
+}
+
+.loading-table i {
+  font-size: 24px;
+  margin-right: 10px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+  .table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+  }
+  
+  table {
+    min-width: 800px;
+  }
+  
+  thead th,
+  tbody td {
+    padding: 12px 10px;
+    font-size: 13px;
+  }
+  
+  .action-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+  
+  tbody td:nth-child(2) {
+    max-width: 120px;
+  }
+  
+  tbody td:nth-child(4) {
+    max-width: 100px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .action-cell {
+    width: 50px;
+    padding: 8px 4px !important;
+  }
+  
+  .action-btn {
+    width: 28px;
+    height: 28px;
+    margin: 0 1px;
+  }
+  
+  .action-btn:hover::after {
+    display: none; /* Remove tooltips em telas muito pequenas */
+  }
+}
+
+/* Animação de entrada para novas linhas */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+tbody tr {
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+/* Melhoria no contraste para acessibilidade */
+@media (prefers-reduced-motion: reduce) {
+  .action-btn,
+  tbody tr {
+    transition: none;
+    animation: none;
+  }
+}

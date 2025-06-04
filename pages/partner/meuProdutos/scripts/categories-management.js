@@ -87,7 +87,7 @@ function openCategoryManagementModal() {
   modalContent.append(modalHeader, modalBody)
   categoryModal.appendChild(modalContent)
   document.body.appendChild(categoryModal)
-  categoryModal.style.display = "flex"
+  categoryModal.classList.add('flex')
 }
 
 /**

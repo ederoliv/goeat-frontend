@@ -20,10 +20,16 @@ window.onload = () => {
 async function listProducts() {
   const table = document.querySelector("table")
 
+  // Verificar se a tabela existe
+  if (!table) {
+    console.error("Tabela não encontrada")
+    return
+  }
+
   // Remover thead existente para evitar duplicação
   const existingThead = table.querySelector("thead")
   if (existingThead) {
-    table.removeChild(existingThead)
+    existingThead.remove()
   }
 
   const thead = document.createElement("thead")
@@ -41,7 +47,21 @@ async function listProducts() {
   table.appendChild(thead)
 
   const tbody = document.querySelector("#tbody")
+  if (!tbody) {
+    console.error("Tbody não encontrado")
+    return
+  }
+  
   tbody.innerHTML = "" // Limpa o conteúdo existente
+
+  // Mostra estado de carregamento
+  const loadingRow = document.createElement("tr")
+  const loadingCell = document.createElement("td")
+  loadingCell.colSpan = headers.length
+  loadingCell.className = "loading-table"
+  loadingCell.innerHTML = '<i class="fa fa-spinner fa-pulse"></i>Carregando produtos...'
+  loadingRow.appendChild(loadingCell)
+  tbody.appendChild(loadingRow)
 
   try {
     const response = await fetch(`${API_BASE_URL}/partners/${userData.id}/products`)
@@ -50,13 +70,20 @@ async function listProducts() {
     }
     const data = await response.json()
 
+    // Remove o loading
+    tbody.innerHTML = ""
+
     if (data.length === 0) {
       // Mostrar mensagem quando não há produtos
       const tr = document.createElement("tr")
       const td = document.createElement("td")
       td.colSpan = headers.length
-      td.textContent = "Nenhum produto encontrado"
-      td.style.textAlign = "center"
+      td.className = "empty-table"
+      td.innerHTML = `
+        <i class="fa fa-archive"></i>
+        <h3>Nenhum produto cadastrado</h3>
+        <p>Comece adicionando seu primeiro produto clicando no botão "Adicionar produto"</p>
+      `
       tr.appendChild(td)
       tbody.appendChild(tr)
       return
@@ -81,28 +108,46 @@ async function listProducts() {
 
       // Botão de editar
       const editButton = document.createElement("td")
-      const editIcon = document.createElement("i")
-      editIcon.className = "fa fa-pencil-square-o list-product-edit-button"
-      editButton.appendChild(editIcon)
-      editButton.addEventListener("click", () => editProduct(product))
+      editButton.className = "action-cell"
+      
+      const editBtn = document.createElement("button")
+      editBtn.className = "action-btn edit-btn"
+      editBtn.innerHTML = '<i class="fa fa-pencil"></i>'
+      editBtn.title = "Editar produto"
+      editBtn.addEventListener("click", () => editProduct(product))
+      
+      editButton.appendChild(editBtn)
 
       // Botão de excluir
       const deleteButton = document.createElement("td")
-      const deleteIcon = document.createElement("i")
-      deleteIcon.className = "fa fa-trash list-product-delete-button"
-      deleteButton.appendChild(deleteIcon)
-      deleteButton.addEventListener("click", () => deleteProduct(product.id))
+      deleteButton.className = "action-cell"
+      
+      const deleteBtn = document.createElement("button")
+      deleteBtn.className = "action-btn delete-btn"
+      deleteBtn.innerHTML = '<i class="fa fa-trash"></i>'
+      deleteBtn.title = "Excluir produto"
+      deleteBtn.addEventListener("click", () => deleteProduct(product.id))
+      
+      deleteButton.appendChild(deleteBtn)
 
       tr.append(editButton, deleteButton)
       tbody.appendChild(tr)
     })
   } catch (error) {
     console.error("Erro ao listar produtos:", error)
+    
+    // Remove o loading e mostra erro
+    tbody.innerHTML = ""
+    
     const tr = document.createElement("tr")
     const td = document.createElement("td")
     td.colSpan = headers.length
-    td.textContent = "Erro ao carregar produtos"
-    td.style.textAlign = "center"
+    td.className = "empty-table"
+    td.innerHTML = `
+      <i class="fa fa-exclamation-triangle" style="color: var(--goeat-red);"></i>
+      <h3>Erro ao carregar produtos</h3>
+      <p>Não foi possível carregar a lista de produtos. Tente recarregar a página.</p>
+    `
     tr.appendChild(td)
     tbody.appendChild(tr)
   }

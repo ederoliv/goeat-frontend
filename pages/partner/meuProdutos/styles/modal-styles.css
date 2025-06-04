@@ -1,0 +1,341 @@
+/* Estilos otimizados para modais de produtos - Compatível com notebooks 15" Full HD */
+
+/* Container do modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.modal.flex {
+  display: flex;
+}
+
+/* Conteúdo do modal - Tamanho otimizado */
+.modal-content {
+  background-color: #fefefe;
+  width: 100%;
+  max-width: 500px; /* Reduzido de ~600px para 500px */
+  max-height: 85vh; /* Máximo 85% da altura da tela */
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Cabeçalho do modal - Mais compacto */
+.modal-header {
+  background: linear-gradient(135deg, var(--goeat-primary) 0%, #532D9E 100%);
+  color: white;
+  padding: 16px 20px; /* Reduzido de 20px para 16px */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: none;
+  flex-shrink: 0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 18px; /* Reduzido de 1.5rem para 18px */
+  font-weight: 600;
+}
+
+.modal-header .close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px; /* Reduzido de 1.5rem para 20px */
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-header .close-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Corpo do modal - Scrollable e compacto */
+.modal-body {
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Reduzido de 15px para 12px */
+}
+
+/* Labels dos campos */
+.modal-body label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px; /* Reduzido de 5px para 4px */
+  color: #333;
+  font-size: 14px;
+}
+
+/* Campos de input - Mais compactos */
+.modal-body input,
+.modal-body textarea,
+.modal-body select {
+  width: 100%;
+  padding: 10px 12px; /* Reduzido de 10px para 8px verticalmente */
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  background: #fafafa;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  font-family: 'Lato', sans-serif;
+}
+
+.modal-body input:focus,
+.modal-body textarea:focus,
+.modal-body select:focus {
+  outline: none;
+  border-color: var(--goeat-primary);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(98, 60, 167, 0.1);
+}
+
+.modal-body textarea {
+  resize: vertical;
+  min-height: 80px; /* Reduzido de 100px para 80px */
+  max-height: 120px;
+}
+
+/* Select personalizado */
+.modal-body select {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  appearance: none;
+  padding-right: 40px;
+}
+
+/* Rodapé do modal - Mais compacto */
+.modal-footer {
+  padding: 16px 20px; /* Reduzido de 15px para 12px */
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Botões do modal - Mais compactos */
+.modal-footer button {
+  padding: 8px 16px; /* Reduzido de 10px 20px para 8px 16px */
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 80px; /* Largura mínima reduzida */
+}
+
+.cancel-button {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.cancel-button:hover {
+  background: #dee2e6;
+  transform: translateY(-1px);
+}
+
+.save-button {
+  background: linear-gradient(135deg, var(--goeat-green) 0%, #05b07e 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(6, 207, 144, 0.3);
+}
+
+.save-button:hover {
+  background: linear-gradient(135deg, #05b07e 0%, var(--goeat-green) 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(6, 207, 144, 0.4);
+}
+
+/* Modal de categorias - Ainda menor */
+#categoryModal .modal-content {
+  max-width: 450px; /* Ainda menor para o modal de categorias */
+  max-height: 80vh;
+}
+
+/* Tabela de categorias compacta */
+.category-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px; /* Reduzido de 15px para 10px */
+  font-size: 14px;
+}
+
+.category-table th,
+.category-table td {
+  padding: 8px 10px; /* Reduzido de 8px para 6px */
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.category-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  font-size: 13px;
+}
+
+/* Formulário de adicionar categoria compacto */
+.add-category-form {
+  margin-bottom: 16px; /* Reduzido de 20px para 16px */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-category-form button {
+  align-self: flex-start;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+/* Botões de ação na tabela de categorias */
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px; /* Reduzido */
+  font-size: 14px; /* Reduzido de 16px para 14px */
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  color: #6c757d;
+}
+
+.icon-button:hover {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+/* Responsividade para tablets */
+@media screen and (max-width: 768px) {
+  .modal {
+    padding: 15px;
+  }
+  
+  .modal-content {
+    max-width: 100%;
+    max-height: 90vh;
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: 15px;
+  }
+  
+  .modal-body {
+    gap: 10px;
+  }
+}
+
+/* Responsividade para celulares */
+@media screen and (max-width: 480px) {
+  .modal {
+    padding: 10px;
+  }
+  
+  .modal-content {
+    max-height: 95vh;
+    border-radius: 8px;
+  }
+  
+  .modal-header {
+    padding: 12px 15px;
+  }
+  
+  .modal-header h2 {
+    font-size: 16px;
+  }
+  
+  .modal-body {
+    padding: 15px;
+    gap: 8px;
+  }
+  
+  .modal-footer {
+    padding: 12px 15px;
+    flex-direction: column;
+  }
+  
+  .modal-footer button {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+/* Melhor scrollbar para o modal body */
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Estados de loading e validação */
+.modal-body input.loading {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%23666' d='M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z' opacity='.25'/%3E%3Cpath fill='%23666' d='M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z'%3E%3CanimateTransform attributeName='transform' dur='0.75s' repeatCount='indefinite' type='rotate' values='0 12 12;360 12 12'/%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+.modal-body input.error {
+  border-color: var(--goeat-red);
+  background-color: #fff5f5;
+}
+
+.modal-body input.success {
+  border-color: var(--goeat-green);
+  background-color: #f0fff4;
+}

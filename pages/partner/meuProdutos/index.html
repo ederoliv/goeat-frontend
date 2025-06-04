@@ -11,10 +11,14 @@
       crossorigin="anonymous"
     />
     
-    <link rel="stylesheet" href="/libraries/styles/product.css"/>
+    <link rel="stylesheet" href="styles/product.css"/>
     <link rel="stylesheet" href="/libraries/styles/tables.css"/>
     <link rel="stylesheet" href="/libraries/styles/colors.css"/>
     <link rel="stylesheet" href="/libraries/styles/dashboard.css"/>
+    <!-- Estilos específicos para a tabela de produtos -->
+    <link rel="stylesheet" href="styles/products-table.css"/>
+    <!-- Estilos específicos para os modais -->
+    <link rel="stylesheet" href="styles/modal-styles.css"/>
     <title>Meus Produtos - Goeat</title>
   </head>
   <body id="body">
@@ -41,9 +45,11 @@
             <input type="button" class="input" id="productButton" value="Adicionar produto" onclick="_addProductModal()">
           </div>
 
-          <table>  
-            <tbody id="tbody"></tbody>
-          </table>
+          <div class="table-container">
+            <table>  
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
         </div>
       </main>
 

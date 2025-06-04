@@ -139,7 +139,7 @@ function _createProductModal(title, productData = null) {
  */
 function _addProductModal() {
   const modal = _createProductModal("Cadastrar Produto")
-  modal.style.display = "flex"
+  modal.classList.add('flex')
 }
 
 /**
@@ -147,7 +147,7 @@ function _addProductModal() {
  */
 function editProduct(product) {
   const modal = _createProductModal("Editar Produto", product)
-  modal.style.display = "flex"
+  modal.classList.add('flex')
 }
 
 /**
