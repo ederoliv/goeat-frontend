@@ -113,53 +113,164 @@ async function openNewSupportTicketPage() {
     Swal.fire({
         title: 'Novo Chamado de Suporte',
         html: `
-            <div style="text-align: left;">
-                <div style="margin-bottom: 15px;">
-                    <label for="ticket-title" style="display: block; margin-bottom: 5px; font-weight: bold;">Título:</label>
-                    <input id="ticket-title" class="swal2-input" placeholder="Descreva brevemente o problema" maxlength="100">
+            <div class="support-modal-content">
+                <div class="support-form-group">
+                    <label for="ticket-title" class="support-form-label">Título do chamado:</label>
+                    <input 
+                        id="ticket-title" 
+                        class="support-form-input" 
+                        placeholder="Descreva brevemente o problema ou dúvida" 
+                        maxlength="100"
+                        autocomplete="off"
+                    >
+                    <div class="char-counter-modal">
+                        <span id="title-char-count">0</span>/100
+                    </div>
                 </div>
-                <div>
-                    <label for="ticket-message" style="display: block; margin-bottom: 5px; font-weight: bold;">Mensagem:</label>
-                    <textarea id="ticket-message" class="swal2-textarea" placeholder="Detalhe seu problema ou dúvida" style="height: 150px;" maxlength="500"></textarea>
+                <div class="support-form-group">
+                    <label for="ticket-message" class="support-form-label">Descrição detalhada:</label>
+                    <textarea 
+                        id="ticket-message" 
+                        class="support-form-textarea" 
+                        placeholder="Detalhe seu problema ou dúvida. Inclua informações como: quando o problema ocorreu, o que estava fazendo, mensagens de erro, etc."
+                        maxlength="500"
+                    ></textarea>
+                    <div class="char-counter-modal">
+                        <span id="message-char-count">0</span>/500
+                    </div>
                 </div>
             </div>
         `,
         showCancelButton: true,
-        confirmButtonText: 'Enviar Chamado',
-        cancelButtonText: 'Cancelar',
-        confirmButtonColor: '#06CF90',
-        width: '500px',
+        confirmButtonText: '<i class="fa fa-paper-plane"></i> Enviar Chamado',
+        cancelButtonText: '<i class="fa fa-times"></i> Cancelar',
+        customClass: {
+            popup: 'support-modal',
+            htmlContainer: 'support-modal-content',
+            confirmButton: 'support-confirm-btn',
+            cancelButton: 'support-cancel-btn'
+        },
+        buttonsStyling: false,
+        allowOutsideClick: false,
+        allowEscapeKey: true,
+        didOpen: () => {
+            // Configurar contadores de caracteres
+            const titleInput = document.getElementById('ticket-title');
+            const messageTextarea = document.getElementById('ticket-message');
+            const titleCounter = document.getElementById('title-char-count');
+            const messageCounter = document.getElementById('message-char-count');
+            
+            // Contador para o título
+            titleInput.addEventListener('input', function() {
+                const currentLength = this.value.length;
+                titleCounter.textContent = currentLength;
+                
+                // Muda cor quando próximo do limite
+                if (currentLength > 80) {
+                    titleCounter.style.color = '#dc3545';
+                } else if (currentLength > 60) {
+                    titleCounter.style.color = '#ffc107';
+                } else {
+                    titleCounter.style.color = '#666';
+                }
+            });
+            
+            // Contador para a mensagem
+            messageTextarea.addEventListener('input', function() {
+                const currentLength = this.value.length;
+                messageCounter.textContent = currentLength;
+                
+                // Auto-resize do textarea
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+                
+                // Muda cor quando próximo do limite
+                if (currentLength > 400) {
+                    messageCounter.style.color = '#dc3545';
+                } else if (currentLength > 300) {
+                    messageCounter.style.color = '#ffc107';
+                } else {
+                    messageCounter.style.color = '#666';
+                }
+            });
+            
+            // Foca no campo do título
+            titleInput.focus();
+            
+            // Permite Enter para quebra de linha no textarea
+            messageTextarea.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    // Permite Enter normal no textarea (não submete o form)
+                    e.stopPropagation();
+                }
+            });
+        },
         preConfirm: async () => {
             const title = document.getElementById('ticket-title').value.trim();
             const message = document.getElementById('ticket-message').value.trim();
             
-            if (!title || !message) {
-                Swal.showValidationMessage('Por favor, preencha todos os campos');
+            // Validações com mensagens mais específicas
+            if (!title) {
+                Swal.showValidationMessage('Por favor, digite um título para o chamado');
+                document.getElementById('ticket-title').focus();
                 return false;
             }
             
             if (title.length < 5) {
                 Swal.showValidationMessage('O título deve ter pelo menos 5 caracteres');
+                document.getElementById('ticket-title').focus();
+                return false;
+            }
+            
+            if (!message) {
+                Swal.showValidationMessage('Por favor, descreva o problema ou dúvida');
+                document.getElementById('ticket-message').focus();
                 return false;
             }
             
             if (message.length < 10) {
-                Swal.showValidationMessage('A mensagem deve ter pelo menos 10 caracteres');
+                Swal.showValidationMessage('A descrição deve ter pelo menos 10 caracteres');
+                document.getElementById('ticket-message').focus();
                 return false;
             }
             
             try {
+                // Mostrar loading no botão
+                const confirmButton = Swal.getConfirmButton();
+                const originalText = confirmButton.innerHTML;
+                confirmButton.innerHTML = '<i class="fa fa-spinner fa-pulse"></i> Enviando...';
+                confirmButton.disabled = true;
+                
                 // Criar o chamado
                 await createNewTicket(title, message);
                 return true;
             } catch (error) {
+                // Restaurar botão em caso de erro
+                const confirmButton = Swal.getConfirmButton();
+                confirmButton.innerHTML = '<i class="fa fa-paper-plane"></i> Enviar Chamado';
+                confirmButton.disabled = false;
+                
                 Swal.showValidationMessage(`Erro ao criar chamado: ${error.message}`);
                 return false;
             }
         }
     }).then((result) => {
         if (result.isConfirmed && result.value) {
-            goeatAlert('success', 'Chamado criado com sucesso! Você será notificado quando houver uma resposta.');
+            // Modal de sucesso mais informativo
+            Swal.fire({
+                icon: 'success',
+                title: 'Chamado criado com sucesso!',
+                html: `
+                    <p>Seu chamado foi registrado e nossa equipe de suporte foi notificada.</p>
+                    <p><small>Você receberá uma resposta em breve através desta mesma interface.</small></p>
+                `,
+                confirmButtonText: 'Entendi',
+                customClass: {
+                    confirmButton: 'support-confirm-btn'
+                },
+                buttonsStyling: false
+            });
+            
             // Recarrega a lista de chamados
             loadSupportTickets();
         }

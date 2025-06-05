@@ -127,3 +127,245 @@
         height: 40px;
     }
 }
+
+/* Correções para o modal de suporte - Adicionar ao support-main.css */
+
+/* Estilos personalizados para o SweetAlert do modal de suporte */
+.swal2-popup.support-modal {
+    width: 520px !important;
+    max-width: 90vw !important;
+    padding: 25px !important;
+}
+
+.swal2-html-container.support-modal-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+}
+
+/* Estilização dos campos do modal */
+.support-form-group {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.support-form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.support-form-input {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px 15px !important;
+    border: 2px solid #e0e6ed !important;
+    border-radius: 8px !important;
+    font-size: 15px !important;
+    font-family: inherit !important;
+    background-color: #fff !important;
+    transition: border-color 0.3s ease !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    resize: vertical !important;
+    min-height: 45px !important;
+}
+
+.support-form-input:focus {
+    outline: none !important;
+    border-color: var(--goeat-primary) !important;
+    box-shadow: 0 0 0 3px rgba(98, 60, 167, 0.1) !important;
+}
+
+.support-form-textarea {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 12px 15px !important;
+    border: 2px solid #e0e6ed !important;
+    border-radius: 8px !important;
+    font-size: 15px !important;
+    font-family: inherit !important;
+    background-color: #fff !important;
+    transition: border-color 0.3s ease !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    resize: vertical !important;
+    min-height: 120px !important;
+    max-height: 200px !important;
+    line-height: 1.5 !important;
+}
+
+.support-form-textarea:focus {
+    outline: none !important;
+    border-color: var(--goeat-primary) !important;
+    box-shadow: 0 0 0 3px rgba(98, 60, 167, 0.1) !important;
+}
+
+/* Contador de caracteres */
+.char-counter-modal {
+    text-align: right;
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Botões do SweetAlert customizados */
+.swal2-confirm.support-confirm-btn {
+    background-color: var(--goeat-tertiary) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 12px 24px !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(6, 207, 144, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+.swal2-confirm.support-confirm-btn:hover {
+    background-color: #05b07e !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(6, 207, 144, 0.4) !important;
+}
+
+.swal2-cancel.support-cancel-btn {
+    background-color: #f8f9fa !important;
+    color: #666 !important;
+    border: 2px solid #e0e6ed !important;
+    border-radius: 8px !important;
+    padding: 10px 24px !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
+    margin-right: 10px !important;
+}
+
+.swal2-cancel.support-cancel-btn:hover {
+    background-color: #e9ecef !important;
+    border-color: #adb5bd !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Correções para o botão de pesquisa */
+.search-icon-button {
+    background-color: var(--goeat-primary);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0px 6px 2px rgba(0, 0, 0, 0.25); /* Adiciona a sombra padrão */
+}
+
+.search-icon-button:hover {
+    background-color: #532D9E;
+    transform: translateY(-1px);
+    box-shadow: 0px 8px 4px rgba(0, 0, 0, 0.3);
+}
+
+.search-icon-button:active {
+    transform: translateY(0);
+    box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25);
+}
+
+.search-icon-button i {
+    font-size: 18px;
+}
+
+/* Correções para o botão "Novo Chamado" */
+#productButton {
+    min-width: auto !important;
+    width: auto !important;
+    padding: 10px 20px !important;
+    font-size: 14px !important;
+    height: 45px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    white-space: nowrap !important;
+    box-shadow: 0px 6px 2px rgba(0, 0, 0, 0.25) !important;
+    transition: all 0.3s ease !important;
+}
+
+#productButton:hover {
+    transform: translateY(-1px);
+    box-shadow: 0px 8px 4px rgba(0, 0, 0, 0.3);
+}
+
+#productButton:active {
+    transform: translateY(0);
+    box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25);
+}
+
+/* Ajustes no container de pesquisa */
+.search-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: stretch; /* Alinha os elementos com a mesma altura */
+}
+
+.search-container .input {
+    margin: 0;
+    height: 45px; /* Altura fixa para todos os elementos */
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+}
+
+#searchInput {
+    flex-grow: 1;
+    padding: 10px 15px;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+    .swal2-popup.support-modal {
+        width: 95vw !important;
+        padding: 20px !important;
+    }
+    
+    .support-form-input,
+    .support-form-textarea {
+        font-size: 16px !important; /* Evita zoom no iOS */
+    }
+    
+    .search-container {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    #productButton, 
+    #searchInput,
+    .search-icon-button {
+        width: 100% !important;
+        height: 45px !important;
+    }
+    
+    .search-icon-button {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .support-form-group {
+        margin-bottom: 15px;
+    }
+    
+    .support-form-input,
+    .support-form-textarea {
+        padding: 10px 12px !important;
+    }
+    
+    .support-form-textarea {
+        min-height: 100px !important;
+    }
+}
