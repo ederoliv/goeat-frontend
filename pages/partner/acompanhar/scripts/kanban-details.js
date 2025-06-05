@@ -71,6 +71,9 @@ function showOrderDetailsModal(orderDetails, order) {
   // Determina se é entrega ou retirada
   const isPickup = order.deliveryAddress === 'RETIRADA NO LOCAL';
   
+  // Verifica se o pedido pode ser cancelado (apenas pedidos em ESPERANDO e PREPARANDO)
+  const canCancel = ['ESPERANDO', 'PREPARANDO'].includes(order.orderStatus);
+  
   // Formata a data do pedido (se disponível)
   let formattedDate = 'Data não disponível';
   if (orderDetails.createdAt) {
@@ -124,6 +127,27 @@ function showOrderDetailsModal(orderDetails, order) {
     case 'FINALIZADOS':
       statusColor = '#06CF90'; // verde
       break;
+    case 'CANCELADOS':
+      statusColor = '#dc3545'; // vermelho escuro
+      break;
+  }
+  
+  // Define os botões do modal baseado no status do pedido
+  let modalButtons = {};
+  
+  if (canCancel) {
+    modalButtons = {
+      confirmButtonText: 'Fechar',
+      confirmButtonColor: '#06CF90',
+      showDenyButton: true,
+      denyButtonText: '<i class="fa fa-times"></i> Cancelar Pedido',
+      denyButtonColor: '#dc3545'
+    };
+  } else {
+    modalButtons = {
+      confirmButtonText: 'Fechar',
+      confirmButtonColor: '#06CF90'
+    };
   }
   
   // Mostra o modal usando SweetAlert2
@@ -179,17 +203,134 @@ function showOrderDetailsModal(orderDetails, order) {
           <h3>Endereço de Entrega</h3>
           <div class="details-address">${order.deliveryAddress}</div>
         </div>` : ''}
+        
+        ${canCancel ? `
+        <div class="cancel-warning">
+          <i class="fa fa-exclamation-triangle"></i>
+          <small>Este pedido pode ser cancelado enquanto estiver em preparação.</small>
+        </div>` : ''}
       </div>
     `,
     width: '600px',
-    confirmButtonColor: '#06CF90',
-    confirmButtonText: 'Fechar',
+    ...modalButtons,
     customClass: {
       container: 'order-details-modal-container',
       popup: 'order-details-modal',
       content: 'order-details-content'
     }
+  }).then((result) => {
+    // Se o usuário clicou no botão de cancelar pedido
+    if (result.isDenied) {
+      confirmCancelOrder(order.id);
+    }
   });
+}
+
+// Função para confirmar o cancelamento do pedido
+function confirmCancelOrder(orderId) {
+  Swal.fire({
+    title: 'Cancelar Pedido',
+    html: `
+      <div class="cancel-confirmation">
+        <p>Tem certeza que deseja cancelar o pedido #${orderId}?</p>
+        <div class="cancel-warning-box">
+          <i class="fa fa-exclamation-triangle"></i>
+          <div>
+            <strong>Atenção:</strong>
+            <p>Esta ação não pode ser desfeita. O cliente será notificado sobre o cancelamento.</p>
+          </div>
+        </div>
+      </div>
+    `,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#dc3545',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: '<i class="fa fa-times"></i> Sim, cancelar pedido',
+    cancelButtonText: 'Voltar',
+    reverseButtons: true
+  }).then((result) => {
+    if (result.isConfirmed) {
+      cancelOrder(orderId);
+    }
+  });
+}
+
+// Função para cancelar o pedido
+async function cancelOrder(orderId) {
+  try {
+    console.log(`Tentando cancelar pedido ${orderId}`);
+    
+    // Mostra loading
+    Swal.fire({
+      title: 'Cancelando pedido...',
+      html: '<i class="fa fa-spinner fa-pulse fa-2x"></i>',
+      showConfirmButton: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+    
+    // Faz a requisição para cancelar o pedido
+    const response = await fetch(`${API_BASE_URL}/partners/${userData.id}/orders`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${userData.token}`
+      },
+      body: JSON.stringify({
+        id: parseInt(orderId),
+        status: 'CANCELADOS'
+      })
+    });
+    
+    console.log(`Response status: ${response.status}`);
+    
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => 'Erro desconhecido');
+      console.error(`Erro na requisição: ${response.status} - ${errorText}`);
+      throw new Error(`Erro ao cancelar pedido: ${response.status} - ${errorText}`);
+    }
+    
+    console.log('Pedido cancelado com sucesso no backend');
+    
+    // Atualiza o status no array local
+    const orderIndex = ordersData.findIndex(o => o.id == orderId);
+    if (orderIndex >= 0) {
+      ordersData[orderIndex].orderStatus = 'CANCELADOS';
+      console.log(`Status local atualizado para pedido ${orderId}: CANCELADOS`);
+    }
+    
+    // Remove o card do kanban já que pedidos cancelados não aparecem no acompanhamento
+    const orderCard = document.getElementById(`order-${orderId}`);
+    if (orderCard) {
+      orderCard.remove();
+    }
+    
+    // Atualiza a exibição
+    refreshOrdersDisplay();
+    
+    // Mostra mensagem de sucesso
+    Swal.fire({
+      icon: 'success',
+      title: 'Pedido Cancelado',
+      text: `O pedido #${orderId} foi cancelado com sucesso.`,
+      confirmButtonColor: '#06CF90',
+      timer: 3000,
+      timerProgressBar: true
+    });
+    
+  } catch (error) {
+    console.error('Erro detalhado ao cancelar pedido:', error);
+    
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro ao cancelar pedido',
+      text: `Não foi possível cancelar o pedido #${orderId}: ${error.message}`,
+      confirmButtonColor: '#06CF90'
+    });
+  }
 }
 
 // Função auxiliar para exibir loading modal

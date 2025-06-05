@@ -211,7 +211,8 @@ function getStatusName(status) {
     'ESPERANDO': 'Em Espera',
     'PREPARANDO': 'Preparando',
     'ENCAMINHADOS': 'A Caminho',
-    'FINALIZADOS': 'Finalizado'
+    'FINALIZADOS': 'Finalizado',
+    'CANCELADOS': 'Cancelado'
   };
   
   return statusNames[status] || status;
