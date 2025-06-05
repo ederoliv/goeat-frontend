@@ -231,8 +231,8 @@ function showCustomPeriodReport(data, startDate, endDate, diffDays) {
                 </div>
                 
                 <div class="report-actions">
-                    <button type="button" class="action-btn export-btn" onclick="exportReportData('${startDate}', '${endDate}', ${JSON.stringify(data).replace(/"/g, '&quot;')})">
-                        <i class="fa fa-download"></i> Exportar Dados
+                    <button type="button" class="action-btn export-btn" onclick="exportReportToPDF('${startDate}', '${endDate}', ${JSON.stringify(data).replace(/"/g, '&quot;')})">
+                        <i class="fa fa-file-pdf-o"></i> Baixar PDF
                     </button>
                     <button type="button" class="action-btn new-period-btn" onclick="Swal.close(); openCustomPeriodModal();">
                         <i class="fa fa-calendar"></i> Novo Período
@@ -247,44 +247,6 @@ function showCustomPeriodReport(data, startDate, endDate, diffDays) {
             htmlContainer: 'custom-report-modal'
         }
     });
-}
-
-/**
- * Exporta os dados do relatório (funcionalidade básica)
- * @param {string} startDate - Data de início
- * @param {string} endDate - Data final
- * @param {Object} data - Dados do relatório
- */
-function exportReportData(startDate, endDate, data) {
-    try {
-        const reportContent = `
-Relatório Financeiro - ${formatDateForDisplay(startDate)} até ${formatDateForDisplay(endDate)}
-=================================================================
-
-Total de Vendas: ${formatCurrency(data.totalSales || 0)}
-Ticket Médio: ${formatCurrency(data.averageTicket || 0)}
-Total de Pedidos: ${data.totalOrders || 0}
-Cancelamentos: ${formatCurrency(data.canceledOrdersValue || 0)} (${data.canceledOrders || 0} pedidos)
-Taxa de Cancelamento: ${data.totalOrders > 0 ? ((data.canceledOrders / data.totalOrders) * 100).toFixed(1) : '0.0'}%
-
-Gerado em: ${new Date().toLocaleString('pt-BR')}
-        `;
-        
-        // Criar e fazer download do arquivo
-        const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `relatorio-financeiro-${startDate}-${endDate}.txt`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        goeatAlert('success', 'Relatório exportado com sucesso!');
-        
-    } catch (error) {
-        console.error('Erro ao exportar relatório:', error);
-        goeatAlert('error', 'Não foi possível exportar o relatório.');
-    }
 }
 
 /**

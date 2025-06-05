@@ -619,3 +619,29 @@
 .metric-row:nth-child(4) { animation-delay: 0.4s; }
 .metric-row:nth-child(5) { animation-delay: 0.5s; }
 .metric-row:nth-child(6) { animation-delay: 0.6s; }
+
+/* Estilos para o botão de PDF - ADICIONAR ao final do arquivo style.css existente */
+
+.export-btn {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: white !important;
+}
+
+.export-btn:hover {
+    background-color: #c82333 !important;
+    border-color: #bd2130 !important;
+    transform: translateY(-1px);
+}
+
+.export-btn i {
+    color: white !important;
+}
+
+/* Responsividade para botão PDF */
+@media screen and (max-width: 480px) {
+    .export-btn {
+        padding: 12px 16px;
+        font-size: 13px;
+    }
+}
