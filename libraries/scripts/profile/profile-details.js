@@ -202,7 +202,7 @@ async function saveProfileChanges() {
             name,
             phone,
             birthDate, // O formato YYYY-MM-DD do input type="date" é geralmente aceito por LocalDate no backend
-            profileImageUrl: currentProfileImageCid // Adicionar o CID da imagem se houver
+            profileImage: currentProfileImageCid // Adicionar o CID da imagem se houver
         };
 
         showLoadingModal();
