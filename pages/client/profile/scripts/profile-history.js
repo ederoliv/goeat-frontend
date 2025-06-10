@@ -1,119 +1,138 @@
-async function showOrderDetails(orderId) {
+// Funções relacionadas ao histórico de pedidos
+
+// Função principal para carregar o histórico de pedidos
+async function loadOrderHistory() {
     try {
         const clientData = getAuthenticatedClient();
         if (!clientData || !clientData.token) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Erro de autenticação',
-                text: 'Sessão expirada. Faça login novamente.',
-                confirmButtonColor: '#06CF90'
-            });
+            console.error('Cliente não autenticado ou token inválido para carregar histórico.');
+            displayEmptyOrderHistory('Faça login para ver seu histórico de pedidos.');
             return;
         }
 
-        showLoadingModal();
-
-        const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
+        showLoadingOrderHistory();
+        
+        const response = await fetch(`${API_BASE_URL}/orders/client`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${clientData.token}`
             }
         });
-
+        
         if (!response.ok) {
-            if (response.status === 401 || response.status === 403) {
-                hideLoadingModal();
-                getInvalidClientToken(response.status);
+            if (response.status === 401) {
+                getInvalidClientToken(401);
                 return;
             }
-            
-            // Tenta extrair mensagem de erro da resposta
-            let errorMessage = 'Falha ao carregar detalhes do pedido';
-            try {
-                const errorData = await response.json();
-                errorMessage = errorData.message || errorData.error || `Erro HTTP ${response.status}`;
-            } catch (jsonError) {
-                errorMessage = `Erro HTTP ${response.status}: ${response.statusText}`;
-            }
-            
-            throw new Error(errorMessage);
+            throw new Error(`Erro ${response.status}: Falha ao carregar histórico de pedidos`);
         }
-
-        const order = await response.json();
-        hideLoadingModal();
-
-        // Formatar data de criação
-        const formattedDate = formatBrazilianDate(order.createdAt);
-
-        // Status em português
-        const statusInfo = getOrderStatusInfo(order.orderStatus);
-
-        // Determinar data de finalização/cancelamento
-        let completionInfo = '';
-        if (order.finishedAt) {
-            const finishedFormatted = formatBrazilianDate(order.finishedAt);
-            completionInfo = `<p><strong>Finalizado em:</strong> ${finishedFormatted}</p>`;
-        } else if (order.canceledAt) {
-            const canceledFormatted = formatBrazilianDate(order.canceledAt);
-            completionInfo = `<p><strong>Cancelado em:</strong> ${canceledFormatted}</p>`;
-        }
-
-        // Verificar se é retirada no local
-        const isPickup = order.deliveryAddress === 'RETIRADA NO LOCAL';
-
-        Swal.fire({
-            title: `Detalhes do Pedido #${order.id}`,
-            html: `
-                <div class="order-details-container">
-                    <div class="order-details-header">
-                        <p><strong>Data do pedido:</strong> ${formattedDate}</p>
-                        <p><strong>Status:</strong> <span class="order-status-text">${statusInfo.text}</span></p>
-                        ${completionInfo}
-                        <p><strong>Cliente:</strong> ${order.name}</p>
-                    </div>
-
-                    <div class="order-details-delivery">
-                        <h4>${isPickup ? 'Retirada' : 'Entrega'}</h4>
-                        <p>${isPickup ? 'Retirada no restaurante' : order.deliveryAddress}</p>
-                    </div>
-
-                    <div class="order-details-payment">
-                        <p class="order-total-text"><strong>Total: R$ ${formatPrice(order.totalPrice)}</strong></p>
-                    </div>
-
-                    <div class="order-note">
-                        <p><em>Para ver os itens detalhados do pedido, entre em contato com o restaurante.</em></p>
-                    </div>
-                </div>
-            `,
-            showCloseButton: true,
-            showConfirmButton: false,
-            width: '500px',
-            customClass: {
-                popup: 'order-details-modal'
-            }
-        });// Funções relacionadas ao histórico de pedidos
-
-// Funções relacionadas ao histórico de pedidos
-
-// Função utilitária para mapear status
-function getOrderStatusInfo(orderStatus) {
-    const statusMap = {
-        'FINALIZADOS': { text: 'Finalizado', class: 'delivered' },
-        'CANCELADOS': { text: 'Cancelado', class: 'cancelled' },
-        'PENDENTES': { text: 'Pendente', class: 'pending' },
-        'EM_PREPARO': { text: 'Em Preparo', class: 'processing' },
-        'PREPARANDO': { text: 'Preparando', class: 'processing' },
-        'PRONTO': { text: 'Pronto', class: 'processing' },
-        'ENTREGUE': { text: 'Entregue', class: 'delivered' }
-    };
-    
-    return statusMap[orderStatus] || { text: orderStatus, class: 'pending' };
+        
+        const orders = await response.json();
+        displayOrderHistory(orders);
+        
+    } catch (error) {
+        console.error('Erro ao carregar histórico de pedidos:', error);
+        displayErrorOrderHistory('Não foi possível carregar seu histórico de pedidos. Tente novamente mais tarde.');
+    }
 }
 
-// Função utilitária para formatar data no padrão brasileiro
-function formatBrazilianDate(dateString) {
+// Função para exibir o histórico de pedidos
+function displayOrderHistory(orders) {
+    const ordersList = document.querySelector('#orders-history .orders-list');
+    if (!ordersList) return;
+    
+    ordersList.innerHTML = ''; // Limpa a lista atual
+    
+    if (!orders || orders.length === 0) {
+        displayEmptyOrderHistory('Você ainda não fez nenhum pedido.');
+        return;
+    }
+    
+    // Ordena os pedidos por data de criação (mais recentes primeiro)
+    orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    
+    orders.forEach(order => {
+        const orderCard = createOrderCard(order);
+        ordersList.appendChild(orderCard);
+    });
+}
+
+// Função para criar um card de pedido
+function createOrderCard(order) {
+    const orderCard = document.createElement('div');
+    orderCard.className = 'order-card';
+    orderCard.dataset.orderId = order.id;
+    
+    // Formatar as datas
+    const createdDate = formatOrderDate(order.createdAt);
+    const finishedDate = order.finishedAt ? formatOrderDate(order.finishedAt) : null;
+    const canceledDate = order.canceledAt ? formatOrderDate(order.canceledAt) : null;
+    
+    // Determinar o status e sua classe CSS
+    const statusInfo = getOrderStatusInfo(order.orderStatus);
+    
+    // Determinar qual data mostrar baseado no status
+    let displayDate = createdDate;
+    let dateLabel = 'Pedido realizado';
+    
+    if (order.orderStatus === 'FINALIZADOS' && finishedDate) {
+        displayDate = finishedDate;
+        dateLabel = 'Finalizado';
+    } else if (order.orderStatus === 'CANCELADOS' && canceledDate) {
+        displayDate = canceledDate;
+        dateLabel = 'Cancelado';
+    }
+    
+    orderCard.innerHTML = `
+        <div class="order-header">
+            <div class="order-info">
+                <h4>Pedido #${order.id}</h4>
+                <p class="order-date">${dateLabel} em ${displayDate}</p>
+            </div>
+            <div class="order-status ${statusInfo.class}">
+                ${statusInfo.text}
+            </div>
+        </div>
+        
+        <div class="order-details-preview">
+            <div class="order-customer">
+                <p><strong>Cliente:</strong> ${order.name}</p>
+            </div>
+            
+            <div class="order-delivery">
+                <p><strong>Endereço:</strong> ${order.deliveryAddress}</p>
+            </div>
+        </div>
+        
+        <div class="order-footer">
+            <div class="order-total">
+                Total: R$ ${formatPrice(order.totalPrice)}
+            </div>
+            <button class="order-details-button" onclick="showOrderDetails('${order.id}')">
+                Ver detalhes
+            </button>
+        </div>
+    `;
+    
+    return orderCard;
+}
+
+// Função para obter informações de status do pedido
+function getOrderStatusInfo(status) {
+    const statusMap = {
+        'PENDENTE': { text: 'Pendente', class: 'pending' },
+        'PREPARANDO': { text: 'Preparando', class: 'processing' },
+        'SAIU_PARA_ENTREGA': { text: 'Saiu para entrega', class: 'processing' },
+        'FINALIZADOS': { text: 'Finalizado', class: 'delivered' },
+        'CANCELADOS': { text: 'Cancelado', class: 'cancelled' }
+    };
+    
+    return statusMap[status] || { text: status, class: 'pending' };
+}
+
+// Função para formatar datas
+function formatOrderDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', {
         day: '2-digit',
@@ -124,151 +143,7 @@ function formatBrazilianDate(dateString) {
     });
 }
 
-async function loadOrderHistory() {
-    try {
-        const clientData = getAuthenticatedClient();
-        if (!clientData || !clientData.token) {
-            console.error('Cliente não autenticado ou token inválido para carregar histórico.');
-            displayOrderHistory([]);
-            return;
-        }
-
-        showLoadingModal();
-
-        const response = await fetch(`${API_BASE_URL}/orders/client`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${clientData.token}`
-            }
-        });
-
-        if (!response.ok) {
-            if (response.status === 401 || response.status === 403) {
-                getInvalidClientToken(response.status);
-                return;
-            }
-            
-            // Tenta extrair mensagem de erro da resposta
-            let errorMessage = 'Erro desconhecido';
-            try {
-                const errorData = await response.json();
-                errorMessage = errorData.message || errorData.error || `Erro HTTP ${response.status}`;
-            } catch (jsonError) {
-                errorMessage = `Erro HTTP ${response.status}: ${response.statusText}`;
-            }
-            
-            throw new Error(errorMessage);
-        }
-
-        const orders = await response.json();
-        displayOrderHistory(orders);
-
-    } catch (error) {
-        console.error('Erro ao carregar histórico de pedidos:', error);
-        const ordersList = document.querySelector('#orders-history .orders-list');
-        if (ordersList) {
-            // Determina a mensagem de erro baseada no tipo
-            let errorDisplayMessage = 'Não foi possível carregar seu histórico de pedidos.';
-            
-            if (error.name === 'TypeError' && error.message.includes('fetch')) {
-                errorDisplayMessage = 'Problema de conexão. Verifique sua internet e tente novamente.';
-            } else if (error.message.includes('HTTP')) {
-                errorDisplayMessage = `Erro do servidor: ${error.message}`;
-            }
-            
-            ordersList.innerHTML = `
-                <div class="error-message">
-                    <i class="fa fa-exclamation-circle"></i>
-                    <p>${errorDisplayMessage}</p>
-                    <button class="action-button" onclick="loadOrderHistory()">Tentar novamente</button>
-                </div>
-            `;
-        }
-    } finally {
-        hideLoadingModal();
-    }
-}
-
-function displayOrderHistory(orders) {
-    const ordersList = document.querySelector('#orders-history .orders-list');
-    if (!ordersList) return;
-
-    ordersList.innerHTML = '';
-
-    if (!orders || orders.length === 0) {
-        ordersList.innerHTML = `
-            <div class="empty-orders">
-                <i class="fa fa-shopping-bag"></i>
-                <p>Você ainda não fez nenhum pedido.</p>
-                <a href="../index.html" class="action-button">Explorar restaurantes</a>
-            </div>
-        `;
-        return;
-    }
-
-    // Ordena os pedidos por data de criação (mais recente primeiro)
-    orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    orders.forEach(order => {
-        const orderCard = createOrderCard(order);
-        ordersList.appendChild(orderCard);
-    });
-}
-
-function createOrderCard(order) {
-    const orderCard = document.createElement('div');
-    orderCard.className = 'order-card';
-    orderCard.dataset.orderId = order.id;
-
-    // Formatar data
-    const formattedDate = formatBrazilianDate(order.createdAt);
-
-    // Determinar status em português baseado no orderStatus
-    const status = getOrderStatusInfo(order.orderStatus);
-
-    // Determinar se foi entrega ou retirada
-    const isPickup = order.deliveryAddress === 'RETIRADA NO LOCAL';
-    const deliveryType = isPickup ? 'Retirada no local' : 'Entrega';
-
-    // Determinar a data de finalização
-    let completionDate = '';
-    if (order.finishedAt) {
-        completionDate = formatBrazilianDate(order.finishedAt);
-    } else if (order.canceledAt) {
-        completionDate = formatBrazilianDate(order.canceledAt);
-    }
-
-    orderCard.innerHTML = `
-        <div class="order-header">
-            <div class="order-info">
-                <h4>Pedido #${order.id}</h4>
-                <p class="order-date">${formattedDate}</p>
-                ${completionDate ? `<p class="order-completion-date">${order.finishedAt ? 'Finalizado' : 'Cancelado'} em: ${completionDate}</p>` : ''}
-            </div>
-            <span class="order-status ${status.class}">${status.text}</span>
-        </div>
-
-        <div class="order-customer-info">
-            <p><strong>Cliente:</strong> ${order.name}</p>
-            <p><strong>Tipo:</strong> ${deliveryType}</p>
-        </div>
-
-        <div class="order-delivery-info">
-            <p><i class="fa fa-map-marker"></i> ${isPickup ? 'Retirada no restaurante' : order.deliveryAddress}</p>
-        </div>
-
-        <div class="order-footer">
-            <span class="order-total">Total: R$ ${formatPrice(order.totalPrice)}</span>
-            <button class="order-details-button" onclick="showOrderDetails('${order.id}')">
-                Ver detalhes
-            </button>
-        </div>
-    `;
-
-    return orderCard;
-}
-
+// Função para mostrar detalhes de um pedido específico
 async function showOrderDetails(orderId) {
     try {
         const clientData = getAuthenticatedClient();
@@ -276,14 +151,15 @@ async function showOrderDetails(orderId) {
             Swal.fire({
                 icon: 'error',
                 title: 'Erro de autenticação',
-                text: 'Sessão expirada. Faça login novamente.',
+                text: 'Faça login novamente para ver os detalhes do pedido.',
                 confirmButtonColor: '#06CF90'
             });
             return;
         }
 
         showLoadingModal();
-
+        
+        // Busca detalhes específicos do pedido
         const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
             method: 'GET',
             headers: {
@@ -291,136 +167,157 @@ async function showOrderDetails(orderId) {
                 'Authorization': `Bearer ${clientData.token}`
             }
         });
-
+        
         if (!response.ok) {
-            if (response.status === 401 || response.status === 403) {
-                hideLoadingModal();
-                getInvalidClientToken(response.status);
-                return;
-            }
-            
-            // Tenta extrair mensagem de erro da resposta
-            let errorMessage = 'Falha ao carregar detalhes do pedido';
-            try {
-                const errorData = await response.json();
-                errorMessage = errorData.message || errorData.error || `Erro HTTP ${response.status}`;
-            } catch (jsonError) {
-                errorMessage = `Erro HTTP ${response.status}: ${response.statusText}`;
-            }
-            
-            throw new Error(errorMessage);
+            throw new Error('Falha ao carregar detalhes do pedido');
         }
-
-        const order = await response.json();
-        hideLoadingModal();
-
-        // Formatar data de criação
-        const orderDate = new Date(order.createdAt);
-        const formattedDate = orderDate.toLocaleDateString('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-
-        // Status em português
-        const statusMap = {
-            'FINALIZADOS': 'Finalizado',
-            'CANCELADOS': 'Cancelado',
-            'PENDENTES': 'Pendente',
-            'EM_PREPARO': 'Em Preparo'
-        };
-
-        const statusText = statusMap[order.orderStatus] || order.orderStatus;
-
-        // Determinar data de finalização/cancelamento
-        let completionInfo = '';
-        if (order.finishedAt) {
-            const finishedDate = new Date(order.finishedAt);
-            const finishedFormatted = finishedDate.toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            completionInfo = `<p><strong>Finalizado em:</strong> ${finishedFormatted}</p>`;
-        } else if (order.canceledAt) {
-            const canceledDate = new Date(order.canceledAt);
-            const canceledFormatted = canceledDate.toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            completionInfo = `<p><strong>Cancelado em:</strong> ${canceledFormatted}</p>`;
-        }
-
-        // Verificar se é retirada no local
-        const isPickup = order.deliveryAddress === 'RETIRADA NO LOCAL';
-
-        Swal.fire({
-            title: `Detalhes do Pedido #${order.id}`,
-            html: `
-                <div class="order-details-container">
-                    <div class="order-details-header">
-                        <p><strong>Data do pedido:</strong> ${formattedDate}</p>
-                        <p><strong>Status:</strong> <span class="order-status-text">${statusText}</span></p>
-                        ${completionInfo}
-                        <p><strong>Cliente:</strong> ${order.name}</p>
-                    </div>
-
-                    <div class="order-details-delivery">
-                        <h4>${isPickup ? 'Retirada' : 'Entrega'}</h4>
-                        <p>${isPickup ? 'Retirada no restaurante' : order.deliveryAddress}</p>
-                    </div>
-
-                    <div class="order-details-payment">
-                        <p class="order-total-text"><strong>Total: R$ ${formatPrice(order.totalPrice)}</strong></p>
-                    </div>
-
-                    <div class="order-note">
-                        <p><em>Para ver os itens detalhados do pedido, entre em contato com o restaurante.</em></p>
-                    </div>
-                </div>
-            `,
-            showCloseButton: true,
-            showConfirmButton: false,
-            width: '500px',
-            customClass: {
-                popup: 'order-details-modal'
-            }
-        });
-
+        
+        const orderDetails = await response.json();
+        displayOrderDetailsModal(orderDetails);
+        
     } catch (error) {
-        hideLoadingModal();
         console.error('Erro ao carregar detalhes do pedido:', error);
-        
-        // Determina mensagem de erro mais específica
-        let errorDisplayMessage = 'Não foi possível carregar os detalhes do pedido. Tente novamente.';
-        
-        if (error.name === 'TypeError' && error.message.includes('fetch')) {
-            errorDisplayMessage = 'Problema de conexão. Verifique sua internet e tente novamente.';
-        } else if (error.message.includes('HTTP')) {
-            errorDisplayMessage = error.message;
-        }
-        
         Swal.fire({
             icon: 'error',
             title: 'Erro',
-            text: errorDisplayMessage,
-            confirmButtonColor: '#06CF90',
-            footer: error.message.includes('HTTP') ? '' : 'Verifique sua conexão com a internet'
+            text: 'Não foi possível carregar os detalhes do pedido.',
+            confirmButtonColor: '#06CF90'
         });
+    } finally {
+        hideLoadingModal();
     }
 }
 
-// Função auxiliar para formatar preço (caso não esteja disponível globalmente)
-function formatPrice(priceInCents) {
-    if (typeof window.formatPrice === 'function') {
-        return window.formatPrice(priceInCents);
+// Função para exibir modal com detalhes do pedido
+function displayOrderDetailsModal(order) {
+    const statusInfo = getOrderStatusInfo(order.orderStatus);
+    const createdDate = formatOrderDate(order.createdAt);
+    
+    let detailsHtml = `
+        <div class="order-details-container">
+            <div class="order-details-header">
+                <h4>Pedido #${order.id}</h4>
+                <p>Realizado em: ${createdDate}</p>
+                <p class="order-status-text">Status: ${statusInfo.text}</p>
+            </div>
+            
+            <div class="order-details-customer">
+                <h4>Informações do Cliente</h4>
+                <p><strong>Nome:</strong> ${order.name}</p>
+                <p><strong>Endereço:</strong> ${order.deliveryAddress}</p>
+            </div>
+    `;
+    
+    // Se houver itens do pedido (se a API retornar essa informação)
+    if (order.items && order.items.length > 0) {
+        detailsHtml += `
+            <div class="order-details-items">
+                <h4>Itens do Pedido</h4>
+                <table class="order-items-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Qtd</th>
+                            <th>Preço</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        order.items.forEach(item => {
+            detailsHtml += `
+                <tr>
+                    <td>${item.name}</td>
+                    <td>${item.quantity}</td>
+                    <td>R$ ${formatPrice(item.price * item.quantity)}</td>
+                </tr>
+            `;
+        });
+        
+        detailsHtml += `
+                    </tbody>
+                </table>
+            </div>
+        `;
     }
-    return (priceInCents / 100).toFixed(2).replace('.', ',');
+    
+    detailsHtml += `
+            <div class="order-details-payment">
+                <div class="order-total-text">
+                    <strong>Total: R$ ${formatPrice(order.totalPrice)}</strong>
+                </div>
+            </div>
+    `;
+    
+    // Adiciona informações de finalização/cancelamento se existirem
+    if (order.finishedAt) {
+        detailsHtml += `
+            <div class="order-details-delivery">
+                <p><strong>Finalizado em:</strong> ${formatOrderDate(order.finishedAt)}</p>
+            </div>
+        `;
+    }
+    
+    if (order.canceledAt) {
+        detailsHtml += `
+            <div class="order-details-delivery">
+                <p><strong>Cancelado em:</strong> ${formatOrderDate(order.canceledAt)}</p>
+            </div>
+        `;
+    }
+    
+    detailsHtml += `</div>`;
+    
+    Swal.fire({
+        title: 'Detalhes do Pedido',
+        html: detailsHtml,
+        width: '600px',
+        showCloseButton: true,
+        showConfirmButton: false,
+        customClass: {
+            popup: 'order-details-modal'
+        }
+    });
+}
+
+// Função para mostrar loading na seção de histórico
+function showLoadingOrderHistory() {
+    const ordersList = document.querySelector('#orders-history .orders-list');
+    if (ordersList) {
+        ordersList.innerHTML = `
+            <div class="loading-orders">
+                <i class="fa fa-spinner fa-pulse"></i>
+                <p>Carregando seu histórico de pedidos...</p>
+            </div>
+        `;
+    }
+}
+
+// Função para mostrar estado vazio
+function displayEmptyOrderHistory(message = 'Você ainda não fez nenhum pedido.') {
+    const ordersList = document.querySelector('#orders-history .orders-list');
+    if (ordersList) {
+        ordersList.innerHTML = `
+            <div class="empty-orders">
+                <i class="fa fa-shopping-bag"></i>
+                <p>${message}</p>
+            </div>
+        `;
+    }
+}
+
+// Função para mostrar erro
+function displayErrorOrderHistory(message) {
+    const ordersList = document.querySelector('#orders-history .orders-list');
+    if (ordersList) {
+        ordersList.innerHTML = `
+            <div class="error-message">
+                <i class="fa fa-exclamation-circle"></i>
+                <p>${message}</p>
+                <button class="action-button" onclick="loadOrderHistory()">
+                    Tentar novamente
+                </button>
+            </div>
+        `;
+    }
 }

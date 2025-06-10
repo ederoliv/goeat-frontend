@@ -129,7 +129,44 @@
   background-color: #3aa9d8;
 }
 
-/* Detalhes do pedido no modal */
+/* Detalhes do pedido */
+.order-details-preview {
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.order-customer,
+.order-delivery {
+  margin-bottom: 10px;
+}
+
+.order-customer p,
+.order-delivery p {
+  margin: 5px 0;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Modal de detalhes customizado */
+.order-details-modal {
+  text-align: left !important;
+}
+
+.order-details-customer {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.order-details-customer h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 16px;
+}
 .order-details-container {
   text-align: left;
   padding: 10px;

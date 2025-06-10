@@ -19,7 +19,7 @@ function setupTabs() {
             if (tabContent) {
                 tabContent.classList.add('active');
 
-                // Carrega conteúdo específico da aba, se necessário
+                // Carrega conteúdo específico da aba quando necessário
                 if (tabId === 'orders-history') {
                     loadOrderHistory(); // De profile-history.js
                 } else if (tabId === 'addresses') {
@@ -34,27 +34,25 @@ function setupTabs() {
 }
 
 function setupProfileButtonEvents() {
-    // Botão de adicionar endereço (delegado para profile-addresses.js via onclick no HTML)
-    // const addAddressButton = document.querySelector('.add-address-button');
-    // if (addAddressButton) {
-    //     addAddressButton.addEventListener('click', showAddAddressForm); // De profile-addresses.js
-    // }
-    
+    // Botão de logout
     const logoutButton = document.getElementById('logout-button');
     if (logoutButton) {
         logoutButton.addEventListener('click', handleLogout); // De profile-config.js
     }
     
+    // Botão de salvar perfil
     const saveProfileButton = document.querySelector('#profile-info .save-button');
     if (saveProfileButton) {
         saveProfileButton.addEventListener('click', saveProfileChanges); // De profile-details.js
     }
     
+    // Botão de alterar senha
     const changePasswordButton = document.querySelector('.change-password-button');
     if (changePasswordButton) {
         changePasswordButton.addEventListener('click', showChangePasswordForm); // De profile-config.js
     }
     
+    // Botão de excluir conta
     const deleteAccountButton = document.querySelector('.delete-account-button');
     if (deleteAccountButton) {
         deleteAccountButton.addEventListener('click', confirmDeleteAccount); // De profile-config.js
@@ -65,25 +63,23 @@ function setupProfileButtonEvents() {
 window.onload = function() {
     if (!isAuthenticatedClient()) {
         // Redireciona para a página de login se não estiver autenticado
-        // Ajuste o caminho se a estrutura de pastas for diferente
         window.location.href = "../../../loginClient/index.html"; 
     } else {
-        // Funções globais/utilitárias como getAuthenticatedClient, API_BASE_URL, show/hideLoadingModal
-        // devem estar disponíveis (assumindo que clientSessionHandler.js e utilities.js são carregados antes).
-
+        // Carrega os dados iniciais necessários
         loadUserProfile();      // De profile-details.js
         loadClientAddresses();  // De profile-addresses.js
         
+        // Configura os eventos e navegação
         setupTabs();
         setupProfileButtonEvents();
-        setupProfileImageUpload(); // Nova função para configurar upload de imagem
+        setupProfileImageUpload(); // De profile-details.js
 
-        // Garante que a aba de configurações também seja inicializada se for a padrão
+        // Configura abas específicas se forem a padrão ativa
         if(document.querySelector('.tab-button[data-tab="settings"].active')) {
-            setupSettingsTab();
+            setupSettingsTab(); // De profile-config.js
         }
-        if(document.querySelector('.tab-button[data-tab="orders-history"].active')) {
-            loadOrderHistory();
-        }
+        
+        // Não carrega o histórico automaticamente para melhorar performance
+        // Será carregado apenas quando o usuário clicar na aba
     }
 };
