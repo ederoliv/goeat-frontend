@@ -11,13 +11,11 @@
       crossorigin="anonymous"
     />
     
-
-    <link rel="stylesheet" href="../../../libraries/styles/tables.css"/>
     <link rel="stylesheet" href="../../../libraries/styles/colors.css"/>
     <link rel="stylesheet" href="../../../libraries/styles/dashboard.css"/>
     <link rel="stylesheet" href="styles/profile-main.css"/>
     
-    <title>Histórico de Pedidos - Goeat</title>
+    <title>Perfil do Restaurante - Goeat</title>
   </head>
   <body id="body">
     <div class="container">
@@ -29,55 +27,484 @@
           <p id="userName"></p>
         </div>
         <div class="navbar__right">
-          <a href="#" onclick="loadOrderHistory()">
-            <i class="fa fa-refresh" aria-hidden="true" title="Atualizar histórico"></i>
+          <a href="#" onclick="saveProfile()">
+            <i class="fa fa-save" aria-hidden="true" title="Salvar alterações"></i>
           </a>
-          <a href="index=.html">
+          <a href="index.html">
             <i class="fa fa-user-circle-o" aria-hidden="true"></i>
           </a>
         </div>
       </nav>
 
       <main>
-        <div class="product-container">
-          <!-- Título da página -->
-          <h2 class="page-title">Histórico de Pedidos</h2>
-          
-          <!-- Container de pesquisa -->
-          <div class="search-container">
-            <input type="text" class="input" id="searchInput" placeholder="Pesquisar por pedido, cliente...">
-            <button type="button" class="search-button" id="searchButton" onclick="searchOrders()">
-              Pesquisar
+        <div class="profile-container">
+          <h2 class="page-title">
+            <i class="fa fa-user-circle-o"></i>
+            Perfil do Restaurante
+          </h2>
+
+          <!-- Status do Plano -->
+          <div class="plan-status-card">
+            <div class="plan-info">
+              <i class="fa fa-star plan-icon"></i>
+              <div class="plan-details">
+                <h3>Plano Basicão</h3>
+                <p>Plano ativo até 15/12/2025</p>
+              </div>
+            </div>
+            <button class="upgrade-button">
+              <i class="fa fa-arrow-up"></i>
+              Fazer Upgrade
             </button>
           </div>
 
-          <!-- Filtros de período -->
-          <div class="period-filters">
-            <button class="period-button active" data-period="all" onclick="filterByPeriod('all')">Todos</button>
-            <button class="period-button" data-period="today" onclick="filterByPeriod('today')">Hoje</button>
-            <button class="period-button" data-period="week" onclick="filterByPeriod('week')">Esta Semana</button>
-            <button class="period-button" data-period="month" onclick="filterByPeriod('month')">Este Mês</button>
+          <!-- Tabs de navegação -->
+          <div class="profile-tabs">
+            <button class="tab-button active" data-tab="restaurant-info">
+              <i class="fa fa-info-circle"></i>
+              Dados do Restaurante
+            </button>
+            <button class="tab-button" data-tab="hours-settings">
+              <i class="fa fa-clock-o"></i>
+              Horários de Funcionamento
+            </button>
+            <button class="tab-button" data-tab="menu-tags">
+              <i class="fa fa-tags"></i>
+              Tags do Cardápio
+            </button>
           </div>
 
-          <!-- Tabela de pedidos -->
-          <div class="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Pedido</th>
-                  <th>Data/Hora</th>
-                  <th>Cliente</th>
-                  <th>Itens</th>
-                  <th>Tipo</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody id="tbody">
-                <!-- Os pedidos serão inseridos aqui via JavaScript -->
-              </tbody>
-            </table>
+          <!-- Conteúdo das tabs -->
+          <div class="tab-content active" id="restaurant-info">
+            <div class="info-section">
+              <h3>
+                <i class="fa fa-building"></i>
+                Informações Básicas
+              </h3>
+              
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="restaurant-name">Nome do Restaurante</label>
+                  <input type="text" id="restaurant-name" value="Restaurante do João" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                  <label for="restaurant-category">Categoria</label>
+                  <select id="restaurant-category" class="form-input">
+                    <option value="brasileira">Comida Brasileira</option>
+                    <option value="italiana">Italiana</option>
+                    <option value="japonesa">Japonesa</option>
+                    <option value="lanches">Lanches</option>
+                    <option value="pizzaria">Pizzaria</option>
+                    <option value="vegetariana">Vegetariana</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label for="restaurant-phone">Telefone</label>
+                  <input type="tel" id="restaurant-phone" value="(54) 99999-9999" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                  <label for="restaurant-email">E-mail</label>
+                  <input type="email" id="restaurant-email" value="contato@restaurantedojoao.com" class="form-input">
+                </div>
+              </div>
+            </div>
+
+            <div class="info-section">
+              <h3>
+                <i class="fa fa-map-marker"></i>
+                Endereço
+              </h3>
+              
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="cep">CEP</label>
+                  <div class="input-with-button">
+                    <input type="text" id="cep" value="95020-000" class="form-input">
+                    <button class="search-cep-button" onclick="searchCep()">
+                      <i class="fa fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label for="street">Rua</label>
+                  <input type="text" id="street" value="Rua das Flores" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                  <label for="number">Número</label>
+                  <input type="text" id="number" value="123" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                  <label for="complement">Complemento</label>
+                  <input type="text" id="complement" value="Sala 1" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                  <label for="neighborhood">Bairro</label>
+                  <input type="text" id="neighborhood" value="Centro" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                  <label for="city">Cidade</label>
+                  <input type="text" id="city" value="Caxias do Sul" class="form-input">
+                </div>
+              </div>
+            </div>
+
+            <div class="info-section">
+              <h3>
+                <i class="fa fa-truck"></i>
+                Configurações de Entrega
+              </h3>
+              
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="delivery-fee">Taxa de Entrega (R$)</label>
+                  <input type="number" id="delivery-fee" value="5.00" step="0.01" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                  <label for="delivery-time">Tempo de Entrega (min)</label>
+                  <input type="text" id="delivery-time" value="30-45" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                  <label for="minimum-order">Pedido Mínimo (R$)</label>
+                  <input type="number" id="minimum-order" value="25.00" step="0.01" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                  <label for="delivery-radius">Raio de Entrega (km)</label>
+                  <input type="number" id="delivery-radius" value="5" step="0.1" class="form-input">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab de Horários -->
+          <div class="tab-content" id="hours-settings">
+            <div class="restaurant-status-control">
+              <div class="status-display">
+                <div class="status-indicator open" id="restaurant-status-indicator"></div>
+                <div class="status-text">
+                  <h3 id="restaurant-status-text">Restaurante Aberto</h3>
+                  <p id="restaurant-status-description">Funcionando normalmente</p>
+                </div>
+              </div>
+              <button class="toggle-status-button open" id="toggle-status-button" onclick="toggleRestaurantStatus()">
+                <i class="fa fa-power-off"></i>
+                Fechar Temporariamente
+              </button>
+            </div>
+
+            <div class="hours-section">
+              <h3>
+                <i class="fa fa-calendar"></i>
+                Horários de Funcionamento
+              </h3>
+              
+              <div class="days-schedule">
+                <div class="day-schedule">
+                  <div class="day-header">
+                    <label class="day-toggle">
+                      <input type="checkbox" checked>
+                      <span class="day-name">Segunda-feira</span>
+                    </label>
+                  </div>
+                  <div class="time-inputs">
+                    <div class="time-group">
+                      <label>Abertura:</label>
+                      <input type="time" value="08:00" class="time-input">
+                    </div>
+                    <div class="time-group">
+                      <label>Fechamento:</label>
+                      <input type="time" value="22:00" class="time-input">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="day-schedule">
+                  <div class="day-header">
+                    <label class="day-toggle">
+                      <input type="checkbox" checked>
+                      <span class="day-name">Terça-feira</span>
+                    </label>
+                  </div>
+                  <div class="time-inputs">
+                    <div class="time-group">
+                      <label>Abertura:</label>
+                      <input type="time" value="08:00" class="time-input">
+                    </div>
+                    <div class="time-group">
+                      <label>Fechamento:</label>
+                      <input type="time" value="22:00" class="time-input">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="day-schedule">
+                  <div class="day-header">
+                    <label class="day-toggle">
+                      <input type="checkbox" checked>
+                      <span class="day-name">Quarta-feira</span>
+                    </label>
+                  </div>
+                  <div class="time-inputs">
+                    <div class="time-group">
+                      <label>Abertura:</label>
+                      <input type="time" value="08:00" class="time-input">
+                    </div>
+                    <div class="time-group">
+                      <label>Fechamento:</label>
+                      <input type="time" value="22:00" class="time-input">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="day-schedule">
+                  <div class="day-header">
+                    <label class="day-toggle">
+                      <input type="checkbox" checked>
+                      <span class="day-name">Quinta-feira</span>
+                    </label>
+                  </div>
+                  <div class="time-inputs">
+                    <div class="time-group">
+                      <label>Abertura:</label>
+                      <input type="time" value="08:00" class="time-input">
+                    </div>
+                    <div class="time-group">
+                      <label>Fechamento:</label>
+                      <input type="time" value="22:00" class="time-input">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="day-schedule">
+                  <div class="day-header">
+                    <label class="day-toggle">
+                      <input type="checkbox" checked>
+                      <span class="day-name">Sexta-feira</span>
+                    </label>
+                  </div>
+                  <div class="time-inputs">
+                    <div class="time-group">
+                      <label>Abertura:</label>
+                      <input type="time" value="08:00" class="time-input">
+                    </div>
+                    <div class="time-group">
+                      <label>Fechamento:</label>
+                      <input type="time" value="23:00" class="time-input">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="day-schedule">
+                  <div class="day-header">
+                    <label class="day-toggle">
+                      <input type="checkbox" checked>
+                      <span class="day-name">Sábado</span>
+                    </label>
+                  </div>
+                  <div class="time-inputs">
+                    <div class="time-group">
+                      <label>Abertura:</label>
+                      <input type="time" value="10:00" class="time-input">
+                    </div>
+                    <div class="time-group">
+                      <label>Fechamento:</label>
+                      <input type="time" value="23:00" class="time-input">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="day-schedule">
+                  <div class="day-header">
+                    <label class="day-toggle">
+                      <input type="checkbox">
+                      <span class="day-name">Domingo</span>
+                    </label>
+                  </div>
+                  <div class="time-inputs disabled">
+                    <div class="time-group">
+                      <label>Abertura:</label>
+                      <input type="time" value="10:00" class="time-input" disabled>
+                    </div>
+                    <div class="time-group">
+                      <label>Fechamento:</label>
+                      <input type="time" value="20:00" class="time-input" disabled>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="schedule-actions">
+                <button class="copy-schedule-button" onclick="copyTodayToAll()">
+                  <i class="fa fa-copy"></i>
+                  Copiar Horário para Todos os Dias
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab de Tags do Cardápio -->
+          <div class="tab-content" id="menu-tags">
+            <div class="tags-section">
+              <h3>
+                <i class="fa fa-tags"></i>
+                Tags do Cardápio
+              </h3>
+              <p class="tags-description">
+                Selecione as categorias que melhor descrevem o seu cardápio. Isso ajuda os clientes a encontrar seu restaurante.
+              </p>
+              
+              <div class="tags-grid">
+                <label class="tag-option">
+                  <input type="checkbox" checked>
+                  <span class="tag-label">
+                    <i class="fa fa-cutlery"></i>
+                    Comida Brasileira
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-fish"></i>
+                    Sushi
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox" checked>
+                  <span class="tag-label">
+                    <i class="fa fa-fire"></i>
+                    Churrasco
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-circle-o"></i>
+                    Pizza
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox" checked>
+                  <span class="tag-label">
+                    <i class="fa fa-leaf"></i>
+                    Carnes
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-coffee"></i>
+                    Massas
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox" checked>
+                  <span class="tag-label">
+                    <i class="fa fa-glass"></i>
+                    Bebidas
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-square"></i>
+                    Marmitas
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-heart"></i>
+                    Doces
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-birthday-cake"></i>
+                    Bolos
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-hamburger"></i>
+                    Lanches
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-leaf"></i>
+                    Vegetariano
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-seedling"></i>
+                    Vegano
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-ice-cream"></i>
+                    Açaí
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-cookie"></i>
+                    Salgados
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-tint"></i>
+                    Sucos
+                  </span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botões de ação -->
+          <div class="profile-actions">
+            <button class="cancel-button" onclick="cancelChanges()">
+              <i class="fa fa-times"></i>
+              Cancelar
+            </button>
+            <button class="save-button" onclick="saveProfile()">
+              <i class="fa fa-save"></i>
+              Salvar Alterações
+            </button>
           </div>
         </div>
       </main>
@@ -100,9 +527,9 @@
             <i class="fa fa-home"></i>
             <a class="link-text" href="../acompanhar/index.html">Acompanhar</a>
           </div>
-          <div class="sidebar__link active_menu_linke">
+          <div class="sidebar__link">
             <i class="fa fa-calendar-check-o"></i>
-            <a class="link-text" href="index.html">Histórico</a>
+            <a class="link-text" href="../history/index.html">Histórico</a>
           </div>
           <div class="sidebar__link">
             <i class="fa fa-money"></i>
