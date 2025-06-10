@@ -1,0 +1,241 @@
+/* pages/client/profile/styles/profile-history.css */
+/* Estilos específicos para histórico de pedidos */
+
+/* Lista de pedidos */
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.order-card {
+  background-color: white;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.order-info h4 {
+  margin: 0 0 5px 0;
+  font-size: 18px;
+  color: var(--goeat-primary);
+}
+
+.order-date {
+  font-size: 14px;
+  color: #888;
+  margin: 0;
+}
+
+.order-status {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.order-status.pending {
+  background-color: #fff9e6;
+  color: #f0b400;
+}
+
+.order-status.processing {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.order-status.delivered {
+  background-color: #e6f7f0;
+  color: var(--goeat-green);
+}
+
+.order-status.cancelled {
+  background-color: #fff1f0;
+  color: #ff4d4f;
+}
+
+.order-restaurant {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.order-restaurant img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 15px;
+}
+
+.order-restaurant p {
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.order-items {
+  margin-bottom: 15px;
+}
+
+.order-items p {
+  margin: 5px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.order-total {
+  font-weight: 700;
+  color: #333;
+}
+
+.order-details-button {
+  background-color: var(--goeat-primary);
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.order-details-button:hover {
+  background-color: #3aa9d8;
+}
+
+/* Detalhes do pedido no modal */
+.order-details-container {
+  text-align: left;
+  padding: 10px;
+}
+
+.order-details-header {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.order-status-text {
+  color: var(--goeat-green);
+  font-weight: 600;
+}
+
+.order-details-restaurant {
+  margin-bottom: 15px;
+}
+
+.order-details-items {
+  margin-bottom: 15px;
+}
+
+.order-details-items h4 {
+  margin-bottom: 10px;
+  font-size: 16px;
+  color: #333;
+}
+
+.order-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.order-items-table th {
+  background-color: #f9f9f9;
+  padding: 8px;
+  text-align: left;
+  font-weight: 600;
+  color: #555;
+  border-bottom: 1px solid #eee;
+}
+
+.order-items-table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.order-details-payment {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+}
+
+.order-total-text {
+  color: var(--goeat-green);
+  font-weight: 700;
+}
+
+.order-details-delivery {
+  margin-bottom: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+/* Estado vazio */
+.empty-orders {
+  text-align: center;
+  padding: 40px 20px;
+  color: #777;
+}
+
+.empty-orders i {
+  font-size: 48px;
+  color: #ddd;
+  margin-bottom: 15px;
+}
+
+.empty-orders p {
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+  .order-header,
+  .order-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .order-status,
+  .order-details-button {
+    margin-top: 10px;
+  }
+  
+  .order-items-table {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .order-card {
+    padding: 10px;
+  }
+}

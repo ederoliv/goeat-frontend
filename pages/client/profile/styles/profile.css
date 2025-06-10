@@ -757,3 +757,343 @@ input:checked + .slider:before {
   display: block;
   margin-top: 4px;
 }
+
+/* Estilos adicionais para histórico de pedidos */
+
+/* Mensagem de erro */
+.error-message {
+  text-align: center;
+  padding: 30px;
+  background-color: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.error-message i {
+  font-size: 48px;
+  color: var(--goeat-red);
+  margin-bottom: 15px;
+  display: block;
+}
+
+.error-message p {
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.error-message .action-button {
+  background-color: var(--goeat-primary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.error-message .action-button:hover {
+  background-color: #3aa9d8;
+}
+
+/* Mensagem de histórico vazio */
+.empty-orders {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.empty-orders i {
+  font-size: 64px;
+  color: #ddd;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.empty-orders p {
+  color: #666;
+  margin-bottom: 25px;
+  font-size: 18px;
+}
+
+.empty-orders .action-button {
+  display: inline-block;
+  background-color: var(--goeat-tertiary);
+  color: white;
+  text-decoration: none;
+  padding: 12px 25px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.empty-orders .action-button:hover {
+  background-color: #05b07e;
+}
+
+/* Estilos específicos para o card de pedido com novos dados */
+.order-completion-date {
+  font-size: 13px;
+  color: #888;
+  margin: 3px 0 0 0;
+  font-style: italic;
+}
+
+.order-customer-info {
+  margin-bottom: 15px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid var(--goeat-primary);
+}
+
+.order-customer-info p {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.order-delivery-info {
+  margin-bottom: 15px;
+  padding: 12px;
+  background-color: #f0f8ff;
+  border-radius: 6px;
+  border-left: 3px solid var(--goeat-blue);
+}
+
+.order-delivery-info p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.order-delivery-info i {
+  color: var(--goeat-blue);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+/* Animação suave para os cards */
+.order-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Melhorias nos botões */
+.order-details-button {
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.order-details-button:hover {
+  background-color: #3aa9d8;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(83, 189, 235, 0.3);
+}
+
+/* Estilos para a modal de detalhes do pedido */
+.order-details-modal {
+  font-family: 'Lato', sans-serif !important;
+}
+
+.order-details-container {
+  text-align: left;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.order-details-header {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #eee;
+}
+
+.order-details-header p {
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+.order-status-text {
+  color: var(--goeat-tertiary);
+  font-weight: 600;
+  background-color: rgba(6, 207, 144, 0.1);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.order-details-delivery {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f0f8ff;
+  border-radius: 8px;
+  border-left: 4px solid var(--goeat-primary);
+}
+
+.order-details-delivery h4 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.order-details-delivery h4::before {
+  content: "\f041";
+  font-family: FontAwesome;
+  color: var(--goeat-primary);
+}
+
+.order-details-delivery p {
+  margin: 0;
+  color: #555;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.order-details-payment {
+  padding: 15px;
+  background-color: #f0fff4;
+  border-radius: 8px;
+  border-left: 4px solid var(--goeat-tertiary);
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.order-total-text {
+  color: var(--goeat-tertiary);
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.order-note {
+  padding: 12px;
+  background-color: #fff7e6;
+  border-radius: 6px;
+  border-left: 3px solid #ffa500;
+  text-align: center;
+}
+
+.order-note p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Loading específico para histórico */
+.loading-orders {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.loading-orders i {
+  font-size: 48px;
+  color: var(--goeat-primary);
+  margin-bottom: 15px;
+  display: block;
+}
+
+.loading-orders p {
+  margin: 0;
+  font-size: 18px;
+}
+
+/* Responsividade para a modal */
+@media (max-width: 768px) {
+  .order-details-container {
+    max-height: 60vh;
+  }
+  
+  .order-customer-info,
+  .order-delivery-info {
+    padding: 10px;
+  }
+  
+  .order-customer-info p,
+  .order-delivery-info p {
+    font-size: 13px;
+  }
+  
+  .order-details-modal {
+    width: 95% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-card {
+    margin-bottom: 15px;
+  }
+  
+  .order-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .order-status {
+    align-self: flex-end;
+  }
+  
+  .order-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .order-details-button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Loading de endereços específico */
+.loading-addresses {
+  text-align: center;
+  padding: 30px;
+  color: #666;
+}
+
+.loading-addresses i {
+  font-size: 32px;
+  color: var(--goeat-primary);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.loading-addresses p {
+  margin: 0;
+  font-size: 16px;
+} center;
+  padding: 30px;
+  color: #666;
+}
+
+.loading-addresses i {
+  font-size: 32px;
+  color: var(--goeat-primary);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.loading-addresses p {
+  margin: 0;
+  font-size: 16px;
+}

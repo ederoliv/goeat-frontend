@@ -9,10 +9,20 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
     integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous"/>
+  
+  <!-- Estilos globais -->
   <link rel="stylesheet" href="../../../libraries/styles/client.css">
   <link rel="stylesheet" href="../../../libraries/styles/colors.css">
   <link rel="stylesheet" href="../../../libraries/styles/navbar.css">
-  <link rel="stylesheet" href="../../../libraries/styles/profile.css"> <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <!-- Estilos modulares do perfil -->
+  <link rel="stylesheet" href="styles/profile-main.css">
+  <link rel="stylesheet" href="styles/profile-details.css">
+  <link rel="stylesheet" href="styles/profile-addresses.css">
+  <link rel="stylesheet" href="styles/profile-history.css">
+  <link rel="stylesheet" href="styles/profile-config.css">
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -91,7 +101,10 @@
     <div class="tab-content" id="orders-history">
       <h3>Histórico de Pedidos</h3>
       <div class="orders-list">
-        <p>Sem pedidos.</p>
+        <div class="empty-orders">
+          <i class="fa fa-shopping-bag"></i>
+          <p>Você ainda não fez nenhum pedido.</p>
+        </div>
       </div>
     </div>
     
@@ -138,14 +151,16 @@
   <p>Vitório Batistti, nº 1856, Jardim Eldorado, Caxias do Sul/RS</p>
 </footer>
 
+<!-- Scripts globais -->
 <script src="../../../libraries/scripts/routes.js"></script>
 <script src="../../../libraries/scripts/clientSessionHandler.js"></script>
 <script src="../../../libraries/scripts/utilities.js"></script>
 
-<script src="../../../libraries/scripts/profile/profile-details.js"></script>
-<script src="../../../libraries/scripts/profile/profile-history.js"></script>
-<script src="../../../libraries/scripts/profile/profile-addresses.js"></script>
-<script src="../../../libraries/scripts/profile/profile-config.js"></script>
-<script src="../../../libraries/scripts/profile/profile-main.js"></script>
+<!-- Scripts modulares do perfil -->
+<script src="scripts/profile-details.js"></script>
+<script src="scripts/profile-history.js"></script>
+<script src="scripts/profile-addresses.js"></script>
+<script src="scripts/profile-config.js"></script>
+<script src="scripts/profile-main.js"></script>
 </body>
 </html>

@@ -1,0 +1,179 @@
+/* pages/client/profile/styles/profile-config.css */
+/* Estilos específicos para configurações e preferências */
+
+/* Seções de configurações */
+.settings-section {
+  margin-bottom: 30px;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.settings-section h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.settings-option {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.settings-option p {
+  margin: 0;
+  color: #555;
+}
+
+/* Switch toggle */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--goeat-tertiary);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--goeat-tertiary);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 24px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* Botões de ação das configurações */
+.change-password-button,
+.delete-account-button {
+  display: block;
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.change-password-button {
+  background-color: var(--goeat-blue);
+  color: white;
+}
+
+.change-password-button:hover {
+  background-color: #3aa9d8;
+}
+
+.delete-account-button {
+  background-color: #f0f0f0;
+  color: var(--goeat-red);
+  border: 1px solid #ddd;
+}
+
+.delete-account-button:hover {
+  background-color: #ffebeb;
+  border-color: #ffbaba;
+}
+
+/* Botão de logout */
+#logout-button {
+  background-color: var(--goeat-red);
+}
+
+#logout-button:hover {
+  background-color: #d32f2f;
+}
+
+/* Customização do SweetAlert2 */
+.swal2-popup {
+  font-family: 'Lato', sans-serif;
+  border-radius: 12px;
+}
+
+.swal2-title {
+  color: #333;
+  font-size: 22px;
+}
+
+.swal2-input {
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  font-size: 16px;
+  color: #555;
+  margin: 5px 0 10px 0;
+}
+
+.swal2-input:focus {
+  border-color: var(--goeat-primary);
+  box-shadow: 0 0 0 1px var(--goeat-primary);
+}
+
+.swal2-confirm {
+  background-color: var(--goeat-tertiary) !important;
+}
+
+.swal2-cancel {
+  background-color: #aaa !important;
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+  .settings-section {
+    padding: 15px;
+  }
+  
+  .settings-option {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .swal2-popup {
+    width: 90% !important;
+    padding: 15px;
+  }
+}

@@ -1,0 +1,85 @@
+/* pages/client/profile/styles/profile-main.css */
+/* Estilos principais e estrutura geral do perfil */
+
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap");
+
+/* Container principal do perfil */
+.profile-container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* Tabs de navegação */
+.profile-tabs {
+  display: flex;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #eee;
+  overflow-x: auto;
+}
+
+.tab-button {
+  padding: 15px 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #666;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.tab-button:hover {
+  color: var(--goeat-primary);
+}
+
+.tab-button.active {
+  color: var(--goeat-primary);
+  border-bottom: 3px solid var(--goeat-primary);
+  font-weight: 600;
+}
+
+/* Conteúdo das tabs */
+.tab-content {
+  display: none;
+  padding: 25px;
+}
+
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsividade para tabs */
+@media screen and (max-width: 768px) {
+  .profile-tabs {
+    flex-wrap: wrap;
+  }
+  
+  .tab-button {
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+    padding: 12px 10px;
+  }
+  
+  .tab-content {
+    padding: 15px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .tab-content {
+    padding: 15px;
+  }
+}
