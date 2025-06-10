@@ -76,6 +76,7 @@ window.onload = function() {
         
         setupTabs();
         setupProfileButtonEvents();
+        setupProfileImageUpload(); // Nova função para configurar upload de imagem
 
         // Garante que a aba de configurações também seja inicializada se for a padrão
         if(document.querySelector('.tab-button[data-tab="settings"].active')) {

@@ -43,8 +43,14 @@
     
     <div class="tab-content active" id="profile-info">
       <div class="profile-header">
-        <div class="profile-avatar">
-          <i class="fa fa-user-circle-o"></i>
+        <div class="profile-avatar" id="profile-avatar-container">
+          <img id="profile-avatar-image" src="" alt="Foto do perfil" style="display: none;">
+          <i id="profile-avatar-icon" class="fa fa-user-circle-o"></i>
+          <div class="avatar-upload-overlay">
+            <i class="fa fa-camera"></i>
+            <span>Alterar foto</span>
+          </div>
+          <input type="file" id="profile-image-input" accept="image/jpeg,image/jpg,image/png,image/webp,image/gif,image/bmp" style="display: none;">
         </div>
         <div class="profile-details">
           <h2 id="user-name-display">Carregando...</h2>
