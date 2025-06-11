@@ -230,10 +230,32 @@ function createProductCard(product, container) {
     const cardDetails = document.createElement('div');
     cardDetails.className = 'card-details';
 
-    const image = document.createElement('img');
-    image.className = 'product-image';
-    image.src = product.image || `${root}${routes.assets}foods.png`;
-    image.alt = product.name;
+    // Container da imagem para permitir placeholder
+    const imageContainer = document.createElement('div');
+    imageContainer.className = 'product-image-container';
+
+    // Verifica se tem imageUrl válida
+    if (product.imageUrl && product.imageUrl.trim() !== '') {
+        // Tem imagem - cria elemento img normal
+        const image = document.createElement('img');
+        image.className = 'product-image';
+        image.src = product.imageUrl;
+        image.alt = product.name;
+        
+        // Adiciona evento de erro para fallback
+        image.onerror = function() {
+            // Se a imagem falhar ao carregar, mostra o placeholder
+            imageContainer.innerHTML = '';
+            const placeholder = createImagePlaceholder();
+            imageContainer.appendChild(placeholder);
+        };
+        
+        imageContainer.appendChild(image);
+    } else {
+        // Não tem imagem - cria placeholder
+        const placeholder = createImagePlaceholder();
+        imageContainer.appendChild(placeholder);
+    }
 
     const divProductDetails = document.createElement('div');
     divProductDetails.className = 'product-details';
@@ -278,7 +300,7 @@ function createProductCard(product, container) {
     addToCartButton.appendChild(addToCartButtonIcon);
     divQuantity.append(minusButton, quantityField, plusButton);
     divProductDetails.append(productName, productDescription, productPrice);
-    cardDetails.append(image, divProductDetails, divQuantity);
+    cardDetails.append(imageContainer, divProductDetails, divQuantity);
     card.append(cardDetails, addToCartButton);
     container.appendChild(card);
 
@@ -303,7 +325,7 @@ function createProductCard(product, container) {
                 product.name, 
                 product.price, 
                 quantity,
-                product.image || null
+                product.imageUrl || null
             );
             
             // Efeito visual de adicionado
@@ -323,6 +345,24 @@ function createProductCard(product, container) {
         }
     });
 }
+
+// Função para criar placeholder quando não há imagem
+function createImagePlaceholder() {
+    const placeholder = document.createElement('div');
+    placeholder.className = 'product-image-placeholder';
+    
+    const icon = document.createElement('i');
+    icon.className = 'fa fa-camera-retro';
+    
+    const text = document.createElement('span');
+    text.textContent = 'Sem foto';
+    
+    placeholder.appendChild(icon);
+    placeholder.appendChild(text);
+    
+    return placeholder;
+}
+
 
 // Evento para carregar mais produtos quando chegar ao final da página (paginação)
 window.addEventListener('scroll', () => {
