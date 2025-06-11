@@ -1,6 +1,7 @@
 /**
  * Arquivo responsável pelas operações de API para produtos
  * Inclui adição e atualização de produtos
+ * VERSÃO ATUALIZADA COM UPLOAD DE IMAGEM
  */
 
 /**
@@ -10,8 +11,12 @@ function addProduct() {
   const name = document.getElementById("nameInput").value
   const description = document.getElementById("descriptionInput").value
   const price = parseFloat(document.getElementById("priceInput").value) || 0
-  const imageUrl = document.getElementById("imageUrlInput").value
   const categoryId = document.getElementById("categoryInput").value
+
+  // Obter o CID da imagem atual ou usar o valor do campo imageUrl
+  const currentImageCid = getCurrentProductImageCid();
+  const imageUrlField = document.getElementById("imageUrlInput").value;
+  const imageUrl = currentImageCid || imageUrlField || "";
 
   if (!name || price <= 0) {
     goeatAlert("warning", "Por favor, preencha os campos obrigatórios corretamente.")
@@ -22,7 +27,7 @@ function addProduct() {
     name,
     description,
     price,
-    imageUrl,
+    imageUrl, // Agora pode ser um CID da imagem uploadada
     menuId: userData.id,
     categoryId: categoryId || null
   }
@@ -43,6 +48,8 @@ function addProduct() {
         if (modal) {
           modal.remove()
         }
+        // Resetar o estado da imagem
+        resetProductImageState();
         // Atualizar a lista de produtos
         listProducts()
       } else {
@@ -63,8 +70,12 @@ function updateProduct(productId) {
   const name = document.getElementById("nameInput").value
   const description = document.getElementById("descriptionInput").value
   const price = parseFloat(document.getElementById("priceInput").value) || 0
-  const imageUrl = document.getElementById("imageUrlInput").value
   const categoryId = document.getElementById("categoryInput").value
+
+  // Obter o CID da imagem atual ou usar o valor do campo imageUrl
+  const currentImageCid = getCurrentProductImageCid();
+  const imageUrlField = document.getElementById("imageUrlInput").value;
+  const imageUrl = currentImageCid || imageUrlField || "";
 
   if (!name || price <= 0) {
     goeatAlert("warning", "Por favor, preencha os campos obrigatórios corretamente.")
@@ -75,7 +86,7 @@ function updateProduct(productId) {
     name,
     description,
     price,
-    imageUrl,
+    imageUrl, // Agora pode ser um CID da imagem uploadada
     menuId: userData.id,
     categoryId: categoryId || null
   }
@@ -96,6 +107,8 @@ function updateProduct(productId) {
         if (modal) {
           modal.remove()
         }
+        // Resetar o estado da imagem
+        resetProductImageState();
         // Atualizar a lista de produtos
         listProducts()
         return response.json()

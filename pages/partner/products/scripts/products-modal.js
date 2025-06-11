@@ -1,6 +1,7 @@
 /**
  * Arquivo responsável pelos modais de produtos
  * Inclui criação, edição e gerenciamento de modais de produtos
+ * VERSÃO ATUALIZADA COM UPLOAD DE IMAGEM
  */
 
 /**
@@ -12,6 +13,9 @@ function _createProductModal(title, productData = null) {
   if (existingModal) {
     existingModal.remove()
   }
+
+  // Resetar o estado da imagem
+  resetProductImageState();
 
   // Criar novo modal
   const modal = document.createElement("div")
@@ -38,15 +42,14 @@ function _createProductModal(title, productData = null) {
   const modalBody = document.createElement("div")
   modalBody.className = "modal-body"
 
-  // Criação dos inputs diretamente dentro da função
-  const inputs = [
+  // Criação dos inputs básicos
+  const basicInputs = [
     { id: "nameInput", type: "text", placeholder: "Nome do produto...", label: "Nome do Produto*" },
     { id: "descriptionInput", type: "text", placeholder: "Descrição do produto...", label: "Descrição" },
-    { id: "priceInput", type: "number", placeholder: "Preço do produto...", label: "Preço*" },
-    { id: "imageUrlInput", type: "text", placeholder: "URL da imagem do produto...", label: "URL da Imagem" },
+    { id: "priceInput", type: "number", placeholder: "Preço do produto...", label: "Preço*" }
   ]
 
-  inputs.forEach((input) => {
+  basicInputs.forEach((input) => {
     const label = document.createElement("label")
     label.textContent = input.label
     label.setAttribute("for", input.id)
@@ -69,14 +72,67 @@ function _createProductModal(title, productData = null) {
         case "priceInput":
           inputElement.value = productData.price || "";
           break;
-        case "imageUrlInput":
-          inputElement.value = productData.imageUrl || "";
-          break;
       }
     }
 
     modalBody.append(label, inputElement)
   })
+
+  // Seção de Upload de Imagem
+  const imageLabel = document.createElement("label")
+  imageLabel.textContent = "Imagem do Produto"
+
+  const imageContainer = document.createElement("div")
+  imageContainer.id = "product-image-container"
+  imageContainer.className = "product-image-container"
+
+  const imagePreview = document.createElement("img")
+  imagePreview.id = "product-image-preview"
+  imagePreview.className = "product-image-preview"
+  imagePreview.style.display = "none"
+
+  const imageIcon = document.createElement("i")
+  imageIcon.id = "product-image-icon"
+  imageIcon.className = "fa fa-image product-image-icon"
+
+  const imageUploadOverlay = document.createElement("div")
+  imageUploadOverlay.id = "product-image-upload-overlay"
+  imageUploadOverlay.className = "product-image-upload-overlay"
+
+  const overlayIcon = document.createElement("i")
+  overlayIcon.className = "fa fa-camera"
+
+  const overlayText = document.createElement("span")
+  overlayText.textContent = "Clique ou arraste uma imagem"
+
+  imageUploadOverlay.append(overlayIcon, overlayText)
+
+  const removeImageButton = document.createElement("button")
+  removeImageButton.id = "remove-image-button"
+  removeImageButton.className = "remove-image-button"
+  removeImageButton.innerHTML = '<i class="fa fa-times"></i>'
+  removeImageButton.style.display = "none"
+  removeImageButton.type = "button"
+
+  const imageInput = document.createElement("input")
+  imageInput.id = "product-image-input"
+  imageInput.type = "file"
+  imageInput.accept = "image/jpeg,image/jpg,image/png,image/webp,image/gif,image/bmp"
+  imageInput.style.display = "none"
+
+  imageContainer.append(imagePreview, imageIcon, imageUploadOverlay, removeImageButton, imageInput)
+
+  // Campo de URL da imagem (oculto, usado internamente)
+  const imageUrlInput = document.createElement("input")
+  imageUrlInput.id = "imageUrlInput"
+  imageUrlInput.type = "hidden"
+  
+  // Se temos dados do produto, preencher o campo de imagem
+  if (productData && productData.imageUrl) {
+    imageUrlInput.value = productData.imageUrl
+  }
+
+  modalBody.append(imageLabel, imageContainer, imageUrlInput)
 
   // Adicionar o campo de categoria como um combobox
   const categoryLabel = document.createElement("label")
@@ -130,6 +186,14 @@ function _createProductModal(title, productData = null) {
   modalContent.append(modalHeader, modalBody, modalFooter)
   modal.appendChild(modalContent)
   document.body.appendChild(modal)
+  
+  // Configurar o upload de imagem após criar o modal
+  setupProductImageUpload()
+
+  // Se estamos editando e há uma imagem, carregá-la
+  if (productData && productData.imageUrl) {
+    loadExistingProductImage(productData.imageUrl)
+  }
   
   return modal
 }

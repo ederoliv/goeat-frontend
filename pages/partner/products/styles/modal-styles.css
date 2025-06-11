@@ -1,4 +1,4 @@
-/* Estilos otimizados para modais de produtos - Compatível com notebooks 15" Full HD */
+/* Estilos otimizados para modais de produtos - VERSÃO CORRIGIDA */
 
 /* Container do modal */
 .modal {
@@ -14,24 +14,27 @@
   justify-content: center;
   padding: 20px;
   box-sizing: border-box;
+  overflow-y: auto; /* Permite scroll vertical se necessário */
 }
 
 .modal.flex {
   display: flex;
 }
 
-/* Conteúdo do modal - Tamanho otimizado */
+/* Conteúdo do modal - Corrigido para evitar overflow */
 .modal-content {
   background-color: #fefefe;
   width: 100%;
-  max-width: 500px; /* Reduzido de ~600px para 500px */
-  max-height: 85vh; /* Máximo 85% da altura da tela */
+  max-width: 500px;
+  max-height: 90vh; /* Reduzido para dar mais espaço */
   border-radius: 12px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   animation: modalFadeIn 0.3s ease;
+  box-sizing: border-box;
+  margin: auto; /* Centraliza verticalmente */
 }
 
 @keyframes modalFadeIn {
@@ -45,21 +48,22 @@
   }
 }
 
-/* Cabeçalho do modal - Mais compacto */
+/* Cabeçalho do modal */
 .modal-header {
   background: linear-gradient(135deg, var(--goeat-primary) 0%, #532D9E 100%);
   color: white;
-  padding: 16px 20px; /* Reduzido de 20px para 16px */
+  padding: 16px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: none;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 18px; /* Reduzido de 1.5rem para 18px */
+  font-size: 18px;
   font-weight: 600;
 }
 
@@ -67,7 +71,7 @@
   background: none;
   border: none;
   color: white;
-  font-size: 20px; /* Reduzido de 1.5rem para 20px */
+  font-size: 20px;
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
@@ -77,37 +81,45 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .modal-header .close-button:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Corpo do modal - Scrollable e compacto */
+/* Corpo do modal - Corrigido */
 .modal-body {
   padding: 20px;
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden; /* Impede scroll horizontal */
   display: flex;
   flex-direction: column;
-  gap: 12px; /* Reduzido de 15px para 12px */
+  gap: 12px;
+  box-sizing: border-box;
+  min-height: 0; /* Permite que o flex funcione corretamente */
 }
 
 /* Labels dos campos */
 .modal-body label {
   display: block;
   font-weight: 600;
-  margin-bottom: 4px; /* Reduzido de 5px para 4px */
+  margin-bottom: 4px;
   color: #333;
   font-size: 14px;
+  width: auto;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
-/* Campos de input - Mais compactos */
+/* Campos de input - Corrigidos */
 .modal-body input,
 .modal-body textarea,
 .modal-body select {
   width: 100%;
-  padding: 10px 12px; /* Reduzido de 10px para 8px verticalmente */
+  max-width: 100%;
+  padding: 10px 12px;
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   font-size: 14px;
@@ -115,6 +127,7 @@
   transition: all 0.3s ease;
   box-sizing: border-box;
   font-family: 'Lato', sans-serif;
+  margin-bottom: 0;
 }
 
 .modal-body input:focus,
@@ -128,7 +141,7 @@
 
 .modal-body textarea {
   resize: vertical;
-  min-height: 80px; /* Reduzido de 100px para 80px */
+  min-height: 80px;
   max-height: 120px;
 }
 
@@ -142,27 +155,29 @@
   padding-right: 40px;
 }
 
-/* Rodapé do modal - Mais compacto */
+/* Rodapé do modal */
 .modal-footer {
-  padding: 16px 20px; /* Reduzido de 15px para 12px */
+  padding: 16px 20px;
   background: #f8f9fa;
   border-top: 1px solid #e9ecef;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
-/* Botões do modal - Mais compactos */
+/* Botões do modal */
 .modal-footer button {
-  padding: 8px 16px; /* Reduzido de 10px 20px para 8px 16px */
+  padding: 8px 16px;
   border: none;
   border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 80px; /* Largura mínima reduzida */
+  min-width: 80px;
+  box-sizing: border-box;
 }
 
 .cancel-button {
@@ -187,9 +202,9 @@
   box-shadow: 0 4px 15px rgba(6, 207, 144, 0.4);
 }
 
-/* Modal de categorias - Ainda menor */
+/* Modal de categorias */
 #categoryModal .modal-content {
-  max-width: 450px; /* Ainda menor para o modal de categorias */
+  max-width: 450px;
   max-height: 80vh;
 }
 
@@ -197,15 +212,17 @@
 .category-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px; /* Reduzido de 15px para 10px */
+  margin-top: 10px;
   font-size: 14px;
+  box-sizing: border-box;
 }
 
 .category-table th,
 .category-table td {
-  padding: 8px 10px; /* Reduzido de 8px para 6px */
+  padding: 8px 10px;
   text-align: left;
   border-bottom: 1px solid #ddd;
+  box-sizing: border-box;
 }
 
 .category-table th {
@@ -217,10 +234,11 @@
 
 /* Formulário de adicionar categoria compacto */
 .add-category-form {
-  margin-bottom: 16px; /* Reduzido de 20px para 16px */
+  margin-bottom: 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-sizing: border-box;
 }
 
 .add-category-form button {
@@ -234,8 +252,8 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px 6px; /* Reduzido */
-  font-size: 14px; /* Reduzido de 16px para 14px */
+  padding: 4px 6px;
+  font-size: 14px;
   border-radius: 4px;
   transition: background-color 0.2s;
   color: #6c757d;
@@ -254,7 +272,7 @@
   
   .modal-content {
     max-width: 100%;
-    max-height: 90vh;
+    max-height: 95vh;
   }
   
   .modal-header,
@@ -275,7 +293,7 @@
   }
   
   .modal-content {
-    max-height: 95vh;
+    max-height: 98vh;
     border-radius: 8px;
   }
   

@@ -1,0 +1,366 @@
+/* Estilos para upload de imagem do produto - VERSÃO CORRIGIDA */
+
+/* Container principal da imagem */
+.product-image-container {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #fafafa;
+  overflow: hidden;
+  margin-bottom: 10px;
+  box-sizing: border-box; /* Adiciona box-sizing */
+  flex-shrink: 0; /* Previne encolhimento */
+  min-height: 180px; /* Altura mínima garantida */
+}
+
+.product-image-container:hover {
+  border-color: var(--goeat-primary);
+  background-color: rgba(98, 60, 167, 0.05);
+}
+
+.product-image-container.dragover {
+  border-color: var(--goeat-tertiary);
+  background-color: rgba(6, 207, 144, 0.1);
+  border-style: solid;
+}
+
+/* Preview da imagem */
+.product-image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  display: none;
+}
+
+/* Ícone padrão quando não há imagem */
+.product-image-icon {
+  font-size: 48px;
+  color: #bbb;
+  transition: color 0.3s ease;
+  flex-shrink: 0; /* Previne encolhimento do ícone */
+}
+
+.product-image-container:hover .product-image-icon {
+  color: var(--goeat-primary);
+}
+
+/* Overlay para upload */
+.product-image-upload-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 6px;
+  color: white;
+  font-size: 14px;
+  text-align: center;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.product-image-container:hover .product-image-upload-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.product-image-upload-overlay i {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.product-image-upload-overlay span {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+/* Botão para remover imagem */
+.remove-image-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ddd;
+  color: var(--goeat-red);
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.remove-image-button:hover {
+  background-color: var(--goeat-red);
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Estados especiais */
+.product-image-container.loading {
+  border-color: var(--goeat-primary);
+  background-color: rgba(98, 60, 167, 0.1);
+}
+
+.product-image-container.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -12px;
+  border: 2px solid var(--goeat-primary);
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.product-image-container.error {
+  border-color: var(--goeat-red);
+  background-color: rgba(255, 85, 85, 0.1);
+}
+
+.product-image-container.success {
+  border-color: var(--goeat-green);
+  background-color: rgba(6, 207, 144, 0.1);
+}
+
+/* Texto de instrução quando não há imagem */
+.product-image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.4;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.product-image-placeholder i {
+  font-size: 48px;
+  margin-bottom: 10px;
+  color: #ddd;
+}
+
+.product-image-placeholder .main-text {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.product-image-placeholder .sub-text {
+  font-size: 12px;
+  color: #999;
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+  .product-image-container {
+    height: 150px;
+    min-height: 150px;
+  }
+  
+  .product-image-icon {
+    font-size: 36px;
+  }
+  
+  .product-image-upload-overlay i {
+    font-size: 20px;
+  }
+  
+  .product-image-upload-overlay span {
+    font-size: 11px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .product-image-container {
+    height: 120px;
+    min-height: 120px;
+  }
+  
+  .product-image-icon {
+    font-size: 32px;
+  }
+  
+  .remove-image-button {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+    top: 6px;
+    right: 6px;
+  }
+}
+
+/* Melhorias de acessibilidade */
+.product-image-container:focus {
+  outline: 2px solid var(--goeat-primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-image-container,
+  .product-image-upload-overlay,
+  .remove-image-button {
+    transition: none;
+  }
+  
+  .product-image-container.loading::after {
+    animation: none;
+  }
+}
+
+/* Integração com o modal - CORRIGIDO */
+.modal-body .product-image-container {
+  margin-top: 5px;
+  margin-bottom: 15px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ajustes para o label da imagem */
+.modal-body label + .product-image-container {
+  margin-top: 5px;
+}
+
+/* Correções para o modal body */
+.modal-body {
+  overflow-x: hidden; /* Remove scroll horizontal */
+  box-sizing: border-box;
+}
+
+/* Correções para inputs no modal */
+.modal-body input,
+.modal-body textarea,
+.modal-body select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 0;
+}
+
+/* Estilos para quando há imagem carregada */
+.product-image-container.has-image {
+  border-style: solid;
+  border-color: var(--goeat-green);
+  background-color: rgba(6, 207, 144, 0.05);
+}
+
+.product-image-container.has-image:hover {
+  border-color: var(--goeat-green);
+}
+
+/* Tooltip para o botão de remover */
+.remove-image-button:hover::after {
+  content: 'Remover imagem';
+  position: absolute;
+  bottom: -25px;
+  right: 0;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  z-index: 1000;
+  animation: tooltipFadeIn 0.3s ease;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Estilo para o input file oculto */
+#product-image-input {
+  display: none !important;
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  left: -9999px;
+}
+
+/* Feedback visual durante upload */
+.product-image-container.uploading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.product-image-container.uploading .product-image-upload-overlay {
+  opacity: 1;
+  background-color: rgba(98, 60, 167, 0.8);
+}
+
+.product-image-container.uploading .product-image-upload-overlay::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 2px solid white;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 8px;
+}
+
+.product-image-container.uploading .product-image-upload-overlay span {
+  font-size: 12px;
+}
+
+/* Correções adicionais para o modal */
+.modal-content {
+  overflow-x: hidden; /* Remove scroll horizontal do modal */
+  max-width: 500px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Garantir que todos os elementos do modal respeitam a largura */
+.modal-body > * {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ajuste específico para labels */
+.modal-body label {
+  width: auto;
+  max-width: 100%;
+  margin-bottom: 4px;
+  display: block;
+}
