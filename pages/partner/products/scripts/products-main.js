@@ -1,17 +1,120 @@
 /**
  * Arquivo principal para gerenciamento de produtos
  * Responsável pela inicialização e listagem de produtos
+ * VERSÃO CORRIGIDA PARA PROBLEMAS DE CORS
  */
 
 const userDataString = sessionStorage.getItem("userData")
 const userData = JSON.parse(userDataString)
 const defaultProductsUrl = `${API_BASE_URL}/products/`
 
+// Lista de gateways IPFS alternativos
+const IPFS_GATEWAYS = [
+  'https://ipfs.io/ipfs/',
+  'https://cloudflare-ipfs.com/ipfs/',
+  'https://gateway.pinata.cloud/ipfs/',
+  'https://dweb.link/ipfs/',
+  'https://ipfs.infura.io/ipfs/'
+];
+
+// Cache para URLs que funcionam
+const workingUrls = new Map();
+
 window.onload = () => {
   if (userDataString) {
     document.getElementById("userName").textContent = userData.name
     listProducts()
   }
+}
+
+/**
+ * Função para construir URL de imagem com fallbacks
+ */
+function buildImageUrl(imageUrl, gatewayIndex = 0) {
+  if (!imageUrl) return null;
+  
+  // Se já é uma URL completa, usa diretamente
+  if (imageUrl.startsWith('http')) {
+    return imageUrl;
+  }
+  
+  // Se é um CID, constrói URL com gateway
+  if (imageUrl.startsWith('baf')) {
+    // Verifica cache primeiro
+    const cacheKey = `${imageUrl}_${gatewayIndex}`;
+    if (workingUrls.has(cacheKey)) {
+      return workingUrls.get(cacheKey);
+    }
+    
+    // Usa gateway baseado no índice
+    const gateway = IPFS_GATEWAYS[gatewayIndex] || IPFS_GATEWAYS[0];
+    const fullUrl = `${gateway}${imageUrl}`;
+    
+    return fullUrl;
+  }
+  
+  return imageUrl;
+}
+
+/**
+ * Função para testar se uma URL de imagem carrega
+ */
+function testImageUrl(url, timeout = 5000) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const timer = setTimeout(() => {
+      reject(new Error('Timeout'));
+    }, timeout);
+    
+    img.onload = () => {
+      clearTimeout(timer);
+      resolve(url);
+    };
+    
+    img.onerror = () => {
+      clearTimeout(timer);
+      reject(new Error('Load failed'));
+    };
+    
+    // Adiciona parâmetros para evitar cache e CORS
+    img.crossOrigin = 'anonymous';
+    img.src = url;
+  });
+}
+
+/**
+ * Função para encontrar URL de imagem funcionando
+ */
+async function findWorkingImageUrl(imageUrl) {
+  if (!imageUrl || !imageUrl.startsWith('baf')) {
+    return imageUrl;
+  }
+  
+  // Verifica cache global primeiro
+  if (workingUrls.has(imageUrl)) {
+    return workingUrls.get(imageUrl);
+  }
+  
+  // Testa todos os gateways
+  for (let i = 0; i < IPFS_GATEWAYS.length; i++) {
+    try {
+      const testUrl = buildImageUrl(imageUrl, i);
+      await testImageUrl(testUrl, 3000); // Timeout de 3 segundos
+      
+      // Salva no cache se funcionou
+      workingUrls.set(imageUrl, testUrl);
+      console.log(`Gateway funcionando para ${imageUrl}: ${IPFS_GATEWAYS[i]}`);
+      
+      return testUrl;
+    } catch (error) {
+      console.log(`Gateway ${IPFS_GATEWAYS[i]} falhou para ${imageUrl}`);
+      continue;
+    }
+  }
+  
+  // Se nenhum gateway funcionou, retorna null
+  console.warn(`Nenhum gateway IPFS funcionou para: ${imageUrl}`);
+  return null;
 }
 
 /**
@@ -35,7 +138,7 @@ async function listProducts() {
   const thead = document.createElement("thead")
   const tr = document.createElement("tr")
 
-  // Removida a coluna "ID" dos cabeçalhos
+  // Cabeçalhos da tabela
   const headers = ["Nome", "Descrição", "Preço", "Imagem", "Categoria", "Editar", "Excluir"]
   headers.forEach((headerText) => {
     const th = document.createElement("th")
@@ -89,50 +192,11 @@ async function listProducts() {
       return
     }
 
-    data.forEach((product) => {
-      const tr = document.createElement("tr")
-      // Removido o ID do array de campos a serem exibidos
-      const fields = [
-        product.name, 
-        product.description, 
-        `R$ ${(product.price / 100).toFixed(2)}`, 
-        product.imageUrl,
-        product.categoryName || "Sem categoria" // Fallback caso não tenha categoria
-      ]
-      
-      fields.forEach((field) => {
-        const td = document.createElement("td")
-        td.innerText = field
-        tr.appendChild(td)
-      })
-
-      // Botão de editar
-      const editButton = document.createElement("td")
-      editButton.className = "action-cell"
-      
-      const editBtn = document.createElement("button")
-      editBtn.className = "action-btn edit-btn"
-      editBtn.innerHTML = '<i class="fa fa-pencil"></i>'
-      editBtn.title = "Editar produto"
-      editBtn.addEventListener("click", () => editProduct(product))
-      
-      editButton.appendChild(editBtn)
-
-      // Botão de excluir
-      const deleteButton = document.createElement("td")
-      deleteButton.className = "action-cell"
-      
-      const deleteBtn = document.createElement("button")
-      deleteBtn.className = "action-btn delete-btn"
-      deleteBtn.innerHTML = '<i class="fa fa-trash"></i>'
-      deleteBtn.title = "Excluir produto"
-      deleteBtn.addEventListener("click", () => deleteProduct(product.id))
-      
-      deleteButton.appendChild(deleteBtn)
-
-      tr.append(editButton, deleteButton)
-      tbody.appendChild(tr)
-    })
+    // Processa os produtos
+    for (const product of data) {
+      await createProductRow(product, tbody);
+    }
+    
   } catch (error) {
     console.error("Erro ao listar produtos:", error)
     
@@ -151,6 +215,187 @@ async function listProducts() {
     tr.appendChild(td)
     tbody.appendChild(tr)
   }
+}
+
+/**
+ * Função para criar uma linha de produto na tabela
+ */
+async function createProductRow(product, tbody) {
+  const tr = document.createElement("tr")
+  
+  // Campo Nome
+  const nameCell = document.createElement("td")
+  nameCell.innerText = product.name
+  tr.appendChild(nameCell)
+  
+  // Campo Descrição
+  const descriptionCell = document.createElement("td")
+  descriptionCell.innerText = product.description
+  tr.appendChild(descriptionCell)
+  
+  // Campo Preço
+  const priceCell = document.createElement("td")
+  priceCell.innerText = `R$ ${(product.price / 100).toFixed(2)}`
+  tr.appendChild(priceCell)
+  
+  // Campo Imagem - CORRIGIDO PARA CORS
+  const imageCell = document.createElement("td")
+  imageCell.className = "image-cell"
+  
+  if (product.imageUrl) {
+    // Mostra loading enquanto testa os gateways
+    const loadingPlaceholder = document.createElement("div")
+    loadingPlaceholder.className = "image-loading"
+    loadingPlaceholder.innerHTML = '<i class="fa fa-spinner fa-pulse"></i>'
+    imageCell.appendChild(loadingPlaceholder)
+    
+    // Adiciona a linha à tabela primeiro para mostrar o loading
+    tr.appendChild(imageCell)
+    
+    // Busca URL funcionando em background
+    try {
+      const workingUrl = await findWorkingImageUrl(product.imageUrl);
+      
+      // Remove o loading
+      imageCell.removeChild(loadingPlaceholder);
+      
+      if (workingUrl) {
+        const img = document.createElement("img")
+        img.src = workingUrl
+        img.alt = product.name
+        img.className = "product-thumbnail"
+        img.loading = "lazy"
+        
+        // Tratamento de erro final
+        img.onerror = function() {
+          this.style.display = 'none'
+          const fallback = document.createElement("div")
+          fallback.className = "image-fallback"
+          fallback.innerHTML = '<i class="fa fa-image"></i><span>Erro ao carregar</span>'
+          this.parentNode.appendChild(fallback)
+        }
+        
+        // Evento de clique para ampliar
+        img.addEventListener('click', () => {
+          showImageModal(workingUrl, product.name)
+        })
+        
+        imageCell.appendChild(img)
+      } else {
+        // Nenhum gateway funcionou
+        const fallback = document.createElement("div")
+        fallback.className = "image-fallback"
+        fallback.innerHTML = '<i class="fa fa-exclamation-triangle"></i><span>CORS bloqueado</span>'
+        imageCell.appendChild(fallback)
+      }
+    } catch (error) {
+      // Remove loading e mostra erro
+      if (imageCell.contains(loadingPlaceholder)) {
+        imageCell.removeChild(loadingPlaceholder)
+      }
+      
+      const errorPlaceholder = document.createElement("div")
+      errorPlaceholder.className = "image-error"
+      errorPlaceholder.innerHTML = '<i class="fa fa-exclamation-triangle"></i><span>Erro</span>'
+      imageCell.appendChild(errorPlaceholder)
+    }
+  } else {
+    // Placeholder quando não há imagem
+    const placeholder = document.createElement("div")
+    placeholder.className = "image-placeholder"
+    placeholder.innerHTML = '<i class="fa fa-image"></i><span>Sem imagem</span>'
+    imageCell.appendChild(placeholder)
+    tr.appendChild(imageCell)
+  }
+  
+  // Se não foi adicionado ainda (caso não tenha imagem)
+  if (!tr.contains(imageCell)) {
+    tr.appendChild(imageCell)
+  }
+  
+  // Campo Categoria
+  const categoryCell = document.createElement("td")
+  categoryCell.innerText = product.categoryName || "Sem categoria"
+  tr.appendChild(categoryCell)
+
+  // Botão de editar
+  const editButton = document.createElement("td")
+  editButton.className = "action-cell"
+  
+  const editBtn = document.createElement("button")
+  editBtn.className = "action-btn edit-btn"
+  editBtn.innerHTML = '<i class="fa fa-pencil"></i>'
+  editBtn.title = "Editar produto"
+  editBtn.addEventListener("click", () => editProduct(product))
+  
+  editButton.appendChild(editBtn)
+
+  // Botão de excluir
+  const deleteButton = document.createElement("td")
+  deleteButton.className = "action-cell"
+  
+  const deleteBtn = document.createElement("button")
+  deleteBtn.className = "action-btn delete-btn"
+  deleteBtn.innerHTML = '<i class="fa fa-trash"></i>'
+  deleteBtn.title = "Excluir produto"
+  deleteBtn.addEventListener("click", () => deleteProduct(product.id))
+  
+  deleteButton.appendChild(deleteBtn)
+
+  tr.append(editButton, deleteButton)
+  tbody.appendChild(tr)
+}
+
+/**
+ * Função para mostrar modal com imagem ampliada
+ */
+function showImageModal(imageUrl, productName) {
+  // Remover modal existente se houver
+  const existingModal = document.getElementById("image-modal")
+  if (existingModal) {
+    existingModal.remove()
+  }
+
+  // Criar modal para exibir imagem
+  const modal = document.createElement("div")
+  modal.id = "image-modal"
+  modal.className = "image-modal"
+  
+  const modalContent = document.createElement("div")
+  modalContent.className = "image-modal-content"
+  
+  const closeButton = document.createElement("button")
+  closeButton.className = "image-modal-close"
+  closeButton.innerHTML = '<i class="fa fa-times"></i>'
+  closeButton.onclick = () => modal.remove()
+  
+  const img = document.createElement("img")
+  img.src = imageUrl
+  img.alt = productName
+  img.className = "image-modal-img"
+  
+  const title = document.createElement("h3")
+  title.textContent = productName
+  title.className = "image-modal-title"
+  
+  modalContent.append(closeButton, img, title)
+  modal.appendChild(modalContent)
+  document.body.appendChild(modal)
+  
+  // Fechar modal ao clicar fora da imagem
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      modal.remove()
+    }
+  })
+  
+  // Fechar modal com ESC
+  document.addEventListener('keydown', function escHandler(e) {
+    if (e.key === 'Escape') {
+      modal.remove()
+      document.removeEventListener('keydown', escHandler)
+    }
+  })
 }
 
 /**

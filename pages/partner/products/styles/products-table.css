@@ -81,16 +81,6 @@ tbody td:nth-child(2) { /* Descrição */
   white-space: nowrap;
 }
 
-tbody td:nth-child(4) { /* URL da imagem */
-  max-width: 150px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: 'Courier New', monospace;
-  font-size: 12px;
-  color: #666;
-}
-
 /* Estilo para o preço */
 tbody td:nth-child(3) {
   font-weight: 600;
@@ -244,6 +234,180 @@ tbody td:nth-child(5) {
   100% { transform: rotate(360deg); }
 }
 
+/* =================================== */
+/* ESTILOS PARA IMAGENS NA TABELA */
+/* =================================== */
+
+/* Célula da imagem */
+.image-cell {
+  width: 80px;
+  padding: 8px !important;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Thumbnail da imagem do produto */
+.product-thumbnail {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #e0e0e0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+  image-rendering: optimizeQuality;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.product-thumbnail:hover {
+  transform: scale(1.1);
+  border-color: var(--goeat-primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  position: relative;
+}
+
+/* Placeholder quando não há imagem */
+.image-placeholder,
+.image-fallback {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  color: #aaa;
+  font-size: 10px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.image-placeholder i,
+.image-fallback i {
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+.image-placeholder span,
+.image-fallback span {
+  font-size: 9px;
+  line-height: 1;
+}
+
+/* Modal para visualização ampliada da imagem */
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.image-modal-content {
+  position: relative;
+  max-width: 90%;
+  max-height: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: scaleIn 0.3s ease;
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to { 
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.image-modal-img {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  background-color: white;
+}
+
+.image-modal-title {
+  color: white;
+  margin-top: 15px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.image-modal-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  color: #333;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-modal-close:hover {
+  background: white;
+  transform: scale(1.1);
+}
+
+/* Tooltip para imagens */
+.product-thumbnail:hover::after {
+  content: 'Clique para ampliar';
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  z-index: 1000;
+  animation: tooltipFadeIn 0.3s ease;
+}
+
+/* Estados de carregamento da imagem */
+.product-thumbnail.loading {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%23ddd' d='M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z' opacity='.25'/%3E%3Cpath fill='%23666' d='M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z'%3E%3CanimateTransform attributeName='transform' dur='0.75s' repeatCount='indefinite' type='rotate' values='0 12 12;360 12 12'/%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 20px;
+}
+
 /* Responsividade */
 @media screen and (max-width: 768px) {
   .table-container {
@@ -271,8 +435,31 @@ tbody td:nth-child(5) {
     max-width: 120px;
   }
   
-  tbody td:nth-child(4) {
-    max-width: 100px;
+  /* Responsividade para imagens */
+  .image-cell {
+    width: 60px;
+    padding: 6px !important;
+  }
+  
+  .product-thumbnail {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .image-placeholder,
+  .image-fallback {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .image-placeholder i,
+  .image-fallback i {
+    font-size: 14px;
+  }
+  
+  .image-placeholder span,
+  .image-fallback span {
+    font-size: 8px;
   }
 }
 
@@ -290,6 +477,49 @@ tbody td:nth-child(5) {
   
   .action-btn:hover::after {
     display: none; /* Remove tooltips em telas muito pequenas */
+  }
+  
+  /* Responsividade para imagens em mobile */
+  .image-cell {
+    width: 50px;
+    padding: 4px !important;
+  }
+  
+  .product-thumbnail {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .image-placeholder,
+  .image-fallback {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .image-placeholder i,
+  .image-fallback i {
+    font-size: 12px;
+  }
+  
+  .image-placeholder span,
+  .image-fallback span {
+    font-size: 7px;
+  }
+  
+  .image-modal-close {
+    top: -35px;
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .image-modal-title {
+    font-size: 16px;
+    margin-top: 10px;
+  }
+  
+  .product-thumbnail:hover::after {
+    display: none; /* Remove tooltip em mobile */
   }
 }
 
@@ -312,8 +542,189 @@ tbody tr {
 /* Melhoria no contraste para acessibilidade */
 @media (prefers-reduced-motion: reduce) {
   .action-btn,
-  tbody tr {
+  tbody tr,
+  .product-thumbnail {
     transition: none;
     animation: none;
   }
+  
+  .image-modal,
+  .image-modal-content {
+    animation: none;
+  }
+}
+
+/* Estilos adicionais para correção de CORS - ADICIONAR ao products-table.css */
+
+/* Estado de loading da imagem */
+.image-loading {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  color: var(--goeat-primary);
+  font-size: 16px;
+  margin: 0 auto;
+}
+
+.image-loading i {
+  animation: spin 1s linear infinite;
+}
+
+/* Estado de erro da imagem */
+.image-error {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff5f5;
+  border: 2px solid #ffbaba;
+  border-radius: 8px;
+  color: var(--goeat-red);
+  font-size: 10px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.image-error i {
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.image-error span {
+  font-size: 8px;
+  line-height: 1;
+}
+
+/* Melhorias no fallback de imagem */
+.image-fallback {
+  background-color: #fff5f5;
+  border-color: #ffbaba;
+  color: var(--goeat-red);
+}
+
+.image-fallback.cors-blocked {
+  background-color: #fff3cd;
+  border-color: #ffeaa7;
+  color: #856404;
+}
+
+/* Indicador de tentativa de múltiplos gateways */
+.image-cell.trying-gateways {
+  position: relative;
+}
+
+.image-cell.trying-gateways::after {
+  content: 'Testando gateways...';
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  color: #666;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsividade para novos estados */
+@media screen and (max-width: 768px) {
+  .image-loading,
+  .image-error {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .image-loading i {
+    font-size: 14px;
+  }
+  
+  .image-error i {
+    font-size: 12px;
+  }
+  
+  .image-error span {
+    font-size: 7px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .image-loading,
+  .image-error {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .image-loading i {
+    font-size: 12px;
+  }
+  
+  .image-error i {
+    font-size: 10px;
+  }
+  
+  .image-error span {
+    font-size: 6px;
+  }
+  
+  .image-cell.trying-gateways::after {
+    display: none; /* Remove em mobile para economizar espaço */
+  }
+}
+
+/* Animação para indicar que está testando gateways */
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.image-loading {
+  animation: pulse 2s infinite;
+}
+
+/* Tooltip específico para problemas de CORS */
+.image-fallback:hover::after {
+  content: 'Bloqueado por CORS - tentamos múltiplos gateways';
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  white-space: nowrap;
+  z-index: 1000;
+  animation: tooltipFadeIn 0.3s ease;
+}
+
+/* Estado de sucesso após encontrar gateway funcionando */
+.product-thumbnail.gateway-found {
+  border-color: var(--goeat-green);
+  box-shadow: 0 0 0 2px rgba(6, 207, 144, 0.2);
+}
+
+/* Indicador visual de qual gateway está sendo usado */
+.image-cell[data-gateway]::before {
+  content: attr(data-gateway);
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--goeat-blue);
+  color: white;
+  font-size: 8px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  opacity: 0.7;
+  pointer-events: none;
 }
