@@ -10,7 +10,6 @@ function handleLogout(event) {
     window.location.href = root + (routes.loginClient || '/pages/loginClient/index.html');
 }
 
-
 function showChangePasswordForm() {
     Swal.fire({
         title: 'Alterar Senha',
@@ -150,15 +149,9 @@ function confirmDeleteAccount() {
     });
 }
 
-// Configurações da aba de "Configurações" (toggles, etc.)
+// Configurações da aba de "Configurações" 
 function setupSettingsTab() {
-    // Lógica para os toggles de notificação, etc.
-    // Por enquanto, apenas um log, já que não há funcionalidade de API para eles.
-    const notificationToggles = document.querySelectorAll('#settings .switch input[type="checkbox"]');
-    notificationToggles.forEach(toggle => {
-        toggle.addEventListener('change', (event) => {
-            console.log(`Configuração de notificação alterada: ${event.target.closest('.settings-option').querySelector('p').textContent} - Novo estado: ${event.target.checked}`);
-            // Aqui você chamaria a API para salvar essa preferência
-        });
-    });
+    // Sem mais funcionalidades de notificação para configurar
+    // Apenas os botões de alterar senha e excluir conta que já são configurados no setupProfileButtonEvents
+    console.log('Aba de configurações carregada - apenas opções de segurança disponíveis');
 }

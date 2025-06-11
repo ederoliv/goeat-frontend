@@ -6,10 +6,17 @@
   box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+}
+
 body {
   font-family: "Lato", sans-serif;
   background-color: #f9f9f9;
   color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 #container {
@@ -19,6 +26,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 80px 20px 100px 20px;
+  flex: 1; /* Faz o container ocupar todo o espaço disponível */
 }
 
 #partner-logo {
@@ -76,6 +84,26 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  flex: 1; /* Permite que a seção de produtos se expanda */
+  min-height: 200px; /* Altura mínima para garantir que o footer não suba demais */
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+  color: #666;
+}
+
+.loading-container i {
+  margin-bottom: 15px;
+  color: var(--goeat-primary);
+}
+
+.loading-container p {
+  font-size: 16px;
 }
 
 .category-title {
@@ -235,11 +263,21 @@ body {
   color: var(--goeat-red);
   font-size: 18px;
   text-align: center;
-  padding: 20px;
+  padding: 40px 20px;
   border: 1px solid #d9534f;
   background-color: #f9e2e2;
   border-radius: 10px;
   margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.error-message i {
+  font-size: 48px;
+  color: #d9534f;
+  margin-bottom: 10px;
 }
 
 /* Mensagem de loja fechada ou indisponível */
@@ -282,6 +320,8 @@ footer {
   background-color: #222;
   color: white;
   gap: 15px;
+  margin-top: auto; /* Empurra o footer para o final */
+  flex-shrink: 0; /* Impede que o footer encolha */
 }
 
 #footer-logo {

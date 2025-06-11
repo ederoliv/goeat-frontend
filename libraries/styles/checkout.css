@@ -8,16 +8,24 @@
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+}
+
 body {
     font-family: 'Lato', sans-serif;
     background-color: #f9f9f9;
     color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 #container {
     max-width: 800px;
     margin: 50px auto;
     padding: 20px;
+    flex: 1; /* Faz o container ocupar todo o espaço disponível */
 }
 
 h2 {
@@ -513,6 +521,30 @@ small {
 
 #back-to-store {
     margin-top: 20px;
+}
+
+/* Footer fixo */
+footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+    background-color: #222;
+    color: white;
+    text-align: center;
+    margin-top: auto; /* Empurra o footer para o final */
+    flex-shrink: 0; /* Impede que o footer encolha */
+}
+
+#footer-logo {
+    width: 120px;
+    margin-bottom: 20px;
+}
+
+footer p {
+    font-size: 14px;
+    color: #ccc;
+    margin-bottom: 10px;
 }
 
 /* Responsividade */
