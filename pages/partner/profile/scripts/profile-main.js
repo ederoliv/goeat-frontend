@@ -7,6 +7,8 @@
 const userDataString = sessionStorage.getItem('userData');
 const userData = userDataString ? JSON.parse(userDataString) : null;
 let restaurantIsOpen = true; // Status inicial do restaurante
+let allCategories = []; // Lista de todas as categorias disponíveis
+let restaurantCategories = []; // Lista das categorias do restaurante
 
 // Inicialização da página
 window.onload = function() {
@@ -23,7 +25,12 @@ window.onload = function() {
   // Inicializa os componentes da página
   initializeTabs();
   initializeScheduleEvents();
+  
+  // Carrega os dados do perfil do backend
   loadProfileData();
+  
+  // Carrega todas as categorias disponíveis
+  loadAllCategories();
   
   console.log('Página de perfil do restaurante carregada');
 };
@@ -183,6 +190,7 @@ function searchCep() {
       document.getElementById('street').value = data.logradouro || '';
       document.getElementById('neighborhood').value = data.bairro || '';
       document.getElementById('city').value = data.localidade || '';
+      document.getElementById('state').value = data.uf || '';
       
       goeatAlert('success', 'CEP encontrado!');
     })
@@ -198,206 +206,333 @@ function searchCep() {
 }
 
 /**
- * Carrega os dados do perfil do restaurante
+ * Carrega todas as categorias disponíveis no sistema
  */
-function loadProfileData() {
-  // Aqui você faria a chamada para a API para carregar os dados reais
-  // Por enquanto, usando dados estáticos conforme solicitado
-  
-  console.log('Dados do perfil carregados (estático)');
-  
-  // Exemplo de como seria a chamada para a API:
-  /*
-  fetch(`${API_BASE_URL}/partners/${userData.id}/profile`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${userData.token}`
+async function loadAllCategories() {
+  try {
+    showLoadingModal();
+    
+    // Obtém as credenciais do usuário
+    const token = userData.token;
+    
+    // Faz a requisição para a API para buscar todas as categorias disponíveis
+    const response = await fetch(`${API_BASE_URL}/restaurant-categories`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Erro ao carregar categorias: ${response.status}`);
     }
-  })
-  .then(response => response.json())
-  .then(data => {
-    // Preencher os campos com os dados da API
-    populateFormFields(data);
-  })
-  .catch(error => {
-    console.error('Erro ao carregar dados do perfil:', error);
-    goeatAlert('error', 'Erro ao carregar dados do perfil');
-  });
-  */
+    
+    // Processa a resposta
+    const categories = await response.json();
+    allCategories = categories; // Salva na variável global
+    
+    // Após carregar todas as categorias, atualizamos o grid de categorias
+    updateCategoriesGrid();
+    
+  } catch (error) {
+    console.error('Erro ao carregar categorias:', error);
+    goeatAlert('error', 'Não foi possível carregar as categorias do restaurante.');
+  } finally {
+    hideLoadingModal();
+  }
 }
 
 /**
- * Salva as alterações do perfil
+ * Atualiza o grid de categorias na interface
  */
-function saveProfile() {
-  // Coleta todos os dados do formulário
-  const profileData = collectFormData();
+function updateCategoriesGrid() {
+  const tagsGrid = document.querySelector('.tags-grid');
   
-  if (!validateProfileData(profileData)) {
-    return;
+  // Limpa o grid existente
+  tagsGrid.innerHTML = '';
+  
+  // Adiciona cada categoria ao grid
+  allCategories.forEach(category => {
+    // Verifica se a categoria está nas categorias do restaurante
+    const isSelected = restaurantCategories.some(rc => rc.id === category.id);
+    
+    // Cria o elemento da categoria
+    const tagOption = document.createElement('label');
+    tagOption.className = 'tag-option';
+    tagOption.innerHTML = `
+      <input type="checkbox" ${isSelected ? 'checked' : ''} value="${category.id}">
+      <span class="tag-label">
+        <i class="fa fa-tag"></i>
+        ${category.name}
+      </span>
+    `;
+    
+    tagsGrid.appendChild(tagOption);
+  });
+}
+
+/**
+ * Carrega os dados do perfil do restaurante
+ */
+async function loadProfileData() {
+  try {
+    showLoadingModal();
+    
+    // Obtém as credenciais do usuário
+    const token = userData.token;
+    
+    // Faz a requisição para a API para buscar os dados do perfil
+    const response = await fetch(`${API_BASE_URL}/partners/profile`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Erro ao carregar perfil: ${response.status}`);
+    }
+    
+    // Processa a resposta
+    const profileData = await response.json();
+    
+    // Preenche os campos com os dados recebidos
+    populateFormFields(profileData);
+    
+    // Salva as categorias do restaurante na variável global
+    restaurantCategories = profileData.categories || [];
+    
+    console.log('Perfil carregado com sucesso:', profileData);
+    
+  } catch (error) {
+    console.error('Erro ao carregar perfil:', error);
+    goeatAlert('error', 'Não foi possível carregar os dados do perfil.');
+  } finally {
+    hideLoadingModal();
+  }
+}
+
+/**
+ * Preenche os campos do formulário com os dados do perfil
+ */
+function populateFormFields(profileData) {
+  // Informações básicas
+  document.getElementById('restaurant-name').value = profileData.name || '';
+  document.getElementById('restaurant-phone').value = profileData.phone || '';
+  
+  // Obtém o email do usuário do sessionStorage
+  const userData = JSON.parse(sessionStorage.getItem('userData'));
+  if (userData && userData.username) {
+    document.getElementById('restaurant-email').value = userData.username;
   }
   
-  // Mostra loading
-  showLoadingModal();
+  // Processa o endereço (que vem como string formatada)
+  const addressParts = parseAddress(profileData.address);
   
-  // Simula salvamento (em produção seria uma chamada para a API)
-  setTimeout(() => {
-    hideLoadingModal();
-    goeatAlert('success', 'Perfil atualizado com sucesso!');
-    console.log('Dados salvos:', profileData);
-  }, 1500);
+  // Preenche os campos de endereço
+  if (addressParts) {
+    document.getElementById('street').value = addressParts.street || '';
+    document.getElementById('number').value = addressParts.number || '';
+    document.getElementById('complement').value = addressParts.complement || '';
+    document.getElementById('neighborhood').value = addressParts.neighborhood || '';
+    document.getElementById('city').value = addressParts.city || '';
+    document.getElementById('state').value = addressParts.state || '';
+    document.getElementById('cep').value = addressParts.zipCode || '';
+    document.getElementById('reference').value = addressParts.reference || '';
+  }
   
-  // Exemplo de como seria a chamada para a API:
-  /*
-  fetch(`${API_BASE_URL}/partners/${userData.id}/profile`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${userData.token}`
-    },
-    body: JSON.stringify(profileData)
-  })
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Erro ao salvar perfil');
-    }
-    return response.json();
-  })
-  .then(data => {
-    hideLoadingModal();
-    goeatAlert('success', 'Perfil atualizado com sucesso!');
-  })
-  .catch(error => {
-    hideLoadingModal();
-    console.error('Erro ao salvar perfil:', error);
-    goeatAlert('error', 'Erro ao salvar perfil. Tente novamente.');
-  });
-  */
+  // Atualiza o grid de categorias
+  if (allCategories.length > 0) {
+    updateCategoriesGrid();
+  }
+}
+
+/**
+ * Analisa a string de endereço e extrai os componentes
+ */
+function parseAddress(addressString) {
+  if (!addressString) return null;
+  
+  // Exemplo: "Avenida Júlio de Castilhos, 1234, Sala 401, Centro, Caxias do Sul - RS"
+  // Tentativa de extrair as partes do endereço
+  const parts = {};
+  
+  // Tentativa de extração do número
+  const numberMatch = addressString.match(/,\s*(\d+)/);
+  if (numberMatch) {
+    parts.number = numberMatch[1];
+    // Remove o número da string para facilitar o processamento
+    addressString = addressString.replace(`, ${parts.number}`, '');
+  }
+  
+  // Divide pelas vírgulas restantes
+  const segments = addressString.split(',').map(s => s.trim());
+  
+  // O primeiro segmento geralmente é a rua
+  parts.street = segments[0] || '';
+  
+  // Se tiver mais de 3 segmentos, o segundo pode ser um complemento
+  if (segments.length > 3) {
+    parts.complement = segments[1] || '';
+  }
+  
+  // Geralmente o bairro é o penúltimo ou antepenúltimo segmento
+  const potentialNeighborhood = segments[segments.length - 2] || '';
+  if (potentialNeighborhood && !potentialNeighborhood.includes('-')) {
+    parts.neighborhood = potentialNeighborhood;
+  } else {
+    // Se não identificou o bairro, pode estar junto com a cidade
+    parts.neighborhood = '';
+  }
+  
+  // O último segmento geralmente contém cidade e estado
+  const lastSegment = segments[segments.length - 1] || '';
+  const cityState = lastSegment.split('-').map(s => s.trim());
+  
+  parts.city = cityState[0] || '';
+  parts.state = cityState.length > 1 ? cityState[1] : '';
+  
+  // CEP não está na string de endereço formatada, então deixamos vazio
+  parts.zipCode = '';
+  
+  // Referência não está na string de endereço formatada, então deixamos vazio
+  parts.reference = '';
+  
+  return parts;
 }
 
 /**
  * Coleta todos os dados do formulário
  */
 function collectFormData() {
-  // Dados básicos do restaurante
-  const basicData = {
-    name: document.getElementById('restaurant-name').value,
-    category: document.getElementById('restaurant-category').value,
-    phone: document.getElementById('restaurant-phone').value,
-    email: document.getElementById('restaurant-email').value
-  };
+  // Informações básicas
+  const name = document.getElementById('restaurant-name').value;
+  const phone = document.getElementById('restaurant-phone').value;
+  const email = document.getElementById('restaurant-email').value;
   
-  // Dados de endereço
-  const addressData = {
-    zipCode: document.getElementById('cep').value,
-    street: document.getElementById('street').value,
-    number: document.getElementById('number').value,
-    complement: document.getElementById('complement').value,
-    neighborhood: document.getElementById('neighborhood').value,
-    city: document.getElementById('city').value
-  };
+  // Endereço
+  const street = document.getElementById('street').value;
+  const number = document.getElementById('number').value;
+  const complement = document.getElementById('complement').value;
+  const neighborhood = document.getElementById('neighborhood').value;
+  const city = document.getElementById('city').value;
+  const state = document.getElementById('state').value;
+  const zipCode = document.getElementById('cep').value;
+  const reference = document.getElementById('reference')?.value || '';
   
-  // Configurações de entrega
-  const deliveryData = {
-    deliveryFee: parseFloat(document.getElementById('delivery-fee').value) || 0,
-    deliveryTime: document.getElementById('delivery-time').value,
-    minimumOrder: parseFloat(document.getElementById('minimum-order').value) || 0,
-    deliveryRadius: parseFloat(document.getElementById('delivery-radius').value) || 0
-  };
+  // Categorias selecionadas
+  const categoryCheckboxes = document.querySelectorAll('.tags-grid input[type="checkbox"]:checked');
+  const categoryIds = Array.from(categoryCheckboxes).map(cb => parseInt(cb.value));
   
-  // Horários de funcionamento
-  const scheduleData = collectScheduleData();
-  
-  // Tags do cardápio
-  const menuTags = collectMenuTags();
-  
+  // Estrutura o objeto conforme esperado pela API
   return {
-    ...basicData,
-    address: addressData,
-    delivery: deliveryData,
-    schedule: scheduleData,
-    menuTags: menuTags,
-    isOpen: restaurantIsOpen
+    name,
+    phone,
+    email,
+    address: {
+      street,
+      number,
+      complement,
+      neighborhood,
+      city,
+      state,
+      zipCode,
+      reference,
+      partnerId: userData.id
+    },
+    categoryIds
   };
 }
 
 /**
- * Coleta os dados de horários de funcionamento
+ * Valida os dados do formulário
  */
-function collectScheduleData() {
-  const days = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo'];
-  const scheduleData = {};
-  
-  document.querySelectorAll('.day-schedule').forEach((dayElement, index) => {
-    const checkbox = dayElement.querySelector('.day-toggle input[type="checkbox"]');
-    const timeInputs = dayElement.querySelectorAll('.time-input');
-    
-    const dayName = days[index];
-    scheduleData[dayName] = {
-      isActive: checkbox.checked,
-      openTime: timeInputs[0].value,
-      closeTime: timeInputs[1].value
-    };
-  });
-  
-  return scheduleData;
-}
-
-/**
- * Coleta as tags do cardápio selecionadas
- */
-function collectMenuTags() {
-  const selectedTags = [];
-  
-  document.querySelectorAll('.tag-option input[type="checkbox"]:checked').forEach(checkbox => {
-    const tagLabel = checkbox.nextElementSibling.textContent.trim();
-    selectedTags.push(tagLabel);
-  });
-  
-  return selectedTags;
-}
-
-/**
- * Valida os dados do perfil
- */
-function validateProfileData(data) {
-  if (!data.name.trim()) {
-    goeatAlert('error', 'Nome do restaurante é obrigatório');
+function validateFormData(data) {
+  if (!data.name || data.name.trim() === '') {
+    goeatAlert('error', 'O nome do restaurante é obrigatório');
     return false;
   }
   
-  if (!data.phone.trim()) {
-    goeatAlert('error', 'Telefone é obrigatório');
+  if (!data.phone || data.phone.trim() === '') {
+    goeatAlert('error', 'O telefone do restaurante é obrigatório');
     return false;
   }
   
-  if (!data.email.trim()) {
-    goeatAlert('error', 'E-mail é obrigatório');
+  if (!data.email || data.email.trim() === '') {
+    goeatAlert('error', 'O email do restaurante é obrigatório');
     return false;
   }
   
-  if (!data.address.street.trim() || !data.address.number.trim()) {
-    goeatAlert('error', 'Endereço completo é obrigatório');
+  // Validação básica de endereço
+  if (!data.address.street || data.address.street.trim() === '') {
+    goeatAlert('error', 'A rua é obrigatória');
     return false;
   }
   
-  // Verifica se pelo menos um dia da semana está ativo
-  const hasActiveDay = Object.values(data.schedule).some(day => day.isActive);
-  if (!hasActiveDay) {
-    goeatAlert('error', 'Pelo menos um dia da semana deve estar ativo');
+  if (!data.address.number || data.address.number.trim() === '') {
+    goeatAlert('error', 'O número é obrigatório');
     return false;
   }
   
-  // Verifica se os dias ativos têm horários definidos
-  for (const [dayName, dayData] of Object.entries(data.schedule)) {
-    if (dayData.isActive && (!dayData.openTime || !dayData.closeTime)) {
-      goeatAlert('error', `Defina os horários para ${dayName}`);
-      return false;
-    }
+  if (!data.address.city || data.address.city.trim() === '') {
+    goeatAlert('error', 'A cidade é obrigatória');
+    return false;
+  }
+  
+  if (!data.address.state || data.address.state.trim() === '') {
+    goeatAlert('error', 'O estado é obrigatório');
+    return false;
   }
   
   return true;
+}
+
+/**
+ * Salva as alterações do perfil
+ */
+async function saveProfile() {
+  // Coleta os dados do formulário
+  const profileData = collectFormData();
+  
+  if (!validateFormData(profileData)) {
+    return;
+  }
+  
+  try {
+    // Mostra loading
+    showLoadingModal();
+    
+    // Obtém as credenciais do usuário
+    const token = userData.token;
+    
+    // Envia os dados para a API
+    const response = await fetch(`${API_BASE_URL}/partners/profile`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(profileData)
+    });
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Erro ao salvar perfil: ${response.status} - ${errorText}`);
+    }
+    
+    // Recarrega os dados do perfil
+    await loadProfileData();
+    
+    goeatAlert('success', 'Perfil atualizado com sucesso!');
+    
+  } catch (error) {
+    console.error('Erro ao salvar perfil:', error);
+    goeatAlert('error', `Erro ao salvar perfil: ${error.message}`);
+  } finally {
+    hideLoadingModal();
+  }
 }
 
 /**
