@@ -442,7 +442,7 @@ main {
   transform: translateY(-2px);
 }
 
-/* Seção de tags */
+/* Seção de tags e categorias */
 .tags-section h3 {
   color: var(--goeat-primary);
   font-size: 18px;
@@ -507,6 +507,16 @@ main {
 .tag-label i {
   font-size: 16px;
   color: var(--goeat-blue);
+}
+
+/* Estilos para a seção de Configurações */
+.settings-section {
+  margin-bottom: 30px;
+}
+
+.password-change-form {
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 /* Ações do perfil */

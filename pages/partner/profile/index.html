@@ -70,7 +70,7 @@
             </button>
             <button class="tab-button" data-tab="menu-tags">
               <i class="fa fa-tags"></i>
-              Tags do Cardápio
+              Configurações
             </button>
           </div>
 
@@ -86,18 +86,6 @@
                 <div class="form-group">
                   <label for="restaurant-name">Nome do Restaurante</label>
                   <input type="text" id="restaurant-name" value="Restaurante do João" class="form-input">
-                </div>
-                
-                <div class="form-group">
-                  <label for="restaurant-category">Categoria</label>
-                  <select id="restaurant-category" class="form-input">
-                    <option value="brasileira">Comida Brasileira</option>
-                    <option value="italiana">Italiana</option>
-                    <option value="japonesa">Japonesa</option>
-                    <option value="lanches">Lanches</option>
-                    <option value="pizzaria">Pizzaria</option>
-                    <option value="vegetariana">Vegetariana</option>
-                  </select>
                 </div>
                 
                 <div class="form-group">
@@ -158,30 +146,138 @@
 
             <div class="info-section">
               <h3>
-                <i class="fa fa-truck"></i>
-                Configurações de Entrega
+                <i class="fa fa-tags"></i>
+                Categorias
               </h3>
               
-              <div class="form-grid">
-                <div class="form-group">
-                  <label for="delivery-fee">Taxa de Entrega (R$)</label>
-                  <input type="number" id="delivery-fee" value="5.00" step="0.01" class="form-input">
-                </div>
-                
-                <div class="form-group">
-                  <label for="delivery-time">Tempo de Entrega (min)</label>
-                  <input type="text" id="delivery-time" value="30-45" class="form-input">
-                </div>
-                
-                <div class="form-group">
-                  <label for="minimum-order">Pedido Mínimo (R$)</label>
-                  <input type="number" id="minimum-order" value="25.00" step="0.01" class="form-input">
-                </div>
-                
-                <div class="form-group">
-                  <label for="delivery-radius">Raio de Entrega (km)</label>
-                  <input type="number" id="delivery-radius" value="5" step="0.1" class="form-input">
-                </div>
+              <div class="tags-grid">
+                <label class="tag-option">
+                  <input type="checkbox" checked>
+                  <span class="tag-label">
+                    <i class="fa fa-cutlery"></i>
+                    Comida Brasileira
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-fish"></i>
+                    Sushi
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox" checked>
+                  <span class="tag-label">
+                    <i class="fa fa-fire"></i>
+                    Churrasco
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-circle-o"></i>
+                    Pizza
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox" checked>
+                  <span class="tag-label">
+                    <i class="fa fa-leaf"></i>
+                    Carnes
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-coffee"></i>
+                    Massas
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox" checked>
+                  <span class="tag-label">
+                    <i class="fa fa-glass"></i>
+                    Bebidas
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-square"></i>
+                    Marmitas
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-heart"></i>
+                    Doces
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-birthday-cake"></i>
+                    Bolos
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-hamburger"></i>
+                    Lanches
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-leaf"></i>
+                    Vegetariano
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-seedling"></i>
+                    Vegano
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-ice-cream"></i>
+                    Açaí
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-cookie"></i>
+                    Salgados
+                  </span>
+                </label>
+
+                <label class="tag-option">
+                  <input type="checkbox">
+                  <span class="tag-label">
+                    <i class="fa fa-tint"></i>
+                    Sucos
+                  </span>
+                </label>
               </div>
             </div>
           </div>
@@ -352,145 +448,36 @@
             </div>
           </div>
 
-          <!-- Tab de Tags do Cardápio -->
+          <!-- Tab de Configurações -->
           <div class="tab-content" id="menu-tags">
             <div class="tags-section">
               <h3>
-                <i class="fa fa-tags"></i>
-                Tags do Cardápio
+                <i class="fa fa-cog"></i>
+                Mudança de Senha
               </h3>
-              <p class="tags-description">
-                Selecione as categorias que melhor descrevem o seu cardápio. Isso ajuda os clientes a encontrar seu restaurante.
-              </p>
               
-              <div class="tags-grid">
-                <label class="tag-option">
-                  <input type="checkbox" checked>
-                  <span class="tag-label">
-                    <i class="fa fa-cutlery"></i>
-                    Comida Brasileira
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox">
-                  <span class="tag-label">
-                    <i class="fa fa-fish"></i>
-                    Sushi
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox" checked>
-                  <span class="tag-label">
-                    <i class="fa fa-fire"></i>
-                    Churrasco
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox">
-                  <span class="tag-label">
-                    <i class="fa fa-circle-o"></i>
-                    Pizza
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox" checked>
-                  <span class="tag-label">
-                    <i class="fa fa-leaf"></i>
-                    Carnes
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox">
-                  <span class="tag-label">
-                    <i class="fa fa-coffee"></i>
-                    Massas
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox" checked>
-                  <span class="tag-label">
-                    <i class="fa fa-glass"></i>
-                    Bebidas
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox">
-                  <span class="tag-label">
-                    <i class="fa fa-square"></i>
-                    Marmitas
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox">
-                  <span class="tag-label">
-                    <i class="fa fa-heart"></i>
-                    Doces
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox">
-                  <span class="tag-label">
-                    <i class="fa fa-birthday-cake"></i>
-                    Bolos
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox">
-                  <span class="tag-label">
-                    <i class="fa fa-hamburger"></i>
-                    Lanches
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox">
-                  <span class="tag-label">
-                    <i class="fa fa-leaf"></i>
-                    Vegetariano
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox">
-                  <span class="tag-label">
-                    <i class="fa fa-seedling"></i>
-                    Vegano
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox">
-                  <span class="tag-label">
-                    <i class="fa fa-ice-cream"></i>
-                    Açaí
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox">
-                  <span class="tag-label">
-                    <i class="fa fa-cookie"></i>
-                    Salgados
-                  </span>
-                </label>
-
-                <label class="tag-option">
-                  <input type="checkbox">
-                  <span class="tag-label">
-                    <i class="fa fa-tint"></i>
-                    Sucos
-                  </span>
-                </label>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="current-password">Senha Atual</label>
+                  <input type="password" id="current-password" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                  <label for="new-password">Nova Senha</label>
+                  <input type="password" id="new-password" class="form-input">
+                </div>
+                
+                <div class="form-group">
+                  <label for="confirm-password">Confirmar Nova Senha</label>
+                  <input type="password" id="confirm-password" class="form-input">
+                </div>
+              </div>
+              
+              <div style="text-align: right; margin-top: 20px;">
+                <button class="save-button" style="display: inline-flex;">
+                  <i class="fa fa-save"></i>
+                  Alterar Senha
+                </button>
               </div>
             </div>
           </div>
