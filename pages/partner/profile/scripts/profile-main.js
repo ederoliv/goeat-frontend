@@ -26,11 +26,11 @@ window.onload = function() {
   initializeTabs();
   initializeScheduleEvents();
   
-  // Carrega os dados do perfil do backend
-  loadProfileData();
-  
   // Carrega todas as categorias disponíveis
   loadAllCategories();
+  
+  // Carrega os dados do perfil do backend
+  loadProfileData();
   
   console.log('Página de perfil do restaurante carregada');
 };
@@ -212,15 +212,12 @@ async function loadAllCategories() {
   try {
     showLoadingModal();
     
-    // Obtém as credenciais do usuário
-    const token = userData.token;
-    
     // Faz a requisição para a API para buscar todas as categorias disponíveis
+    // Nota: Essa rota não requer autenticação por token
     const response = await fetch(`${API_BASE_URL}/restaurant-categories`, {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Content-Type': 'application/json'
       }
     });
     
@@ -234,6 +231,8 @@ async function loadAllCategories() {
     
     // Após carregar todas as categorias, atualizamos o grid de categorias
     updateCategoriesGrid();
+    
+    console.log('Categorias carregadas com sucesso:', categories);
     
   } catch (error) {
     console.error('Erro ao carregar categorias:', error);
@@ -251,6 +250,13 @@ function updateCategoriesGrid() {
   
   // Limpa o grid existente
   tagsGrid.innerHTML = '';
+  
+  // Verifica se as categorias estão carregadas
+  if (!allCategories || allCategories.length === 0) {
+    // Se não tiver categorias, exibe uma mensagem
+    tagsGrid.innerHTML = '<p>Carregando categorias...</p>';
+    return;
+  }
   
   // Adiciona cada categoria ao grid
   allCategories.forEach(category => {
@@ -305,6 +311,12 @@ async function loadProfileData() {
     restaurantCategories = profileData.categories || [];
     
     console.log('Perfil carregado com sucesso:', profileData);
+    console.log('Categorias do restaurante:', restaurantCategories);
+    
+    // Se já carregamos as categorias, atualizamos o grid
+    if (allCategories.length > 0) {
+      updateCategoriesGrid();
+    }
     
   } catch (error) {
     console.error('Erro ao carregar perfil:', error);
@@ -422,27 +434,30 @@ function collectFormData() {
   const zipCode = document.getElementById('cep').value;
   const reference = document.getElementById('reference')?.value || '';
   
-  // Categorias selecionadas
+  // Categorias selecionadas - apenas os IDs
   const categoryCheckboxes = document.querySelectorAll('.tags-grid input[type="checkbox"]:checked');
-  const categoryIds = Array.from(categoryCheckboxes).map(cb => parseInt(cb.value));
+  const selectedCategoryIds = Array.from(categoryCheckboxes).map(cb => parseInt(cb.value));
   
-  // Estrutura o objeto conforme esperado pela API
+  // Cria o objeto de endereço no formato esperado pela API
+  const addressObj = {
+    street,
+    number,
+    complement,
+    neighborhood,
+    city,
+    state,
+    zipCode,
+    reference,
+    partnerId: userData.partnerId || userData.id // Usa partnerId se disponível, caso contrário usa id
+  };
+  
+  // Estrutura o objeto conforme esperado pela API para o PUT
   return {
     name,
     phone,
     email,
-    address: {
-      street,
-      number,
-      complement,
-      neighborhood,
-      city,
-      state,
-      zipCode,
-      reference,
-      partnerId: userData.id
-    },
-    categoryIds
+    address: addressObj,
+    categoryIds: selectedCategoryIds // Usa categoryIds em vez de categories
   };
 }
 
@@ -466,23 +481,9 @@ function validateFormData(data) {
   }
   
   // Validação básica de endereço
-  if (!data.address.street || data.address.street.trim() === '') {
-    goeatAlert('error', 'A rua é obrigatória');
-    return false;
-  }
-  
-  if (!data.address.number || data.address.number.trim() === '') {
-    goeatAlert('error', 'O número é obrigatório');
-    return false;
-  }
-  
-  if (!data.address.city || data.address.city.trim() === '') {
-    goeatAlert('error', 'A cidade é obrigatória');
-    return false;
-  }
-  
-  if (!data.address.state || data.address.state.trim() === '') {
-    goeatAlert('error', 'O estado é obrigatório');
+  const address = data.address;
+  if (!address || !address.street || !address.number || !address.city || !address.state) {
+    goeatAlert('error', 'Preencha os campos obrigatórios do endereço');
     return false;
   }
   
@@ -507,6 +508,8 @@ async function saveProfile() {
     // Obtém as credenciais do usuário
     const token = userData.token;
     
+    console.log('Enviando dados para API:', JSON.stringify(profileData, null, 2));
+    
     // Envia os dados para a API
     const response = await fetch(`${API_BASE_URL}/partners/profile`, {
       method: 'PUT',
@@ -518,8 +521,16 @@ async function saveProfile() {
     });
     
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Erro ao salvar perfil: ${response.status} - ${errorText}`);
+      let errorMessage = 'Erro desconhecido';
+      try {
+        const errorData = await response.json();
+        errorMessage = JSON.stringify(errorData);
+      } catch (e) {
+        const errorText = await response.text();
+        errorMessage = errorText || `Código de status: ${response.status}`;
+      }
+      
+      throw new Error(`Erro ao salvar perfil: ${errorMessage}`);
     }
     
     // Recarrega os dados do perfil
