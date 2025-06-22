@@ -63,8 +63,7 @@ function renderPartners(partners) {
     });
 }
 
-// Função para criar o card de parceiro
-// Função corrigida para criar o card de parceiro
+// Função corrigida para criar o card de parceiro - ATUALIZADA
 function createPartnerCard(partner, container) {
     // Primeiro, remova qualquer card existente com o mesmo ID para evitar duplicação
     const existingCard = document.querySelector(`.partner-card[data-partner-id="${partner.id}"]`);
@@ -78,9 +77,8 @@ function createPartnerCard(partner, container) {
     card.dataset.partnerId = partner.id;
     card.dataset.category = partner.category || '';
     
-    // Estrutura HTML do card
+    // Estrutura HTML do card atualizada (SEM imagem de capa)
     card.innerHTML = `
-        <img class="partner-card-image" src="${partner.coverImage || `${root}${routes.assets}foods.png`}" alt="${partner.name}">
         <img class="partner-logo" src="${partner.logo || `${root}${routes.assets}partner.png`}" alt="${partner.name} logo">
         <div class="partner-card-content">
             <div class="partner-card-header">

@@ -138,7 +138,7 @@ body {
   width: 100%;
 }
 
-/* Estilos do card do parceiro */
+/* Estilos do card do parceiro - MODIFICADO */
 .partner-card {
   display: flex;
   flex-direction: column;
@@ -149,6 +149,7 @@ body {
   transition: transform 0.3s, box-shadow 0.3s;
   cursor: pointer;
   position: relative;
+  padding: 20px;
 }
 
 .partner-card:hover {
@@ -157,36 +158,33 @@ body {
 }
 
 .partner-card-image {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
+  display: none; /* Remove a imagem de capa */
 }
 
 .partner-logo {
-  width: 70px;
-  height: 70px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid white;
+  border: 3px solid #f0f0f0;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  position: absolute;
-  top: 120px;
-  left: 20px;
-  z-index: 1; /* Garante que o logo está acima de outros elementos */
+  position: static;
+  margin: 0 auto 15px auto;
+  display: block;
 }
 
 .partner-card-content {
-  padding: 20px;
-  padding-top: 40px;
+  padding: 0;
   display: flex;
   flex-direction: column;
   flex: 1;
+  text-align: center;
 }
 
 .partner-card-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   margin-bottom: 15px;
   width: 100%;
 }
@@ -197,12 +195,14 @@ body {
   color: #333;
   margin-bottom: 5px;
   margin-top: 0;
+  text-align: center;
 }
 
 .partner-card-category {
   font-size: 14px;
   color: #666;
   margin: 0;
+  text-align: center;
 }
 
 .partner-card-rating {
@@ -215,6 +215,7 @@ body {
   padding: 5px 10px;
   border-radius: 20px;
   white-space: nowrap;
+  margin-top: 8px;
 }
 
 .partner-card-rating i {
@@ -235,6 +236,7 @@ body {
 .partner-card-delivery {
   display: flex;
   flex-direction: column;
+  text-align: left;
 }
 
 .delivery-time {
@@ -331,14 +333,13 @@ footer p {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   }
   
-  .partner-card-image {
-    height: 130px;
+  .partner-logo {
+    width: 70px;
+    height: 70px;
   }
   
-  .partner-logo {
-    width: 60px;
-    height: 60px;
-    top: 100px;
+  .partner-card {
+    padding: 15px;
   }
 }
 
@@ -356,7 +357,11 @@ footer p {
   }
   
   .partner-card-content {
-    padding: 15px;
-    padding-top: 30px;
+    padding: 0;
+  }
+  
+  .partner-logo {
+    width: 60px;
+    height: 60px;
   }
 }
