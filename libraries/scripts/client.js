@@ -63,7 +63,7 @@ function renderPartners(partners) {
     });
 }
 
-// Função corrigida para criar o card de parceiro - ATUALIZADA
+// Função para criar o card de parceiro - MODIFICADA (removido taxa de entrega, avaliação e tempo)
 function createPartnerCard(partner, container) {
     // Primeiro, remova qualquer card existente com o mesmo ID para evitar duplicação
     const existingCard = document.querySelector(`.partner-card[data-partner-id="${partner.id}"]`);
@@ -77,27 +77,20 @@ function createPartnerCard(partner, container) {
     card.dataset.partnerId = partner.id;
     card.dataset.category = partner.category || '';
     
-    // Estrutura HTML do card atualizada (SEM imagem de capa)
+    // Usa a imagem do parceiro ou fallback para partner.png
+    const partnerImage = partner.imageUrl || partner.logo || `${root}${routes.assets}partner.png`;
+    
+    // Estrutura HTML do card modificada (removido avaliação, taxa de entrega e tempo)
     card.innerHTML = `
-        <img class="partner-logo" src="${partner.logo || `${root}${routes.assets}partner.png`}" alt="${partner.name} logo">
+        <img class="partner-logo" src="${partnerImage}" alt="${partner.name} logo">
         <div class="partner-card-content">
             <div class="partner-card-header">
                 <div>
                     <h3 class="partner-card-title">${partner.name}</h3>
                     <p class="partner-card-category">${partner.category || 'Restaurante'}</p>
                 </div>
-                <div class="partner-card-rating">
-                    <i class="fa fa-star"></i>
-                    <span>${partner.rating || '4.5'}</span>
-                </div>
             </div>
             <div class="partner-card-info">
-                <div class="partner-card-delivery">
-                    <span class="delivery-time">${partner.deliveryTime || '30-45 min'}</span>
-                    <span class="delivery-fee" ${partner.deliveryFee === 0 ? 'style="color: var(--goeat-green);"' : ''}>
-                        ${partner.deliveryFee === 0 ? 'Entrega grátis' : `Entrega: R$ ${formatPrice(partner.deliveryFee || 500)}`}
-                    </span>
-                </div>
                 <span class="partner-status ${partner.isOpen ? 'open' : 'closed'}">
                     ${partner.isOpen ? 'Aberto' : 'Fechado'}
                 </span>

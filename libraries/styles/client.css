@@ -138,7 +138,7 @@ body {
   width: 100%;
 }
 
-/* Estilos do card do parceiro - MODIFICADO */
+/* Estilos do card do parceiro - MODIFICADO para remover avaliação, taxa de entrega e tempo */
 .partner-card {
   display: flex;
   flex-direction: column;
@@ -205,27 +205,14 @@ body {
   text-align: center;
 }
 
+/* Removido elementos de avaliação - não são mais necessários */
 .partner-card-rating {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  background-color: #fff9e9;
-  padding: 5px 10px;
-  border-radius: 20px;
-  white-space: nowrap;
-  margin-top: 8px;
-}
-
-.partner-card-rating i {
-  color: #ffcc00;
-  margin-right: 5px;
+  display: none; /* Remove avaliação */
 }
 
 .partner-card-info {
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* Centraliza o status */
   align-items: center;
   padding-top: 15px;
   border-top: 1px solid #f0f0f0;
@@ -233,23 +220,14 @@ body {
   width: 100%;
 }
 
+/* Removido elementos de entrega - não são mais necessários */
 .partner-card-delivery {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
+  display: none; /* Remove tempo e taxa de entrega */
 }
 
-.delivery-time {
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
-}
-
+.delivery-time,
 .delivery-fee {
-  font-size: 13px;
-  color: #666;
-  margin: 0;
+  display: none; /* Remove tempo e taxa de entrega */
 }
 
 .partner-status {
