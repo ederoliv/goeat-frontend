@@ -98,20 +98,34 @@ function fechar() {
   document.getElementById("modal").style.display = "none";
 }
 
-// Adicionar listener para tecla Enter nos campos de input
+// Adicionar listener para tecla Enter nos campos de input e configurações gerais
 document.addEventListener('DOMContentLoaded', function() {
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
+  const loginButton = document.querySelector('.btn');
 
+  // Configurar eventos de Enter nos campos de input
   if (emailInput && passwordInput) {
     emailInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
+        e.preventDefault(); // Previne comportamento padrão do form
         passwordInput.focus();
       }
     });
     
     passwordInput.addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
+        e.preventDefault(); // Previne comportamento padrão do form
+        login();
+      }
+    });
+  }
+
+  // Configurar evento de Enter no botão de login (caso ele receba foco)
+  if (loginButton) {
+    loginButton.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
         login();
       }
     });
@@ -128,4 +142,22 @@ document.addEventListener('DOMContentLoaded', function() {
   if (okButton) {
     okButton.addEventListener('click', fechar);
   }
+
+  // Adicionar evento de Enter global no modal para fechá-lo
+  const modal = document.getElementById('modal');
+  if (modal) {
+    modal.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        fechar();
+      }
+    });
+  }
+
+  // Evento de clique fora do modal para fechá-lo
+  window.addEventListener('click', function(event) {
+    const modal = document.getElementById('modal');
+    if (event.target === modal) {
+      fechar();
+    }
+  });
 });

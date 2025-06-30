@@ -12,7 +12,7 @@ function showLoadingModal() {
        left: 0;
        width: 100%;
        height: 100%;
-       background-color: var(--goeat-primary);
+       background-color: rgba(0, 0, 0, 0.6);
        display: flex;
        justify-content: center;
        align-items: center;
@@ -22,19 +22,20 @@ function showLoadingModal() {
    // Criar o conteúdo do modal
    const modalContent = document.createElement('div');
    modalContent.style.cssText = `
-       background-color: rgba(0, 0, 0, 0);
-       padding: 20px;
-       border-radius: 10px;
+       background-color: rgba(255, 255, 255, 0.95);
+       padding: 40px;
+       border-radius: 15px;
        text-align: center;
+       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
    `;
 
    // Adicionar a logo
    const logo = document.createElement('img');
-   logo.src = `${routes.assets}goeat-logo.svg`;
+   logo.src = `${routes.assets}goeat-logo-pg.svg`;
    logo.style.cssText = `
-       height: 120px;
-       margin-bottom: 15px;
-       animation: spin 2s linear infinite;
+       height: 80px;
+       margin-bottom: 20px;
+       animation: pulse 1.5s ease-in-out infinite;
    `;
 
    // Adicionar o texto de loading
@@ -44,6 +45,8 @@ function showLoadingModal() {
        margin: 0;
        color: var(--goeat-primary);
        font-family: Arial, sans-serif;
+       font-size: 16px;
+       font-weight: 500;
    `;
 
    // Montar a estrutura do modal
@@ -52,17 +55,26 @@ function showLoadingModal() {
    modalContainer.appendChild(modalContent);
    document.body.appendChild(modalContainer);
 
-   // Adicionar a animação de rotação
+   // Adicionar a animação de pulse (vai e vem)
    const style = document.createElement('style');
    style.textContent = `
-       @keyframes spin {
-           0% { transform: rotate(0deg); }
-           100% { transform: rotate(360deg); }
+       @keyframes pulse {
+           0% { 
+               transform: scale(1);
+               opacity: 1;
+           }
+           50% { 
+               transform: scale(1.1);
+               opacity: 0.7;
+           }
+           100% { 
+               transform: scale(1);
+               opacity: 1;
+           }
        }
    `;
    document.head.appendChild(style);
 }
-
 
 function hideLoadingModal() {
    const modal = document.getElementById('loading-modal');
@@ -70,7 +82,6 @@ function hideLoadingModal() {
        modal.remove();
    }
 }
-
 
 function goeatAlert(iconType,message){
     Swal.fire({
