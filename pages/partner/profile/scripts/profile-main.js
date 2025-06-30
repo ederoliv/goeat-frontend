@@ -25,12 +25,16 @@ window.onload = function() {
   // Inicializa os componentes da página
   initializeTabs();
   initializeScheduleEvents();
+  initializeOperatingHoursEvents(); // Nova linha para inicializar eventos dos horários
   
   // Carrega todas as categorias disponíveis
   loadAllCategories();
   
   // Carrega os dados do perfil do backend
   loadProfileData();
+  
+  // Carrega os horários de funcionamento
+  loadOperatingHours(); // Nova linha para carregar os horários
   
   console.log('Página de perfil do restaurante carregada');
 };
@@ -535,6 +539,7 @@ async function saveProfile() {
     
     // Recarrega os dados do perfil
     await loadProfileData();
+    await saveOperatingHours();
     
     goeatAlert('success', 'Perfil atualizado com sucesso!');
     
@@ -546,9 +551,6 @@ async function saveProfile() {
   }
 }
 
-/**
- * Cancela as alterações e recarrega os dados originais
- */
 function cancelChanges() {
   Swal.fire({
     title: 'Cancelar alterações?',
@@ -562,6 +564,7 @@ function cancelChanges() {
   }).then((result) => {
     if (result.isConfirmed) {
       loadProfileData();
+      loadOperatingHours(); // Recarregar os horários para descartar as alterações
       goeatAlert('info', 'Alterações canceladas');
     }
   });
