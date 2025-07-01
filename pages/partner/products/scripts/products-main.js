@@ -1,12 +1,14 @@
 /**
  * Arquivo principal para gerenciamento de produtos
- * Responsável pela inicialização e listagem de produtos
- * VERSÃO CORRIGIDA PARA PROBLEMAS DE CORS
+ * VERSÃO COMPLETA COM PESQUISA SEM BOTÃO
  */
 
 const userDataString = sessionStorage.getItem("userData")
 const userData = JSON.parse(userDataString)
 const defaultProductsUrl = `${API_BASE_URL}/products/`
+
+// Variável global para armazenar todos os produtos
+let allProducts = [];
 
 // Lista de gateways IPFS alternativos
 const IPFS_GATEWAYS = [
@@ -33,20 +35,16 @@ window.onload = () => {
 function buildImageUrl(imageUrl, gatewayIndex = 0) {
   if (!imageUrl) return null;
   
-  // Se já é uma URL completa, usa diretamente
   if (imageUrl.startsWith('http')) {
     return imageUrl;
   }
   
-  // Se é um CID, constrói URL com gateway
   if (imageUrl.startsWith('baf')) {
-    // Verifica cache primeiro
     const cacheKey = `${imageUrl}_${gatewayIndex}`;
     if (workingUrls.has(cacheKey)) {
       return workingUrls.get(cacheKey);
     }
     
-    // Usa gateway baseado no índice
     const gateway = IPFS_GATEWAYS[gatewayIndex] || IPFS_GATEWAYS[0];
     const fullUrl = `${gateway}${imageUrl}`;
     
@@ -76,7 +74,6 @@ function testImageUrl(url, timeout = 5000) {
       reject(new Error('Load failed'));
     };
     
-    // Adiciona parâmetros para evitar cache e CORS
     img.crossOrigin = 'anonymous';
     img.src = url;
   });
@@ -90,18 +87,15 @@ async function findWorkingImageUrl(imageUrl) {
     return imageUrl;
   }
   
-  // Verifica cache global primeiro
   if (workingUrls.has(imageUrl)) {
     return workingUrls.get(imageUrl);
   }
   
-  // Testa todos os gateways
   for (let i = 0; i < IPFS_GATEWAYS.length; i++) {
     try {
       const testUrl = buildImageUrl(imageUrl, i);
-      await testImageUrl(testUrl, 3000); // Timeout de 3 segundos
+      await testImageUrl(testUrl, 3000);
       
-      // Salva no cache se funcionou
       workingUrls.set(imageUrl, testUrl);
       console.log(`Gateway funcionando para ${imageUrl}: ${IPFS_GATEWAYS[i]}`);
       
@@ -112,7 +106,6 @@ async function findWorkingImageUrl(imageUrl) {
     }
   }
   
-  // Se nenhum gateway funcionou, retorna null
   console.warn(`Nenhum gateway IPFS funcionou para: ${imageUrl}`);
   return null;
 }
@@ -123,13 +116,11 @@ async function findWorkingImageUrl(imageUrl) {
 async function listProducts() {
   const table = document.querySelector("table")
 
-  // Verificar se a tabela existe
   if (!table) {
     console.error("Tabela não encontrada")
     return
   }
 
-  // Remover thead existente para evitar duplicação
   const existingThead = table.querySelector("thead")
   if (existingThead) {
     existingThead.remove()
@@ -138,7 +129,6 @@ async function listProducts() {
   const thead = document.createElement("thead")
   const tr = document.createElement("tr")
 
-  // Cabeçalhos da tabela
   const headers = ["Nome", "Descrição", "Preço", "Imagem", "Categoria", "Editar", "Excluir"]
   headers.forEach((headerText) => {
     const th = document.createElement("th")
@@ -155,9 +145,8 @@ async function listProducts() {
     return
   }
   
-  tbody.innerHTML = "" // Limpa o conteúdo existente
+  tbody.innerHTML = ""
 
-  // Mostra estado de carregamento
   const loadingRow = document.createElement("tr")
   const loadingCell = document.createElement("td")
   loadingCell.colSpan = headers.length
@@ -173,47 +162,27 @@ async function listProducts() {
     }
     const data = await response.json()
 
-    // Remove o loading
+    // ARMAZENAR OS PRODUTOS GLOBALMENTE
+    allProducts = data;
+
     tbody.innerHTML = ""
 
     if (data.length === 0) {
-      // Mostrar mensagem quando não há produtos
-      const tr = document.createElement("tr")
-      const td = document.createElement("td")
-      td.colSpan = headers.length
-      td.className = "empty-table"
-      td.innerHTML = `
-        <i class="fa fa-archive"></i>
-        <h3>Nenhum produto cadastrado</h3>
-        <p>Comece adicionando seu primeiro produto clicando no botão "Adicionar produto"</p>
-      `
-      tr.appendChild(td)
-      tbody.appendChild(tr)
+      showNoProductsMessage(tbody, headers.length)
       return
     }
 
-    // Processa os produtos
     for (const product of data) {
       await createProductRow(product, tbody);
     }
     
+    // CONFIGURAR A PESQUISA APÓS CARREGAR OS PRODUTOS
+    setupProductSearch();
+    
   } catch (error) {
     console.error("Erro ao listar produtos:", error)
-    
-    // Remove o loading e mostra erro
     tbody.innerHTML = ""
-    
-    const tr = document.createElement("tr")
-    const td = document.createElement("td")
-    td.colSpan = headers.length
-    td.className = "empty-table"
-    td.innerHTML = `
-      <i class="fa fa-exclamation-triangle" style="color: var(--goeat-red);"></i>
-      <h3>Erro ao carregar produtos</h3>
-      <p>Não foi possível carregar a lista de produtos. Tente recarregar a página.</p>
-    `
-    tr.appendChild(td)
-    tbody.appendChild(tr)
+    showErrorMessage(tbody, headers.length)
   }
 }
 
@@ -346,13 +315,11 @@ async function createProductRow(product, tbody) {
  * Função para mostrar modal com imagem ampliada
  */
 function showImageModal(imageUrl, productName) {
-  // Remover modal existente se houver
   const existingModal = document.getElementById("image-modal")
   if (existingModal) {
     existingModal.remove()
   }
 
-  // Criar modal para exibir imagem
   const modal = document.createElement("div")
   modal.id = "image-modal"
   modal.className = "image-modal"
@@ -378,14 +345,12 @@ function showImageModal(imageUrl, productName) {
   modal.appendChild(modalContent)
   document.body.appendChild(modal)
   
-  // Fechar modal ao clicar fora da imagem
   modal.addEventListener('click', (e) => {
     if (e.target === modal) {
       modal.remove()
     }
   })
   
-  // Fechar modal com ESC
   document.addEventListener('keydown', function escHandler(e) {
     if (e.key === 'Escape') {
       modal.remove()
@@ -398,7 +363,6 @@ function showImageModal(imageUrl, productName) {
  * Função para excluir um produto
  */
 async function deleteProduct(productId) {
-  // Usa o Swal.fire para mostrar uma caixa de confirmação
   const result = await Swal.fire({
     title: 'Tem certeza?',
     text: "Você está prestes a excluir este produto!",
@@ -410,7 +374,6 @@ async function deleteProduct(productId) {
     cancelButtonText: 'Cancelar'
   });
 
-  // Se o usuário confirmou a exclusão
   if (result.isConfirmed) {
     const response = await fetch(`${API_BASE_URL}/partners/${userData.id}/products/${productId}`, { 
       method: "DELETE", 
@@ -426,6 +389,154 @@ async function deleteProduct(productId) {
     } else {
       goeatAlert("error", "Erro ao excluir produto")
     }
+  }
+}
+
+// ===========================================
+// FUNÇÕES DE PESQUISA (SEM BOTÃO)
+// ===========================================
+
+/**
+ * Função para configurar a pesquisa
+ */
+function setupProductSearch() {
+  const searchInput = document.getElementById("searchInput");
+  
+  if (!searchInput) {
+    console.error("Campo de pesquisa não encontrado");
+    return;
+  }
+
+  // Limpar eventos anteriores
+  searchInput.replaceWith(searchInput.cloneNode(true));
+  
+  // Pegar a referência novamente
+  const newSearchInput = document.getElementById("searchInput");
+  
+  // Evento de Enter no input
+  newSearchInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      performProductSearch();
+    }
+  });
+  
+  // Pesquisa automática enquanto digita
+  newSearchInput.addEventListener('input', function() {
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+      performProductSearch();
+    }, 300);
+  });
+}
+
+/**
+ * Função para realizar a pesquisa
+ */
+function performProductSearch() {
+  const searchInput = document.getElementById("searchInput");
+  const searchTerm = searchInput.value.trim().toLowerCase();
+  
+  if (!searchTerm) {
+    displayProducts(allProducts);
+    return;
+  }
+  
+  const filteredProducts = allProducts.filter(product => {
+    const name = product.name.toLowerCase();
+    const description = (product.description || '').toLowerCase();
+    const category = (product.categoryName || '').toLowerCase();
+    const price = formatCentsToReais(product.price);
+    
+    return name.includes(searchTerm) || 
+           description.includes(searchTerm) || 
+           category.includes(searchTerm) ||
+           price.includes(searchTerm);
+  });
+  
+  displayProducts(filteredProducts);
+}
+
+/**
+ * Função para exibir produtos filtrados
+ */
+async function displayProducts(products) {
+  const tbody = document.querySelector("#tbody");
+  const headers = ["Nome", "Descrição", "Preço", "Imagem", "Categoria", "Editar", "Excluir"];
+  
+  if (!tbody) return;
+  
+  tbody.innerHTML = "";
+  
+  if (products.length === 0) {
+    showNoResultsMessage(tbody, headers.length);
+    return;
+  }
+  
+  for (const product of products) {
+    await createProductRow(product, tbody);
+  }
+}
+
+/**
+ * Função para mostrar mensagem de nenhum produto encontrado
+ */
+function showNoProductsMessage(tbody, colSpan) {
+  const tr = document.createElement("tr")
+  const td = document.createElement("td")
+  td.colSpan = colSpan
+  td.className = "empty-table"
+  td.innerHTML = `
+    <i class="fa fa-archive"></i>
+    <h3>Nenhum produto cadastrado</h3>
+    <p>Comece adicionando seu primeiro produto clicando no botão "Adicionar produto"</p>
+  `
+  tr.appendChild(td)
+  tbody.appendChild(tr)
+}
+
+/**
+ * Função para mostrar mensagem de nenhum resultado na pesquisa
+ */
+function showNoResultsMessage(tbody, colSpan) {
+  const tr = document.createElement("tr")
+  const td = document.createElement("td")
+  td.colSpan = colSpan
+  td.className = "empty-table"
+  td.innerHTML = `
+    <i class="fa fa-search"></i>
+    <h3>Nenhum produto encontrado</h3>
+    <p>Tente usar outros termos de pesquisa ou <button onclick="clearProductSearch()" style="background:none;border:none;color:var(--goeat-primary);text-decoration:underline;cursor:pointer;">limpar a pesquisa</button></p>
+  `
+  tr.appendChild(td)
+  tbody.appendChild(tr)
+}
+
+/**
+ * Função para mostrar mensagem de erro
+ */
+function showErrorMessage(tbody, colSpan) {
+  const tr = document.createElement("tr")
+  const td = document.createElement("td")
+  td.colSpan = colSpan
+  td.className = "empty-table"
+  td.innerHTML = `
+    <i class="fa fa-exclamation-triangle" style="color: var(--goeat-red);"></i>
+    <h3>Erro ao carregar produtos</h3>
+    <p>Não foi possível carregar a lista de produtos. Tente recarregar a página.</p>
+  `
+  tr.appendChild(td)
+  tbody.appendChild(tr)
+}
+
+/**
+ * Função para limpar a pesquisa
+ */
+function clearProductSearch() {
+  const searchInput = document.getElementById("searchInput");
+  if (searchInput) {
+    searchInput.value = '';
+    displayProducts(allProducts);
+    searchInput.focus();
   }
 }
 
@@ -455,3 +566,6 @@ async function registerProduct() {
     goeatAlert("success", "Produto cadastrado com sucesso!")
   }
 }
+
+// Tornar a função disponível globalmente
+window.clearProductSearch = clearProductSearch;

@@ -225,9 +225,21 @@ main {
 
 .search-container {
   display: flex;
-  justify-content: space-between;
-  width: 80%;
+  align-items: center;
+  width: 60%;
   gap: 20px;
+}
+
+.search-container #searchInput {
+  margin-left: auto;
+  flex: 1;
+  max-width: 300px;
+  position: relative;
+}
+
+.search-container #productButton {
+  flex-shrink: 0;
+  max-width: 300px;
 }
 
 .input {
@@ -250,11 +262,6 @@ main {
 #productButton {
   color: white;
   background-color: var(--goeat-green);
-}
-
-#searchButton {
-  color: white;
-  background-color: var(--goeat-blue);
 }
 
 .list-product-edit-button {
@@ -292,7 +299,6 @@ main {
   border-bottom: 1px solid #ddd;
 }
 
-
 .add-category-form {
   margin-bottom: 20px;
   display: flex;
@@ -300,7 +306,7 @@ main {
 }
 
 .add-category-form button {
-  background: #06cf90; /* Mesmo fundo do botão Salvar */
+  background: #06cf90;
   color: #fff;
   padding: 10px 20px;
   border: none;
@@ -319,6 +325,5 @@ main {
 .category-input-container {
   display: flex;
   align-items: center;
-  gap: 10px; /* Espaço entre o input e o botão */
+  gap: 10px;
 }
-
