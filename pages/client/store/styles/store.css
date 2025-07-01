@@ -48,7 +48,7 @@ body {
   font-size: 28px;
   font-weight: 700;
   color: #333;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   text-align: center;
   position: relative;
   padding-bottom: 10px;
@@ -70,12 +70,237 @@ body {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  padding: 20px;
-  margin-bottom: 20px;
+  max-width: 600px;
+  padding: 30px 20px;
+  margin-bottom: 30px;
   background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
+
+/* === ESTILOS PARA INFORMAÇÕES DETALHADAS DO RESTAURANTE === */
+
+.store-detailed-info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Container do status */
+.store-status-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Status do restaurante (atualizado) */
+.store-status {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.store-status.open {
+  border-color: var(--goeat-green);
+  background: linear-gradient(135deg, #e6f7f0 0%, #f0fff4 100%);
+  color: var(--goeat-green);
+}
+
+.store-status.closed {
+  border-color: var(--goeat-red);
+  background: linear-gradient(135deg, #ffe5e5 0%, #fff1f1 100%);
+  color: var(--goeat-red);
+}
+
+.store-status i {
+  font-size: 18px;
+}
+
+.store-status.open i {
+  color: var(--goeat-green);
+  animation: pulse 2s infinite;
+}
+
+.store-status.closed i {
+  color: var(--goeat-red);
+}
+
+/* Seção do endereço */
+.store-address-section {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 15px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-left: 4px solid var(--goeat-primary);
+  transition: all 0.3s ease;
+}
+
+.store-address-section:hover {
+  background-color: #e9ecef;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.store-address-section i {
+  color: var(--goeat-primary);
+  font-size: 18px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.store-address-section span {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Seção de horários de funcionamento */
+.store-hours-section {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.store-hours-section:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.store-hours-header {
+  padding: 15px;
+  background: linear-gradient(135deg, var(--goeat-primary) 0%, #3aa9d8 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.store-hours-header:hover {
+  background: linear-gradient(135deg, #3aa9d8 0%, var(--goeat-primary) 100%);
+}
+
+.store-hours-header i {
+  font-size: 18px;
+}
+
+.store-hours-header span {
+  flex: 1;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.hours-toggle-button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.hours-toggle-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.hours-toggle-button i {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+/* Lista de horários */
+.store-hours-list {
+  background-color: white;
+  border-top: 1px solid #e9ecef;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 300px;
+  }
+}
+
+.store-hours-day {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  border-bottom: 1px solid #f1f3f4;
+  transition: background-color 0.2s ease;
+}
+
+.store-hours-day:last-child {
+  border-bottom: none;
+}
+
+.store-hours-day:hover {
+  background-color: #f8f9fa;
+}
+
+.store-hours-day.today {
+  background: linear-gradient(135deg, #e6f7f0 0%, #f0fff4 100%);
+  border-left: 4px solid var(--goeat-green);
+  font-weight: 600;
+}
+
+.day-name {
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.day-hours {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.day-hours.open {
+  color: var(--goeat-green);
+  background-color: rgba(6, 207, 144, 0.1);
+}
+
+.day-hours.closed {
+  color: var(--goeat-red);
+  background-color: rgba(255, 85, 85, 0.1);
+}
+
+/* Animação de pulse para status aberto */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* === FIM DOS ESTILOS PARA INFORMAÇÕES DETALHADAS === */
 
 #container-products {
   width: 100%;
@@ -280,37 +505,6 @@ body {
   margin-bottom: 10px;
 }
 
-/* Mensagem de loja fechada ou indisponível */
-.store-status {
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.store-status.open {
-  border-left: 4px solid var(--goeat-green);
-}
-
-.store-status.closed {
-  border-left: 4px solid var(--goeat-red);
-}
-
-.store-status i {
-  font-size: 20px;
-}
-
-.store-status.open i {
-  color: var(--goeat-green);
-}
-
-.store-status.closed i {
-  color: var(--goeat-red);
-}
-
 footer {
   display: flex;
   flex-direction: column;
@@ -369,60 +563,6 @@ footer p {
   content: '\f07a';
   font-family: FontAwesome;
   font-size: 20px;
-}
-
-/* Responsividade */
-@media screen and (max-width: 768px) {
-  .card-details {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .product-image {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .div-quantity {
-    align-self: flex-start;
-  }
-  
-  .add-to-cart-button {
-    width: 50px;
-  }
-  
-  #partner-logo {
-    width: 100px;
-    height: 100px;
-  }
-  
-  #partner-name {
-    font-size: 24px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .product-image {
-    width: 70px;
-    height: 70px;
-  }
-  
-  .product-name {
-    font-size: 16px;
-  }
-  
-  .product-price {
-    font-size: 16px;
-  }
-  
-  .quantity-button, .quantity-field {
-    width: 32px;
-    height: 32px;
-  }
-  
-  #container {
-    padding: 60px 10px 80px 10px;
-  }
 }
 
 /* Container da imagem do produto */
@@ -496,8 +636,49 @@ footer p {
   background: linear-gradient(135deg, #9B8BC4 0%, #B5A6D3 50%, #A697CA 100%);
 }
 
-/* Responsividade para telas menores */
+/* === RESPONSIVIDADE === */
+
 @media screen and (max-width: 768px) {
+  .store-detailed-info {
+    gap: 12px;
+  }
+  
+  .store-status {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+  
+  .store-address-section {
+    padding: 12px;
+    gap: 10px;
+  }
+  
+  .store-address-section span {
+    font-size: 13px;
+  }
+  
+  .store-hours-header {
+    padding: 12px;
+  }
+  
+  .store-hours-header span {
+    font-size: 14px;
+  }
+  
+  .store-hours-day {
+    padding: 10px 12px;
+  }
+  
+  .day-name,
+  .day-hours {
+    font-size: 13px;
+  }
+
+  .card-details {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
   .product-image-container {
     width: 80px;
     height: 80px;
@@ -511,9 +692,75 @@ footer p {
   .product-image-placeholder span {
     font-size: 10px;
   }
+  
+  .div-quantity {
+    align-self: flex-start;
+  }
+  
+  .add-to-cart-button {
+    width: 50px;
+  }
+  
+  #partner-logo {
+    width: 100px;
+    height: 100px;
+  }
+  
+  #partner-name {
+    font-size: 24px;
+  }
 }
 
 @media screen and (max-width: 480px) {
+  .store-status {
+    padding: 8px 12px;
+    font-size: 13px;
+    gap: 8px;
+  }
+  
+  .store-status i {
+    font-size: 16px;
+  }
+  
+  .store-address-section {
+    padding: 10px;
+    gap: 8px;
+  }
+  
+  .store-address-section i {
+    font-size: 16px;
+  }
+  
+  .store-address-section span {
+    font-size: 12px;
+  }
+  
+  .store-hours-header {
+    padding: 10px;
+    gap: 10px;
+  }
+  
+  .store-hours-header span {
+    font-size: 13px;
+  }
+  
+  .store-hours-day {
+    padding: 8px 10px;
+  }
+  
+  .day-name,
+  .day-hours {
+    font-size: 12px;
+  }
+  
+  .hours-toggle-button {
+    padding: 3px;
+  }
+  
+  .hours-toggle-button i {
+    font-size: 12px;
+  }
+
   .product-image-container {
     width: 70px;
     height: 70px;
@@ -526,5 +773,22 @@ footer p {
   
   .product-image-placeholder span {
     font-size: 9px;
+  }
+  
+  .product-name {
+    font-size: 16px;
+  }
+  
+  .product-price {
+    font-size: 16px;
+  }
+  
+  .quantity-button, .quantity-field {
+    width: 32px;
+    height: 32px;
+  }
+  
+  #container {
+    padding: 60px 10px 80px 10px;
   }
 }

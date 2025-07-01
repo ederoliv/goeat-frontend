@@ -643,3 +643,121 @@ footer p {
 .add-address-button i {
     font-size: 18px;
 }
+
+/* Estilos para as informações de retirada no checkout */
+
+.pickup-status {
+  margin-bottom: 15px;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  border-left: 4px solid var(--goeat-primary);
+}
+
+.pickup-status p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pickup-status i {
+  font-size: 16px;
+}
+
+.pickup-hours {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f1f3f4;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.pickup-hours p {
+  margin: 8px 0;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.pickup-hours p:first-child {
+  margin-top: 0;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.pickup-hours p:last-child {
+  margin-bottom: 0;
+}
+
+.pickup-closed-days {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  font-style: italic;
+}
+
+/* Melhorias para a seção de retirada existente */
+.pickup-details {
+  position: relative;
+}
+
+.pickup-details p {
+  margin-bottom: 12px;
+}
+
+.pickup-details p i {
+  color: var(--goeat-primary);
+  margin-right: 8px;
+  width: 16px;
+  text-align: center;
+}
+
+.pickup-address {
+  font-weight: 600;
+  color: #333;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 6px;
+  margin: 10px 0 15px 24px;
+  border-left: 3px solid var(--goeat-primary);
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+  .pickup-hours {
+    padding: 12px;
+  }
+  
+  .pickup-hours p {
+    font-size: 13px;
+  }
+  
+  .pickup-address {
+    margin-left: 20px;
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .pickup-status {
+    padding: 10px;
+  }
+  
+  .pickup-hours {
+    padding: 10px;
+  }
+  
+  .pickup-hours p {
+    font-size: 12px;
+  }
+  
+  .pickup-address {
+    margin-left: 16px;
+    padding: 6px;
+    font-size: 13px;
+  }
+}

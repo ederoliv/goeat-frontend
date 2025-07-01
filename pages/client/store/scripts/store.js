@@ -46,7 +46,7 @@ function getPartnerId() {
 // REQUISIÇÕES PARA API
 async function loadPartnerData(partnerId) {
     try {
-        const response = await fetch(`${API_BASE_URL}/partners/${partnerId}`);
+        const response = await fetch(`${API_BASE_URL}/partners/${partnerId}/details`);
         
         if (!response.ok) {
             throw new Error('Erro na requisição');
@@ -63,8 +63,8 @@ async function loadPartnerData(partnerId) {
             document.getElementById("partner-logo").src = data.logo;
         }
         
-        // Cria a seção de status do parceiro (Aberto/Fechado)
-        createPartnerStatus(data.isOpen, data.openingHours);
+        // Cria a seção detalhada de informações do parceiro
+        createDetailedPartnerInfo(data);
 
     } catch (error) {
         console.error('Erro ao carregar dados do parceiro:', error);
@@ -77,10 +77,47 @@ async function loadPartnerData(partnerId) {
     }
 }
 
-// Função para criar a seção de status do parceiro
-function createPartnerStatus(isOpen, openingHours) {
-    const storeHeader = document.createElement('div');
-    storeHeader.className = 'store-header';
+// Função para criar a seção detalhada de informações do parceiro
+function createDetailedPartnerInfo(partnerData) {
+    const storeHeader = document.querySelector('.store-header');
+    
+    // Remove qualquer informação anterior
+    const existingInfo = storeHeader.querySelector('.store-detailed-info');
+    if (existingInfo) {
+        existingInfo.remove();
+    }
+    
+    // Cria container principal das informações detalhadas
+    const detailedInfo = document.createElement('div');
+    detailedInfo.className = 'store-detailed-info';
+    
+    // Status de funcionamento (aberto/fechado)
+    const statusContainer = createPartnerStatus(partnerData.isOpen, partnerData.operatingHours);
+    detailedInfo.appendChild(statusContainer);
+    
+    // Endereço completo se disponível
+    if (partnerData.fullAddress) {
+        const addressSection = createAddressSection(partnerData.fullAddress);
+        detailedInfo.appendChild(addressSection);
+    }
+    
+    // Horários de funcionamento
+    if (partnerData.operatingHours && Array.isArray(partnerData.operatingHours) && partnerData.operatingHours.length > 0) {
+        const hoursSection = createOperatingHoursSection(partnerData.operatingHours);
+        if (hoursSection) { // Só adiciona se a seção foi criada com sucesso
+            detailedInfo.appendChild(hoursSection);
+        }
+    }
+    
+    // Adiciona as informações detalhadas após o nome do parceiro
+    const partnerName = document.getElementById('partner-name');
+    partnerName.parentNode.insertBefore(detailedInfo, partnerName.nextSibling);
+}
+
+// Função para criar o status do parceiro (atualizada)
+function createPartnerStatus(isOpen, operatingHours) {
+    const statusContainer = document.createElement('div');
+    statusContainer.className = 'store-status-container';
     
     const storeStatus = document.createElement('div');
     storeStatus.className = isOpen ? 'store-status open' : 'store-status closed';
@@ -89,20 +126,235 @@ function createPartnerStatus(isOpen, openingHours) {
     statusIcon.className = isOpen ? 'fa fa-check-circle' : 'fa fa-clock-o';
     
     const statusText = document.createElement('span');
-    statusText.textContent = isOpen ? 'Aberto' : 'Fechado no momento';
     
-    // Adiciona horário de funcionamento se estiver fechado
-    if (!isOpen && openingHours) {
-        statusText.textContent += ` • Abre ${openingHours}`;
+    if (isOpen) {
+        statusText.textContent = 'Aberto agora';
+        
+        // Se estiver aberto e tiver horários, mostra quando fecha hoje
+        if (operatingHours && Array.isArray(operatingHours)) {
+            const todayHours = getTodayOperatingHours(operatingHours);
+            if (todayHours && todayHours.isOpen && todayHours.closingTime) {
+                try {
+                    const currentTime = new Date();
+                    const closingTime = parseTime(todayHours.closingTime);
+                    
+                    if (currentTime < closingTime) {
+                        statusText.textContent += ` • Fecha às ${todayHours.closingTime}`;
+                    }
+                } catch (error) {
+                    console.warn('Erro ao processar horário de fechamento:', error);
+                }
+            }
+        }
+    } else {
+        statusText.textContent = 'Fechado no momento';
+        
+        // Se estiver fechado e tiver horários, mostra quando abre novamente
+        if (operatingHours && Array.isArray(operatingHours)) {
+            const nextOpenTime = getNextOpenTime(operatingHours);
+            if (nextOpenTime) {
+                statusText.textContent += ` • ${nextOpenTime}`;
+            }
+        }
     }
     
     storeStatus.appendChild(statusIcon);
     storeStatus.appendChild(statusText);
+    statusContainer.appendChild(storeStatus);
     
-    // Insere após o logo e nome do parceiro
-    const partnerName = document.getElementById('partner-name');
-    partnerName.parentNode.insertBefore(storeStatus, partnerName.nextSibling);
+    return statusContainer;
 }
+
+// Função para criar seção do endereço
+function createAddressSection(fullAddress) {
+    const addressSection = document.createElement('div');
+    addressSection.className = 'store-address-section';
+    
+    const addressIcon = document.createElement('i');
+    addressIcon.className = 'fa fa-map-marker';
+    
+    const addressText = document.createElement('span');
+    addressText.textContent = fullAddress;
+    
+    addressSection.appendChild(addressIcon);
+    addressSection.appendChild(addressText);
+    
+    return addressSection;
+}
+
+// Função para criar seção de horários de funcionamento
+function createOperatingHoursSection(operatingHours) {
+    // Validação adicional
+    if (!operatingHours || !Array.isArray(operatingHours) || operatingHours.length === 0) {
+        return null; // Retorna null se não houver horários válidos
+    }
+
+    const hoursSection = document.createElement('div');
+    hoursSection.className = 'store-hours-section';
+    
+    const hoursHeader = document.createElement('div');
+    hoursHeader.className = 'store-hours-header';
+    
+    const hoursIcon = document.createElement('i');
+    hoursIcon.className = 'fa fa-clock-o';
+    
+    const hoursTitle = document.createElement('span');
+    hoursTitle.textContent = 'Horários de funcionamento';
+    
+    const toggleButton = document.createElement('button');
+    toggleButton.className = 'hours-toggle-button';
+    toggleButton.innerHTML = '<i class="fa fa-chevron-down"></i>';
+    
+    hoursHeader.appendChild(hoursIcon);
+    hoursHeader.appendChild(hoursTitle);
+    hoursHeader.appendChild(toggleButton);
+    
+    const hoursList = document.createElement('div');
+    hoursList.className = 'store-hours-list';
+    hoursList.style.display = 'none'; // Inicialmente oculto
+    
+    // Mapear dias da semana para português
+    const daysMap = {
+        'MONDAY': 'Segunda-feira',
+        'TUESDAY': 'Terça-feira',
+        'WEDNESDAY': 'Quarta-feira',
+        'THURSDAY': 'Quinta-feira',
+        'FRIDAY': 'Sexta-feira',
+        'SATURDAY': 'Sábado',
+        'SUNDAY': 'Domingo'
+    };
+    
+    // Adiciona cada dia da semana
+    operatingHours.forEach(day => {
+        const dayItem = document.createElement('div');
+        dayItem.className = 'store-hours-day';
+        
+        const dayName = document.createElement('span');
+        dayName.className = 'day-name';
+        dayName.textContent = daysMap[day.dayOfWeek] || day.dayOfWeek;
+        
+        const dayHours = document.createElement('span');
+        dayHours.className = 'day-hours';
+        
+        if (day.isOpen) {
+            dayHours.textContent = `${day.openingTime} - ${day.closingTime}`;
+            dayHours.classList.add('open');
+        } else {
+            dayHours.textContent = 'Fechado';
+            dayHours.classList.add('closed');
+        }
+        
+        // Destaca o dia atual
+        if (isToday(day.dayOfWeek)) {
+            dayItem.classList.add('today');
+        }
+        
+        dayItem.appendChild(dayName);
+        dayItem.appendChild(dayHours);
+        hoursList.appendChild(dayItem);
+    });
+    
+    // Evento para expandir/contrair horários
+    hoursHeader.addEventListener('click', () => {
+        const isHidden = hoursList.style.display === 'none';
+        hoursList.style.display = isHidden ? 'block' : 'none';
+        
+        const chevron = toggleButton.querySelector('i');
+        chevron.className = isHidden ? 'fa fa-chevron-up' : 'fa fa-chevron-down';
+    });
+    
+    hoursSection.appendChild(hoursHeader);
+    hoursSection.appendChild(hoursList);
+    
+    return hoursSection;
+}
+
+// Funções auxiliares para trabalhar com horários
+function getTodayOperatingHours(operatingHours) {
+    // Validação de entrada
+    if (!operatingHours || !Array.isArray(operatingHours)) {
+        console.warn('operatingHours is not a valid array');
+        return null;
+    }
+    
+    const today = new Date().getDay(); // 0 = Domingo, 1 = Segunda, etc.
+    const dayNames = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    const todayName = dayNames[today];
+    
+    return operatingHours.find(day => day && day.dayOfWeek === todayName) || null;
+}
+
+function getNextOpenTime(operatingHours) {
+    // Validação de entrada
+    if (!operatingHours || !Array.isArray(operatingHours)) {
+        console.warn('operatingHours is not a valid array');
+        return null;
+    }
+    
+    const today = new Date().getDay();
+    const dayNames = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    
+    // Procura pelo próximo dia aberto
+    for (let i = 1; i <= 7; i++) {
+        const nextDayIndex = (today + i) % 7;
+        const nextDayName = dayNames[nextDayIndex];
+        const nextDay = operatingHours.find(day => day && day.dayOfWeek === nextDayName);
+        
+        if (nextDay && nextDay.isOpen && nextDay.openingTime) {
+            const dayLabel = i === 1 ? 'Amanhã' : 
+                            i === 7 ? 'Próximo ' + getDayName(nextDayName) :
+                            getDayName(nextDayName);
+            return `Abre ${dayLabel} às ${nextDay.openingTime}`;
+        }
+    }
+    
+    return null;
+}
+
+function parseTime(timeString) {
+    if (!timeString || typeof timeString !== 'string') {
+        console.warn('Invalid time string:', timeString);
+        return new Date(); // Retorna data atual como fallback
+    }
+    
+    try {
+        const [hours, minutes] = timeString.split(':').map(Number);
+        if (isNaN(hours) || isNaN(minutes)) {
+            throw new Error('Invalid time format');
+        }
+        
+        const time = new Date();
+        time.setHours(hours, minutes, 0, 0);
+        return time;
+    } catch (error) {
+        console.warn('Error parsing time:', timeString, error);
+        return new Date(); // Retorna data atual como fallback
+    }
+}
+
+function isToday(dayOfWeek) {
+    if (!dayOfWeek || typeof dayOfWeek !== 'string') {
+        return false;
+    }
+    
+    const today = new Date().getDay();
+    const dayNames = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    return dayNames[today] === dayOfWeek;
+}
+
+function getDayName(dayOfWeek) {
+    const daysMap = {
+        'MONDAY': 'Segunda-feira',
+        'TUESDAY': 'Terça-feira',
+        'WEDNESDAY': 'Quarta-feira',
+        'THURSDAY': 'Quinta-feira',
+        'FRIDAY': 'Sexta-feira',
+        'SATURDAY': 'Sábado',
+        'SUNDAY': 'Domingo'
+    };
+    return daysMap[dayOfWeek] || dayOfWeek;
+}
+
 
 // Função para listar as categorias e produtos do parceiro
 async function listPartnerProducts(partnerId) {
