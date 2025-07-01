@@ -1,19 +1,10 @@
-/**
- * Arquivo responsável pelas operações de API para produtos
- * Inclui adição e atualização de produtos
- * VERSÃO ATUALIZADA COM UPLOAD DE IMAGEM
- */
-
-/**
- * Função para adicionar um novo produto
- */
 function addProduct() {
   const name = document.getElementById("nameInput").value
   const description = document.getElementById("descriptionInput").value
-  const price = parseFloat(document.getElementById("priceInput").value) || 0
+  const priceInput = document.getElementById("priceInput")
+  const price = getPriceInCents(priceInput)
   const categoryId = document.getElementById("categoryInput").value
 
-  // Obter o CID da imagem atual ou usar o valor do campo imageUrl
   const currentImageCid = getCurrentProductImageCid();
   const imageUrlField = document.getElementById("imageUrlInput").value;
   const imageUrl = currentImageCid || imageUrlField || "";
@@ -27,7 +18,7 @@ function addProduct() {
     name,
     description,
     price,
-    imageUrl, // Agora pode ser um CID da imagem uploadada
+    imageUrl,
     menuId: userData.id,
     categoryId: categoryId || null
   }
@@ -43,14 +34,11 @@ function addProduct() {
     .then((response) => {
       if (response.status === 200 || response.status === 201) {
         goeatAlert("success", "Produto adicionado com sucesso!")
-        // Remove o modal completamente
         const modal = document.getElementById("modal")
         if (modal) {
           modal.remove()
         }
-        // Resetar o estado da imagem
         resetProductImageState();
-        // Atualizar a lista de produtos
         listProducts()
       } else {
         goeatAlert("error", "Falha ao adicionar produto")
@@ -63,16 +51,13 @@ function addProduct() {
     })
 }
 
-/**
- * Função para atualizar um produto existente
- */
 function updateProduct(productId) {
   const name = document.getElementById("nameInput").value
   const description = document.getElementById("descriptionInput").value
-  const price = parseFloat(document.getElementById("priceInput").value) || 0
+  const priceInput = document.getElementById("priceInput")
+  const price = getPriceInCents(priceInput)
   const categoryId = document.getElementById("categoryInput").value
 
-  // Obter o CID da imagem atual ou usar o valor do campo imageUrl
   const currentImageCid = getCurrentProductImageCid();
   const imageUrlField = document.getElementById("imageUrlInput").value;
   const imageUrl = currentImageCid || imageUrlField || "";
@@ -86,7 +71,7 @@ function updateProduct(productId) {
     name,
     description,
     price,
-    imageUrl, // Agora pode ser um CID da imagem uploadada
+    imageUrl,
     menuId: userData.id,
     categoryId: categoryId || null
   }
@@ -102,14 +87,11 @@ function updateProduct(productId) {
     .then((response) => {
       if (response.ok) {
         goeatAlert("success", "Produto atualizado com sucesso!")
-        // Remove o modal completamente
         const modal = document.getElementById("modal")
         if (modal) {
           modal.remove()
         }
-        // Resetar o estado da imagem
         resetProductImageState();
-        // Atualizar a lista de produtos
         listProducts()
         return response.json()
       }

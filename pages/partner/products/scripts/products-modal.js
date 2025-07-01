@@ -1,23 +1,11 @@
-/**
- * Arquivo responsável pelos modais de produtos
- * Inclui criação, edição e gerenciamento de modais de produtos
- * VERSÃO ATUALIZADA COM UPLOAD DE IMAGEM
- */
-
-/**
- * Função para criar o modal de produtos (cadastro ou edição)
- */
 function _createProductModal(title, productData = null) {
-  // Remover modal existente se houver
   const existingModal = document.getElementById("modal")
   if (existingModal) {
     existingModal.remove()
   }
 
-  // Resetar o estado da imagem
   resetProductImageState();
 
-  // Criar novo modal
   const modal = document.createElement("div")
   modal.id = "modal"
   modal.className = "modal"
@@ -34,7 +22,7 @@ function _createProductModal(title, productData = null) {
   const closeButton = document.createElement("button")
   closeButton.className = "close-button fa fa-times"
   closeButton.onclick = () => {
-    modal.remove() // Remove completamente o modal
+    modal.remove()
   }
 
   modalHeader.append(modalTitle, closeButton)
@@ -42,11 +30,10 @@ function _createProductModal(title, productData = null) {
   const modalBody = document.createElement("div")
   modalBody.className = "modal-body"
 
-  // Criação dos inputs básicos
   const basicInputs = [
     { id: "nameInput", type: "text", placeholder: "Nome do produto...", label: "Nome do Produto*" },
     { id: "descriptionInput", type: "text", placeholder: "Descrição do produto...", label: "Descrição" },
-    { id: "priceInput", type: "number", placeholder: "Preço do produto...", label: "Preço*" }
+    { id: "priceInput", type: "text", placeholder: "0,00", label: "Preço (R$)*", isPriceField: true }
   ]
 
   basicInputs.forEach((input) => {
@@ -60,7 +47,29 @@ function _createProductModal(title, productData = null) {
     inputElement.placeholder = input.placeholder
     inputElement.className = "input-modal"
     
-    // Se temos dados do produto, preencher os campos
+    if (input.isPriceField) {
+      const priceContainer = document.createElement("div")
+      priceContainer.className = "price-input-container"
+      
+      const currencyIcon = document.createElement("span")
+      currencyIcon.className = "currency-icon"
+      currencyIcon.textContent = "R$"
+      
+      inputElement.style.paddingLeft = "35px"
+      inputElement.style.textAlign = "right"
+      inputElement.style.fontFamily = "'Courier New', monospace"
+      inputElement.style.fontWeight = "500"
+      
+      priceContainer.appendChild(currencyIcon)
+      priceContainer.appendChild(inputElement)
+      
+      modalBody.append(label, priceContainer)
+      
+      setupPriceInputFormatter(inputElement)
+    } else {
+      modalBody.append(label, inputElement)
+    }
+    
     if (productData) {
       switch(input.id) {
         case "nameInput":
@@ -70,15 +79,14 @@ function _createProductModal(title, productData = null) {
           inputElement.value = productData.description || "";
           break;
         case "priceInput":
-          inputElement.value = productData.price || "";
+          if (productData.price) {
+            setPriceFromCents(inputElement, productData.price);
+          }
           break;
       }
     }
-
-    modalBody.append(label, inputElement)
   })
 
-  // Seção de Upload de Imagem
   const imageLabel = document.createElement("label")
   imageLabel.textContent = "Imagem do Produto"
 
@@ -122,19 +130,16 @@ function _createProductModal(title, productData = null) {
 
   imageContainer.append(imagePreview, imageIcon, imageUploadOverlay, removeImageButton, imageInput)
 
-  // Campo de URL da imagem (oculto, usado internamente)
   const imageUrlInput = document.createElement("input")
   imageUrlInput.id = "imageUrlInput"
   imageUrlInput.type = "hidden"
   
-  // Se temos dados do produto, preencher o campo de imagem
   if (productData && productData.imageUrl) {
     imageUrlInput.value = productData.imageUrl
   }
 
   modalBody.append(imageLabel, imageContainer, imageUrlInput)
 
-  // Adicionar o campo de categoria como um combobox
   const categoryLabel = document.createElement("label")
   categoryLabel.textContent = "Categoria*"
   categoryLabel.setAttribute("for", "categoryInput")
@@ -143,17 +148,13 @@ function _createProductModal(title, productData = null) {
   categorySelect.id = "categoryInput"
   categorySelect.className = "input-modal"
 
-  // Adicionar evento de change para detectar quando "Adicionar categoria" é selecionado
   categorySelect.addEventListener("change", function () {
     if (this.value === "add_new_category") {
-      // Resetar a seleção para a opção padrão
       this.selectedIndex = 0
-      // Abrir o modal de gerenciamento de categorias
       openCategoryManagementModal()
     }
   })
 
-  // Adicionar uma opção de carregamento inicial
   const loadingOption = document.createElement("option")
   loadingOption.textContent = "Carregando categorias..."
   loadingOption.disabled = true
@@ -162,7 +163,6 @@ function _createProductModal(title, productData = null) {
 
   modalBody.append(categoryLabel, categorySelect)
 
-  // Carregar categorias no dropdown
   loadCategories(categorySelect, productData?.categoryId)
 
   const modalFooter = document.createElement("div")
@@ -172,7 +172,7 @@ function _createProductModal(title, productData = null) {
   cancelButton.className = "cancel-button"
   cancelButton.textContent = "Cancelar"
   cancelButton.onclick = () => {
-    modal.remove() // Remove completamente o modal
+    modal.remove()
   }
 
   const saveButton = document.createElement("button")
@@ -187,10 +187,8 @@ function _createProductModal(title, productData = null) {
   modal.appendChild(modalContent)
   document.body.appendChild(modal)
   
-  // Configurar o upload de imagem após criar o modal
   setupProductImageUpload()
 
-  // Se estamos editando e há uma imagem, carregá-la
   if (productData && productData.imageUrl) {
     loadExistingProductImage(productData.imageUrl)
   }
@@ -198,25 +196,16 @@ function _createProductModal(title, productData = null) {
   return modal
 }
 
-/**
- * Função para abrir o modal de adição de produtos
- */
 function _addProductModal() {
   const modal = _createProductModal("Cadastrar Produto")
   modal.classList.add('flex')
 }
 
-/**
- * Função para editar um produto existente
- */
 function editProduct(product) {
   const modal = _createProductModal("Editar Produto", product)
   modal.classList.add('flex')
 }
 
-/**
- * Função para carregar categorias no dropdown
- */
 function loadCategories(categorySelect, selectedCategoryId = null) {
   fetch(`${API_BASE_URL}/menus/${userData.id}/categories`, {
     method: "GET",
@@ -231,35 +220,29 @@ function loadCategories(categorySelect, selectedCategoryId = null) {
       return response.json()
     })
     .then((categories) => {
-      // Limpar a opção de carregamento
       categorySelect.innerHTML = ""
 
-      // Adicionar uma opção padrão
       const defaultOption = document.createElement("option")
       defaultOption.textContent = "Selecione uma categoria"
       defaultOption.value = ""
       defaultOption.disabled = true
       
-      // Se não temos uma categoria selecionada, marcar a opção padrão como selecionada
       if (!selectedCategoryId) {
         defaultOption.selected = true
       }
       
       categorySelect.appendChild(defaultOption)
 
-      // Adicionar a opção "Adicionar categoria"
       const addCategoryOption = document.createElement("option")
       addCategoryOption.textContent = "Adicionar categoria"
       addCategoryOption.value = "add_new_category"
       categorySelect.appendChild(addCategoryOption)
 
-      // Adicionar as categorias ao combobox
       categories.forEach((category) => {
         const option = document.createElement("option")
         option.value = category.id
         option.textContent = category.name
         
-        // Se esta é a categoria do produto que estamos editando, marcá-la como selecionada
         if (selectedCategoryId && category.id == selectedCategoryId) {
           option.selected = true
         }
@@ -278,12 +261,9 @@ function loadCategories(categorySelect, selectedCategoryId = null) {
     })
 }
 
-/**
- * Função para fechar modais
- */
 function fechar() {
   const modal = document.getElementById("modal")
   if (modal) {
-    modal.remove() // Remove completamente o modal
+    modal.remove()
   }
 }

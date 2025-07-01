@@ -223,40 +223,45 @@ async function listProducts() {
 async function createProductRow(product, tbody) {
   const tr = document.createElement("tr")
   
-  // Campo Nome
   const nameCell = document.createElement("td")
   nameCell.innerText = product.name
   tr.appendChild(nameCell)
   
-  // Campo Descrição
   const descriptionCell = document.createElement("td")
   descriptionCell.innerText = product.description
   tr.appendChild(descriptionCell)
   
-  // Campo Preço
   const priceCell = document.createElement("td")
-  priceCell.innerText = `R$ ${(product.price / 100).toFixed(2)}`
+  priceCell.className = "price-cell"
+  
+  if (product.price && product.price > 0) {
+    priceCell.innerHTML = `R$ ${formatCentsToReais(product.price)}`;
+  } else {
+    priceCell.innerHTML = `<span class="price-error">Preço inválido</span>`;
+  }
+  
+  priceCell.style.fontWeight = '600';
+  priceCell.style.color = 'var(--goeat-green)';
+  priceCell.style.fontSize = '15px';
+  priceCell.style.fontFamily = "'Courier New', monospace";
+  priceCell.style.textAlign = 'right';
+  
   tr.appendChild(priceCell)
   
-  // Campo Imagem - CORRIGIDO PARA CORS
   const imageCell = document.createElement("td")
   imageCell.className = "image-cell"
   
   if (product.imageUrl) {
-    // Mostra loading enquanto testa os gateways
     const loadingPlaceholder = document.createElement("div")
     loadingPlaceholder.className = "image-loading"
     loadingPlaceholder.innerHTML = '<i class="fa fa-spinner fa-pulse"></i>'
     imageCell.appendChild(loadingPlaceholder)
     
-    // Adiciona a linha à tabela primeiro para mostrar o loading
     tr.appendChild(imageCell)
     
-    // Busca URL funcionando em background
     try {
       const workingUrl = await findWorkingImageUrl(product.imageUrl);
       
-      // Remove o loading
       imageCell.removeChild(loadingPlaceholder);
       
       if (workingUrl) {
@@ -266,7 +271,6 @@ async function createProductRow(product, tbody) {
         img.className = "product-thumbnail"
         img.loading = "lazy"
         
-        // Tratamento de erro final
         img.onerror = function() {
           this.style.display = 'none'
           const fallback = document.createElement("div")
@@ -275,21 +279,18 @@ async function createProductRow(product, tbody) {
           this.parentNode.appendChild(fallback)
         }
         
-        // Evento de clique para ampliar
         img.addEventListener('click', () => {
           showImageModal(workingUrl, product.name)
         })
         
         imageCell.appendChild(img)
       } else {
-        // Nenhum gateway funcionou
         const fallback = document.createElement("div")
         fallback.className = "image-fallback"
         fallback.innerHTML = '<i class="fa fa-exclamation-triangle"></i><span>CORS bloqueado</span>'
         imageCell.appendChild(fallback)
       }
     } catch (error) {
-      // Remove loading e mostra erro
       if (imageCell.contains(loadingPlaceholder)) {
         imageCell.removeChild(loadingPlaceholder)
       }
@@ -300,7 +301,6 @@ async function createProductRow(product, tbody) {
       imageCell.appendChild(errorPlaceholder)
     }
   } else {
-    // Placeholder quando não há imagem
     const placeholder = document.createElement("div")
     placeholder.className = "image-placeholder"
     placeholder.innerHTML = '<i class="fa fa-image"></i><span>Sem imagem</span>'
@@ -308,17 +308,14 @@ async function createProductRow(product, tbody) {
     tr.appendChild(imageCell)
   }
   
-  // Se não foi adicionado ainda (caso não tenha imagem)
   if (!tr.contains(imageCell)) {
     tr.appendChild(imageCell)
   }
   
-  // Campo Categoria
   const categoryCell = document.createElement("td")
   categoryCell.innerText = product.categoryName || "Sem categoria"
   tr.appendChild(categoryCell)
 
-  // Botão de editar
   const editButton = document.createElement("td")
   editButton.className = "action-cell"
   
@@ -330,7 +327,6 @@ async function createProductRow(product, tbody) {
   
   editButton.appendChild(editBtn)
 
-  // Botão de excluir
   const deleteButton = document.createElement("td")
   deleteButton.className = "action-cell"
   

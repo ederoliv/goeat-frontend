@@ -357,3 +357,38 @@
   border-color: var(--goeat-green);
   background-color: #f0fff4;
 }
+
+/* Adicione este CSS ao final do arquivo modal-styles.css */
+
+.price-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: #fafafa;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.price-input-container:focus-within {
+  border-color: var(--goeat-primary);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(98, 60, 167, 0.1);
+}
+
+.currency-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--goeat-primary);
+  font-weight: 600;
+  font-size: 14px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.price-input-container input {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}

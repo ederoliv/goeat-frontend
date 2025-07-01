@@ -104,31 +104,23 @@
         </div>
       </div>
     </div>
-    
-    <script src="../../../libraries/scripts/fetchInterceptor.js"></script>
-    <!-- Scripts de bibliotecas externas -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    
-    <!-- Scripts utilitários -->
-    <script src="../../../libraries/scripts/utilities.js"></script>
-    <script src="../../../libraries/scripts/routes.js"></script>
-    <script src="../../../libraries/scripts/dashboard.js"></script>
-    
-    <!-- Scripts de produtos - ORDEM IMPORTANTE -->
-    <!-- 1. Arquivo principal (deve vir primeiro) -->
-    <script src="scripts/products-main.js"></script>
-    
-    <!-- 2. Upload de imagem -->
-    <script src="scripts/products-image-upload.js"></script>
-    
-    <!-- 3. API operations -->
-    <script src="scripts/products-api.js"></script>
-    
-    <!-- 4. Modal management -->
-    <script src="scripts/products-modal.js"></script>
-    
-    <!-- 5. Categories management -->
-    <script src="scripts/categories-management.js"></script>
+
+    <!-- No seu arquivo index.html, substitua a seção de scripts por esta ordem: -->
+
+<script src="../../../libraries/scripts/fetchInterceptor.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="../../../libraries/scripts/utilities.js"></script>
+<script src="../../../libraries/scripts/routes.js"></script>
+<script src="../../../libraries/scripts/dashboard.js"></script>
+
+<script src="scripts/price-formatting.js"></script>
+
+<script src="scripts/products-main.js"></script>
+<script src="scripts/products-image-upload.js"></script>
+<script src="scripts/products-api.js"></script>
+<script src="scripts/products-modal.js"></script>
+<script src="scripts/categories-management.js"></script>
+
   </body>
 </html>
