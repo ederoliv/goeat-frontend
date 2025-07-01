@@ -1,7 +1,11 @@
 var cart = [];
+var currentPartnerId = null; // Variável para controlar o restaurante atual
 
 // FUNÇÕES DO CARRINHO
 function addCartItem(productId, productName, productPrice, productQuantity, productImage = null) {
+    // Verifica se mudou de restaurante e limpa o carrinho se necessário
+    validatePartnerAndClearCart();
+    
     // Se não houver itens no carrinho, cria a barra do carrinho
     if(cart.length === 0) createCartNavbar();
 
@@ -440,22 +444,99 @@ function updateCartTotals(modalFooter, totalPedidoButton) {
 
 // Função para salvar o carrinho na sessionStorage
 function saveCartToStorage() {
-    sessionStorage.setItem('cart', JSON.stringify(cart));
+    const cartData = {
+        partnerId: currentPartnerId,
+        items: cart
+    };
+    sessionStorage.setItem('cart', JSON.stringify(cartData));
 }
 
 // Função para carregar o carrinho da sessionStorage
 function loadCartFromStorage() {
-    const savedCart = sessionStorage.getItem('cart');
-    if (savedCart) {
-        cart = JSON.parse(savedCart);
-        
-        // Se o carrinho não estiver vazio, crie a navbar
-        if (cart.length > 0) {
-            createCartNavbar();
-            updateCartNavbar();
+    const savedCartData = sessionStorage.getItem('cart');
+    if (savedCartData) {
+        try {
+            const cartData = JSON.parse(savedCartData);
+            
+            // Verifica se é o formato antigo (array direto) ou novo (objeto com partnerId)
+            if (Array.isArray(cartData)) {
+                // Formato antigo - limpa o carrinho pois não temos controle do partnerId
+                console.log('Carrinho no formato antigo detectado, limpando...');
+                clearCart();
+                return;
+            }
+            
+            // Formato novo - verifica se o partnerId corresponde
+            if (cartData.partnerId === currentPartnerId) {
+                cart = cartData.items || [];
+                
+                // Se o carrinho não estiver vazio, crie a navbar
+                if (cart.length > 0) {
+                    createCartNavbar();
+                    updateCartNavbar();
+                }
+            } else {
+                // Carrinho de outro restaurante - limpa
+                console.log('Carrinho de outro restaurante detectado, limpando...');
+                clearCart();
+            }
+        } catch (error) {
+            console.error('Erro ao carregar carrinho da sessionStorage:', error);
+            clearCart();
         }
     }
 }
 
+// Nova função para validar o parceiro e limpar carrinho se necessário
+function validatePartnerAndClearCart() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const partnerId = urlParams.get('partnerId');
+    
+    // Se não temos partnerId atual definido, define agora
+    if (!currentPartnerId) {
+        currentPartnerId = partnerId;
+        return;
+    }
+    
+    // Se mudou de restaurante, limpa o carrinho
+    if (currentPartnerId !== partnerId) {
+        console.log(`Mudança de restaurante detectada: ${currentPartnerId} -> ${partnerId}`);
+        clearCart();
+        currentPartnerId = partnerId;
+    }
+}
+
+// Nova função para limpar completamente o carrinho
+function clearCart() {
+    cart = [];
+    
+    // Remove a navbar do carrinho se existir
+    const cartNavbar = document.getElementById('cart-navbar');
+    if (cartNavbar) {
+        cartNavbar.remove();
+    }
+    
+    // Fecha o modal do carrinho se estiver aberto
+    const existingOverlay = document.querySelector('.overlay');
+    if (existingOverlay) {
+        existingOverlay.remove();
+    }
+    
+    // Limpa da sessionStorage
+    sessionStorage.removeItem('cart');
+    
+    console.log('Carrinho limpo completamente');
+}
+
+// Função para inicializar o carrinho quando a página carrega
+function initializeCart() {
+    // Define o partnerId atual da URL
+    const urlParams = new URLSearchParams(window.location.search);
+    currentPartnerId = urlParams.get('partnerId');
+    
+    // Carrega o carrinho da sessionStorage
+    loadCartFromStorage();
+}
+
 // Carrega o carrinho ao iniciar a página
-window.addEventListener('DOMContentLoaded', loadCartFromStorage);
+window.addEventListener('DOMContentLoaded', initializeCart);

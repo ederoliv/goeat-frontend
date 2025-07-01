@@ -4,11 +4,26 @@ window.onload = function () {
         // Se o usuário estiver autenticado, atualiza o navbar
         setAuthenticatedNavbar();
     }
+    
     // Mostra loading enquanto carrega os dados
     showLoadingModal();
     
     // Obtém o partnerId da URL
     const partnerId = getPartnerId();
+    
+    // Valida se temos um partnerId válido
+    if (!partnerId) {
+        hideLoadingModal();
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: 'Restaurante não encontrado!',
+            confirmButtonColor: '#06CF90'
+        }).then(() => {
+            window.location.href = '../index.html';
+        });
+        return;
+    }
 
     // Carrega os dados do parceiro
     loadPartnerData(partnerId)
@@ -319,7 +334,7 @@ function createProductCard(product, container) {
         
         // Verifica se a quantidade é maior que 0
         if (quantity > 0) {
-            // Adiciona o produto ao carrinho
+            // Adiciona o produto ao carrinho (a função addCartItem já vai validar o restaurante)
             addCartItem(
                 product.id,
                 product.name, 
@@ -362,7 +377,6 @@ function createImagePlaceholder() {
     
     return placeholder;
 }
-
 
 // Evento para carregar mais produtos quando chegar ao final da página (paginação)
 window.addEventListener('scroll', () => {
