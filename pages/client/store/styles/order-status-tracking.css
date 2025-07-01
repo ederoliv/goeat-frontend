@@ -1,0 +1,443 @@
+/* 
+ * Arquivo: pages/client/store/styles/order-status-tracking.css
+ * Estilos para o acompanhamento em tempo real do status do pedido
+ */
+
+/* Container principal do tracking de status */
+.order-status-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 30px 0;
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.status-section h3 {
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* Status atual */
+.current-status {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.status-icon {
+    font-size: 28px;
+    animation: pulse 2s infinite;
+}
+
+#current-status-text {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.status-timestamp {
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+    position: relative;
+}
+
+.status-timestamp::before {
+    content: '●';
+    color: #06CF90;
+    margin-right: 5px;
+    animation: blink 2s infinite;
+}
+
+/* Barra de progresso do status */
+.status-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 25px 0;
+    position: relative;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+    position: relative;
+    min-width: 80px;
+}
+
+.step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ddd;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+    border: 3px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-step span {
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    font-weight: 500;
+    line-height: 1.2;
+    transition: all 0.3s ease;
+}
+
+.progress-line {
+    flex: 1;
+    height: 3px;
+    background-color: #ddd;
+    margin: 0 -5px;
+    z-index: 1;
+    transition: background-color 0.3s ease;
+}
+
+/* Estados dos steps */
+.progress-step.completed .step-circle {
+    background-color: #06CF90;
+    border-color: #06CF90;
+    color: white;
+    box-shadow: 0 2px 8px rgba(6, 207, 144, 0.3);
+}
+
+.progress-step.completed span {
+    color: #06CF90;
+    font-weight: 600;
+}
+
+.progress-step.active .step-circle {
+    background-color: #53BDEB;
+    border-color: #53BDEB;
+    color: white;
+    animation: stepPulse 2s infinite;
+    box-shadow: 0 2px 8px rgba(83, 189, 235, 0.3);
+}
+
+.progress-step.active span {
+    color: #53BDEB;
+    font-weight: 600;
+}
+
+/* Linha completada */
+.progress-step.completed + .progress-line {
+    background-color: #06CF90;
+}
+
+.progress-step.active + .progress-line {
+    background: linear-gradient(to right, #06CF90 50%, #ddd 50%);
+}
+
+/* Informação adicional */
+.status-info {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.status-info p {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.status-info i {
+    color: #53BDEB;
+}
+
+/* Animações */
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes stepPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(83, 189, 235, 0.7);
+    }
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(83, 189, 235, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(83, 189, 235, 0);
+    }
+}
+
+@keyframes blink {
+    0%, 50% {
+        opacity: 1;
+    }
+    51%, 100% {
+        opacity: 0.3;
+    }
+}
+
+/* Estados especiais */
+.status-loading .status-icon {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Estado de erro */
+.status-error .status-icon {
+    color: #dc3545 !important;
+}
+
+.status-error #current-status-text {
+    color: #dc3545 !important;
+}
+
+/* Estado de cancelado */
+.status-cancelled {
+    border: 2px solid #dc3545;
+    background-color: #fff5f5;
+}
+
+.status-cancelled .status-icon {
+    color: #dc3545 !important;
+}
+
+.status-cancelled #current-status-text {
+    color: #dc3545 !important;
+}
+
+/* Estado de finalizado */
+.status-completed .order-status-container {
+    border: 2px solid #06CF90;
+    background: linear-gradient(135deg, #f0fff4 0%, #e6ffed 100%);
+}
+
+.status-completed .status-icon {
+    color: #06CF90 !important;
+    animation: completedCheckmark 0.6s ease-in-out;
+}
+
+@keyframes completedCheckmark {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Efeito visual adicional */
+.order-status-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s;
+}
+
+.order-status-container:hover::before {
+    left: 100%;
+}
+
+/* Hover interativo */
+.progress-step:hover .step-circle {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+/* Transições suaves */
+.status-indicator,
+.step-circle,
+.progress-line {
+    transition: all 0.5s ease-in-out;
+}
+
+/* Responsividade */
+@media screen and (max-width: 768px) {
+    .order-status-container {
+        padding: 20px 15px;
+        margin: 20px 0;
+    }
+    
+    .status-progress {
+        flex-wrap: wrap;
+        gap: 15px 10px;
+    }
+    
+    .progress-step {
+        min-width: 60px;
+    }
+    
+    .step-circle {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+    }
+    
+    .progress-step span {
+        font-size: 11px;
+    }
+    
+    .progress-line {
+        display: none; /* Oculta as linhas em telas pequenas */
+    }
+    
+    .status-indicator {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .status-icon {
+        font-size: 24px;
+    }
+    
+    #current-status-text {
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .order-status-container {
+        padding: 15px 10px;
+    }
+    
+    .status-section h3 {
+        font-size: 18px;
+    }
+    
+    .status-progress {
+        justify-content: space-around;
+    }
+    
+    .progress-step {
+        min-width: 50px;
+    }
+    
+    .step-circle {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+    
+    .progress-step span {
+        font-size: 10px;
+    }
+    
+    .status-info p {
+        font-size: 12px;
+        flex-direction: column;
+        gap: 4px;
+    }
+}
+
+/* Melhorias para acessibilidade */
+.progress-step.completed .step-circle,
+.progress-step.active .step-circle {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Indicador visual de atualização automática */
+.status-info::after {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #06CF90;
+    border-radius: 50%;
+    margin-left: 8px;
+    animation: pulse 2s infinite;
+}
+
+/* Estados de cores por tipo de status */
+.status-esperando .status-icon {
+    color: #FF5555 !important;
+}
+
+.status-esperando #current-status-text {
+    color: #FF5555 !important;
+}
+
+.status-preparando .status-icon {
+    color: #53BDEB !important;
+}
+
+.status-preparando #current-status-text {
+    color: #53BDEB !important;
+}
+
+.status-encaminhados .status-icon {
+    color: #FCCC48 !important;
+}
+
+.status-encaminhados #current-status-text {
+    color: #FCCC48 !important;
+}
+
+.status-finalizados .status-icon {
+    color: #06CF90 !important;
+}
+
+.status-finalizados #current-status-text {
+    color: #06CF90 !important;
+}
+
+/* Animação de entrada para o container de status */
+.order-status-container {
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
