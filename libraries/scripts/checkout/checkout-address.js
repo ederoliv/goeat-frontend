@@ -45,7 +45,9 @@ function getNextOpenTime(operatingHours) {
     }
     
     return null;
-}// Funções relacionadas à etapa de endereço do checkout
+}
+
+// Funções relacionadas à etapa de endereço do checkout
 
 // Função para atualizar opção de entrega/retirada
 function updateDeliveryOption(option) {
@@ -73,14 +75,14 @@ function updateDeliveryOption(option) {
     }
 }
 
-// Função atualizada para buscar o endereço do restaurante
+// Função CORRIGIDA para buscar o endereço do restaurante
 function fetchPartnerAddress(partnerId) {
     // Mostrar loading enquanto busca o endereço
     const pickupAddress = document.getElementById('pickup-address');
     pickupAddress.innerHTML = '<i class="fa fa-spinner fa-pulse"></i> Carregando endereço...';
     
-    // Fazer requisição para a API para buscar os dados completos do parceiro
-    fetch(`${API_BASE_URL}/partners/${partnerId}`)
+    // CORREÇÃO: Usar o endpoint correto que funciona na página da loja
+    fetch(`${API_BASE_URL}/partners/${partnerId}/details`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Falha ao buscar dados do restaurante');
@@ -88,7 +90,9 @@ function fetchPartnerAddress(partnerId) {
             return response.json();
         })
         .then(partnerData => {
-            // Usa o campo fullAddress do novo formato de dados
+            console.log('Dados do parceiro carregados:', partnerData); // Para debug
+            
+            // Usa o campo fullAddress do formato de dados correto
             const address = partnerData.fullAddress || 'Endereço não disponível';
             pickupAddress.textContent = address;
             
@@ -101,7 +105,7 @@ function fetchPartnerAddress(partnerId) {
         });
 }
 
-// Nova função para atualizar as informações de retirada com horários
+// Função CORRIGIDA para atualizar as informações de retirada com horários
 function updatePickupInfo(partnerData) {
     const pickupInfoContainer = document.getElementById('pickup-info');
     
@@ -111,7 +115,7 @@ function updatePickupInfo(partnerData) {
         existingHours.remove();
     }
     
-    // Se houver dados de horários de funcionamento, adiciona essa informação
+    // VALIDAÇÃO: Verifica se existem horários válidos
     if (partnerData.operatingHours && Array.isArray(partnerData.operatingHours) && partnerData.operatingHours.length > 0) {
         const hoursContainer = document.createElement('div');
         hoursContainer.className = 'pickup-hours';
@@ -131,13 +135,19 @@ function updatePickupInfo(partnerData) {
             'SUNDAY': 'Domingo'
         };
         
+        // CORREÇÃO: Filtrar apenas dias válidos e ordenar por dia da semana
+        const dayOrder = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY'];
+        const validDays = partnerData.operatingHours.filter(day => 
+            day && day.dayOfWeek && daysMap[day.dayOfWeek]
+        ).sort((a, b) => dayOrder.indexOf(a.dayOfWeek) - dayOrder.indexOf(b.dayOfWeek));
+        
         // Criar lista resumida dos horários (só dias úteis e fim de semana)
-        const weekdayHours = partnerData.operatingHours.filter(day => 
-            day && ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'].includes(day.dayOfWeek) && day.isOpen
+        const weekdayHours = validDays.filter(day => 
+            ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'].includes(day.dayOfWeek) && day.isOpen
         );
         
-        const weekendHours = partnerData.operatingHours.filter(day => 
-            day && ['SATURDAY', 'SUNDAY'].includes(day.dayOfWeek) && day.isOpen
+        const weekendHours = validDays.filter(day => 
+            ['SATURDAY', 'SUNDAY'].includes(day.dayOfWeek) && day.isOpen
         );
         
         // Mostrar horários de segunda a sexta se forem consistentes
@@ -170,7 +180,7 @@ function updatePickupInfo(partnerData) {
         });
         
         // Mostrar dias fechados se houver
-        const closedDays = partnerData.operatingHours.filter(day => day && !day.isOpen);
+        const closedDays = validDays.filter(day => day && !day.isOpen);
         if (closedDays.length > 0) {
             const closedInfo = document.createElement('p');
             closedInfo.className = 'pickup-closed-days';
@@ -181,16 +191,28 @@ function updatePickupInfo(partnerData) {
         
         // Inserir as informações de horário após o endereço
         const pickupDetails = pickupInfoContainer.querySelector('.pickup-details');
-        pickupDetails.appendChild(hoursContainer);
+        if (pickupDetails) {
+            pickupDetails.appendChild(hoursContainer);
+        }
+    } else {
+        console.log('Nenhum horário de funcionamento válido encontrado');
+        // Se não houver horários, pode mostrar uma mensagem padrão ou não mostrar nada
+        const pickupDetails = pickupInfoContainer.querySelector('.pickup-details');
+        if (pickupDetails) {
+            const noHoursInfo = document.createElement('p');
+            noHoursInfo.innerHTML = '<i class="fa fa-info-circle"></i> Horários de funcionamento não disponíveis. Entre em contato com o restaurante.';
+            pickupDetails.appendChild(noHoursInfo);
+        }
     }
     
     // Atualizar status atual do restaurante
     updatePickupStatus(partnerData);
 }
 
-// Nova função para mostrar o status atual do restaurante na seção de retirada
+// Função CORRIGIDA para mostrar o status atual do restaurante na seção de retirada
 function updatePickupStatus(partnerData) {
     const pickupDetails = document.querySelector('.pickup-details');
+    if (!pickupDetails) return;
     
     // Remove status anterior se existir
     const existingStatus = pickupDetails.querySelector('.pickup-status');
@@ -202,85 +224,50 @@ function updatePickupStatus(partnerData) {
     const statusElement = document.createElement('div');
     statusElement.className = 'pickup-status';
     
-    if (partnerData.isOpen) {
-        statusElement.innerHTML = `
-            <p style="color: var(--goeat-green); font-weight: 600;">
-                <i class="fa fa-check-circle"></i> Restaurante aberto agora
-            </p>
-        `;
-        
-        // Tentar mostrar quando fecha hoje se tiver horários
-        if (partnerData.operatingHours && Array.isArray(partnerData.operatingHours)) {
-            const todayHours = getTodayOperatingHours(partnerData.operatingHours);
-            if (todayHours && todayHours.isOpen && todayHours.closingTime) {
-                const closingTime = document.createElement('p');
-                closingTime.innerHTML = `<small style="color: #666;">Fecha às ${todayHours.closingTime}</small>`;
-                statusElement.appendChild(closingTime);
+    // VALIDAÇÃO: Verificar se partnerData.isOpen está definido
+    if (partnerData.hasOwnProperty('isOpen')) {
+        if (partnerData.isOpen) {
+            statusElement.innerHTML = `
+                <p style="color: var(--goeat-green); font-weight: 600;">
+                    <i class="fa fa-check-circle"></i> Restaurante aberto agora
+                </p>
+            `;
+            
+            // Tentar mostrar quando fecha hoje se tiver horários
+            if (partnerData.operatingHours && Array.isArray(partnerData.operatingHours)) {
+                const todayHours = getTodayOperatingHours(partnerData.operatingHours);
+                if (todayHours && todayHours.isOpen && todayHours.closingTime) {
+                    const closingTime = document.createElement('p');
+                    closingTime.innerHTML = `<small style="color: #666;">Fecha às ${todayHours.closingTime}</small>`;
+                    statusElement.appendChild(closingTime);
+                }
+            }
+        } else {
+            statusElement.innerHTML = `
+                <p style="color: var(--goeat-red); font-weight: 600;">
+                    <i class="fa fa-clock-o"></i> Restaurante fechado no momento
+                </p>
+            `;
+            
+            // Mostrar quando abre novamente
+            if (partnerData.operatingHours && Array.isArray(partnerData.operatingHours)) {
+                const nextOpenTime = getNextOpenTime(partnerData.operatingHours);
+                if (nextOpenTime) {
+                    const reopenInfo = document.createElement('p');
+                    reopenInfo.innerHTML = `<small style="color: #666;">${nextOpenTime}</small>`;
+                    statusElement.appendChild(reopenInfo);
+                }
             }
         }
     } else {
-        statusElement.innerHTML = `
-            <p style="color: var(--goeat-red); font-weight: 600;">
-                <i class="fa fa-clock-o"></i> Restaurante fechado no momento
-            </p>
-        `;
-        
-        // Mostrar quando abre novamente
-        if (partnerData.operatingHours && Array.isArray(partnerData.operatingHours)) {
-            const nextOpenTime = getNextOpenTime(partnerData.operatingHours);
-            if (nextOpenTime) {
-                const reopenInfo = document.createElement('p');
-                reopenInfo.innerHTML = `<small style="color: #666;">${nextOpenTime}</small>`;
-                statusElement.appendChild(reopenInfo);
-            }
-        }
+        // Se não tiver informação de status, não mostra nada sobre aberto/fechado
+        console.log('Status de funcionamento não disponível nos dados do parceiro');
     }
     
-    // Inserir no início dos detalhes de retirada
-    pickupDetails.insertBefore(statusElement, pickupDetails.firstChild);
-}
-
-// Funções auxiliares para horários (reutilizadas do store.js)
-function getTodayOperatingHours(operatingHours) {
-    if (!operatingHours) return null;
-    
-    const today = new Date().getDay(); // 0 = Domingo, 1 = Segunda, etc.
-    const dayNames = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
-    const todayName = dayNames[today];
-    
-    return operatingHours.find(day => day.dayOfWeek === todayName);
-}
-
-function getNextOpenTime(operatingHours) {
-    if (!operatingHours) return null;
-    
-    const today = new Date().getDay();
-    const dayNames = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
-    const daysMapPt = {
-        'MONDAY': 'Segunda-feira',
-        'TUESDAY': 'Terça-feira',
-        'WEDNESDAY': 'Quarta-feira',
-        'THURSDAY': 'Quinta-feira',
-        'FRIDAY': 'Sexta-feira',
-        'SATURDAY': 'Sábado',
-        'SUNDAY': 'Domingo'
-    };
-    
-    // Procura pelo próximo dia aberto
-    for (let i = 1; i <= 7; i++) {
-        const nextDayIndex = (today + i) % 7;
-        const nextDayName = dayNames[nextDayIndex];
-        const nextDay = operatingHours.find(day => day.dayOfWeek === nextDayName);
-        
-        if (nextDay && nextDay.isOpen) {
-            const dayLabel = i === 1 ? 'Amanhã' : 
-                            i === 7 ? 'Próximo ' + daysMapPt[nextDayName] :
-                            daysMapPt[nextDayName];
-            return `Abre ${dayLabel} às ${nextDay.openingTime}`;
-        }
+    // Inserir no início dos detalhes de retirada apenas se tiver conteúdo
+    if (statusElement.children.length > 0) {
+        pickupDetails.insertBefore(statusElement, pickupDetails.firstChild);
     }
-    
-    return null;
 }
 
 // === RESTO DO CÓDIGO PERMANECE IGUAL ===
