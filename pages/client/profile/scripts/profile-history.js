@@ -84,6 +84,9 @@ function createOrderCard(order) {
         dateLabel = 'Cancelado';
     }
     
+    // Armazenar o partnerId para uso posterior
+    const partnerId = order.partnerId || '';
+    
     orderCard.innerHTML = `
         <div class="order-header">
             <div class="order-info">
@@ -109,11 +112,21 @@ function createOrderCard(order) {
             <div class="order-total">
                 Total: R$ ${formatPrice(order.totalPrice)}
             </div>
-            <button class="order-details-button" onclick="showOrderDetails('${order.id}')">
+            <button class="order-details-button" data-order-id="${order.id}" data-partner-id="${partnerId}">
                 Ver detalhes
             </button>
         </div>
     `;
+    
+    // Adicionar evento ao botão de detalhes
+    const detailsButton = orderCard.querySelector('.order-details-button');
+    if (detailsButton) {
+        detailsButton.addEventListener('click', function() {
+            const orderId = this.getAttribute('data-order-id');
+            const partnerId = this.getAttribute('data-partner-id');
+            showOrderDetails(orderId, partnerId);
+        });
+    }
     
     return orderCard;
 }
@@ -121,9 +134,9 @@ function createOrderCard(order) {
 // Função para obter informações de status do pedido
 function getOrderStatusInfo(status) {
     const statusMap = {
-        'PENDENTE': { text: 'Pendente', class: 'pending' },
+        'ESPERANDO': { text: 'Pendente', class: 'pending' },
         'PREPARANDO': { text: 'Preparando', class: 'processing' },
-        'SAIU_PARA_ENTREGA': { text: 'Saiu para entrega', class: 'processing' },
+        'ENCAMINHADOS': { text: 'Saiu para entrega', class: 'processing' },
         'FINALIZADOS': { text: 'Finalizado', class: 'delivered' },
         'CANCELADOS': { text: 'Cancelado', class: 'cancelled' }
     };
@@ -144,7 +157,7 @@ function formatOrderDate(dateString) {
 }
 
 // Função para mostrar detalhes de um pedido específico
-async function showOrderDetails(orderId) {
+async function showOrderDetails(orderId, partnerId) {
     try {
         const clientData = getAuthenticatedClient();
         if (!clientData || !clientData.token) {
@@ -159,123 +172,222 @@ async function showOrderDetails(orderId) {
 
         showLoadingModal();
         
-        // Busca detalhes específicos do pedido
-        const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${clientData.token}`
-            }
-        });
+        // Inicializar variável para detalhes do pedido
+        let orderDetails = null;
         
-        if (!response.ok) {
-            throw new Error('Falha ao carregar detalhes do pedido');
+        // Primeiro, tentar buscar via endpoint de detalhes para clientes
+        try {
+            const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${clientData.token}`
+                }
+            });
+            
+            if (response.ok) {
+                orderDetails = await response.json();
+                console.log('Detalhes do pedido obtidos via endpoint do cliente:', orderDetails);
+            } else {
+                console.warn(`Erro ao buscar detalhes via endpoint do cliente: ${response.status}`);
+            }
+        } catch (clientEndpointError) {
+            console.warn('Erro ao buscar via endpoint do cliente:', clientEndpointError);
         }
         
-        const orderDetails = await response.json();
+        // Se não conseguiu pelos detalhes do cliente, tentar pelo endpoint do parceiro se tivermos o partnerId
+        if (!orderDetails && partnerId) {
+            try {
+                console.log(`Tentando buscar detalhes do pedido ${orderId} pelo parceiro ${partnerId}`);
+                const response = await fetch(`${API_BASE_URL}/partners/${partnerId}/orders/${orderId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${clientData.token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    orderDetails = await response.json();
+                    console.log('Detalhes do pedido obtidos via endpoint do parceiro:', orderDetails);
+                } else {
+                    console.warn(`Erro ao buscar detalhes via endpoint do parceiro: ${response.status}`);
+                }
+            } catch (partnerEndpointError) {
+                console.warn('Erro ao buscar via endpoint do parceiro:', partnerEndpointError);
+            }
+        }
+        
+        // Agora, tentar buscar os itens do pedido
+        let orderItems = [];
+        
+        try {
+            const itemsResponse = await fetch(`${API_BASE_URL}/orders/${orderId}/items`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${clientData.token}`
+                }
+            });
+            
+            if (itemsResponse.ok) {
+                orderItems = await itemsResponse.json();
+                console.log('Itens do pedido obtidos:', orderItems);
+                
+                // Adiciona os itens ao objeto de detalhes
+                if (orderDetails) {
+                    orderDetails.items = orderItems;
+                }
+            }
+        } catch (itemsError) {
+            console.warn('Erro ao buscar itens do pedido:', itemsError);
+        }
+        
+        hideLoadingModal();
+        
+        // Se não conseguiu obter detalhes completos, mostrar erro
+        if (!orderDetails) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro ao carregar detalhes',
+                text: 'Não foi possível obter os detalhes deste pedido. Tente novamente mais tarde.',
+                confirmButtonColor: '#06CF90'
+            });
+            return;
+        }
+        
+        // Mostrar modal com detalhes do pedido
         displayOrderDetailsModal(orderDetails);
         
     } catch (error) {
         console.error('Erro ao carregar detalhes do pedido:', error);
+        hideLoadingModal();
+        
         Swal.fire({
             icon: 'error',
             title: 'Erro',
             text: 'Não foi possível carregar os detalhes do pedido.',
             confirmButtonColor: '#06CF90'
         });
-    } finally {
-        hideLoadingModal();
     }
 }
 
 // Função para exibir modal com detalhes do pedido
 function displayOrderDetailsModal(order) {
+    // Determinar o status e sua cor
     const statusInfo = getOrderStatusInfo(order.orderStatus);
-    const createdDate = formatOrderDate(order.createdAt);
+    let statusColor = '#888';
     
-    let detailsHtml = `
-        <div class="order-details-container">
-            <div class="order-details-header">
-                <h4>Pedido #${order.id}</h4>
-                <p>Realizado em: ${createdDate}</p>
-                <p class="order-status-text">Status: ${statusInfo.text}</p>
-            </div>
-            
-            <div class="order-details-customer">
-                <h4>Informações do Cliente</h4>
-                <p><strong>Nome:</strong> ${order.name}</p>
-                <p><strong>Endereço:</strong> ${order.deliveryAddress}</p>
-            </div>
-    `;
+    switch(order.orderStatus) {
+        case 'ESPERANDO':
+            statusColor = '#FF5555'; // vermelho
+            break;
+        case 'PREPARANDO':
+            statusColor = '#53BDEB'; // azul
+            break;
+        case 'ENCAMINHADOS':
+            statusColor = '#FCCC48'; // amarelo
+            break;
+        case 'FINALIZADOS':
+            statusColor = '#06CF90'; // verde
+            break;
+        case 'CANCELADOS':
+            statusColor = '#dc3545'; // vermelho escuro
+            break;
+    }
     
-    // Se houver itens do pedido (se a API retornar essa informação)
+    // Formatar datas
+    const createdDate = order.createdAt ? formatOrderDate(order.createdAt) : 'Data não disponível';
+    const finishedDate = order.finishedAt ? formatOrderDate(order.finishedAt) : null;
+    const canceledDate = order.canceledAt ? formatOrderDate(order.canceledAt) : null;
+    
+    // Determinar se é retirada ou entrega
+    const isPickup = order.deliveryAddress === 'RETIRADA NO LOCAL';
+    
+    // Construir HTML dos itens
+    let itemsHtml = '';
+    
     if (order.items && order.items.length > 0) {
-        detailsHtml += `
-            <div class="order-details-items">
-                <h4>Itens do Pedido</h4>
-                <table class="order-items-table">
-                    <thead>
-                        <tr>
-                            <th>Item</th>
-                            <th>Qtd</th>
-                            <th>Preço</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-        `;
+        itemsHtml = '<ul class="details-items-list">';
         
         order.items.forEach(item => {
-            detailsHtml += `
-                <tr>
-                    <td>${item.name}</td>
-                    <td>${item.quantity}</td>
-                    <td>R$ ${formatPrice(item.price * item.quantity)}</td>
-                </tr>
-            `;
+            const quantity = item.quantity || 1;
+            const name = item.name || item.productName || 'Item sem nome';
+            
+            itemsHtml += `<li>${quantity}x ${name}</li>`;
         });
         
-        detailsHtml += `
-                    </tbody>
-                </table>
-            </div>
-        `;
+        itemsHtml += '</ul>';
+    } else {
+        itemsHtml = '<p class="no-items">Detalhes dos itens não disponíveis</p>';
     }
     
-    detailsHtml += `
-            <div class="order-details-payment">
-                <div class="order-total-text">
-                    <strong>Total: R$ ${formatPrice(order.totalPrice)}</strong>
-                </div>
-            </div>
-    `;
+    // Formatar o preço total
+    const totalPrice = order.totalPrice || 0;
+    const formattedTotalPrice = formatPrice(totalPrice);
     
-    // Adiciona informações de finalização/cancelamento se existirem
-    if (order.finishedAt) {
-        detailsHtml += `
-            <div class="order-details-delivery">
-                <p><strong>Finalizado em:</strong> ${formatOrderDate(order.finishedAt)}</p>
-            </div>
-        `;
-    }
-    
-    if (order.canceledAt) {
-        detailsHtml += `
-            <div class="order-details-delivery">
-                <p><strong>Cancelado em:</strong> ${formatOrderDate(order.canceledAt)}</p>
-            </div>
-        `;
-    }
-    
-    detailsHtml += `</div>`;
-    
+    // Mostrar o modal usando SweetAlert2
     Swal.fire({
-        title: 'Detalhes do Pedido',
-        html: detailsHtml,
+        title: `Pedido #${order.id}`,
+        html: `
+            <div class="order-details-container">
+                <div class="details-section">
+                    <h3>Informações do Pedido</h3>
+                    <div class="details-row">
+                        <div class="details-label">Status:</div>
+                        <div class="details-value"><span class="order-status-badge" style="background-color: ${statusColor};">${statusInfo.text}</span></div>
+                    </div>
+                    <div class="details-row">
+                        <div class="details-label">Data/Hora:</div>
+                        <div class="details-value">${createdDate}</div>
+                    </div>
+                    <div class="details-row">
+                        <div class="details-label">Total:</div>
+                        <div class="details-value">R$ ${formattedTotalPrice}</div>
+                    </div>
+                    <div class="details-row">
+                        <div class="details-label">Tipo:</div>
+                        <div class="details-value">${isPickup ? '<i class="fa fa-store"></i> Retirada no local' : '<i class="fa fa-motorcycle"></i> Entrega'}</div>
+                    </div>
+                </div>
+                
+                <div class="details-section">
+                    <h3>Itens do Pedido</h3>
+                    ${itemsHtml}
+                </div>
+                
+                ${!isPickup ? `
+                <div class="details-section">
+                    <h3>Endereço de Entrega</h3>
+                    <div class="details-address">${order.deliveryAddress}</div>
+                </div>` : ''}
+                
+                ${order.orderStatus === 'CANCELADOS' ? `
+                <div class="details-section">
+                    <h3>Informações de Cancelamento</h3>
+                    <div class="details-row">
+                        <div class="details-label">Data:</div>
+                        <div class="details-value">${canceledDate || 'Não disponível'}</div>
+                    </div>
+                </div>` : ''}
+                
+                ${order.orderStatus === 'FINALIZADOS' ? `
+                <div class="details-section">
+                    <h3>Informações de Entrega</h3>
+                    <div class="details-row">
+                        <div class="details-label">Finalizado em:</div>
+                        <div class="details-value">${finishedDate || 'Não disponível'}</div>
+                    </div>
+                </div>` : ''}
+            </div>
+        `,
         width: '600px',
-        showCloseButton: true,
-        showConfirmButton: false,
+        confirmButtonText: 'Fechar',
+        confirmButtonColor: '#06CF90',
         customClass: {
-            popup: 'order-details-modal'
+            container: 'order-details-modal-container',
+            popup: 'order-details-modal',
+            content: 'order-details-content'
         }
     });
 }
@@ -320,4 +432,22 @@ function displayErrorOrderHistory(message) {
             </div>
         `;
     }
+}
+
+// Função auxiliar para exibir loading modal
+function showLoadingModal() {
+    Swal.fire({
+        title: 'Carregando...',
+        html: '<i class="fa fa-spinner fa-pulse fa-3x"></i>',
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+}
+
+// Função auxiliar para esconder loading modal
+function hideLoadingModal() {
+    Swal.close();
 }

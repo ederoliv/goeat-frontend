@@ -276,3 +276,154 @@
     padding: 10px;
   }
 }
+
+/* Estilos para o Modal de Detalhes do Pedido */
+.order-details-modal {
+  border-radius: 10px;
+  max-width: 800px;
+  width: 90%;
+}
+
+.order-details-container {
+  text-align: left;
+  padding: 0 20px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.details-section {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.details-section:last-child {
+  border-bottom: none;
+}
+
+.details-section h3 {
+  color: var(--goeat-primary);
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.details-row {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.details-label {
+  font-weight: 600;
+  width: 120px;
+  color: #555;
+}
+
+.details-value {
+  flex: 1;
+}
+
+.details-address {
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  border-left: 4px solid var(--goeat-primary);
+  margin-top: 10px;
+}
+
+.order-status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.no-items {
+  color: #888;
+  text-align: center;
+  font-style: italic;
+  padding: 10px;
+}
+
+/* Lista de itens no modal de detalhes */
+.details-items-list {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin: 10px 0;
+  font-size: 15px;
+}
+
+.details-items-list li {
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+/* Customizações para o SweetAlert2 */
+.swal2-popup {
+  padding: 1.5em;
+}
+
+.swal2-title {
+  color: var(--goeat-primary) !important;
+  font-size: 24px !important;
+}
+
+/* Responsividade para o modal de detalhes */
+@media screen and (max-width: 768px) {
+  .details-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .details-label {
+    width: 100%;
+  }
+  
+  .details-items-list {
+    padding-left: 15px;
+  }
+  
+  .details-items-list li {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .order-details-modal {
+    margin: 10px !important;
+    width: calc(100% - 20px) !important;
+    max-width: none !important;
+  }
+  
+  .order-details-container {
+    padding: 0 10px;
+  }
+  
+  .details-section h3 {
+    font-size: 16px;
+  }
+  
+  .details-address {
+    padding: 8px;
+    font-size: 14px;
+  }
+}
+
+/* Melhorias visuais */
+.order-status-badge.pending {
+  background-color: #FF5555;
+}
+
+.order-status-badge.processing {
+  background-color: #53BDEB;
+}
+
+.order-status-badge.delivered {
+  background-color: #06CF90;
+}
+
+.order-status-badge.cancelled {
+  background-color: #dc3545;
+}
