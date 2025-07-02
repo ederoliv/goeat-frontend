@@ -15,6 +15,8 @@ let orderData = {
 
 // Inicializa o checkout quando a página carrega
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Checkout carregando...');
+    
     // Tenta restaurar o estado do checkout se estiver vindo de um retorno de login
     const stateRestored = restoreCheckoutState();
     
@@ -24,7 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const cartFromStorage = sessionStorage.getItem('cart');
         
         // Se não existir carrinho, redireciona para a página do restaurante
-        if (!cartFromStorage || JSON.parse(cartFromStorage).length === 0) {
+        if (!cartFromStorage) {
+            console.log('Carrinho vazio, redirecionando...');
             Swal.fire({
                 title: 'Carrinho vazio',
                 text: 'Seu carrinho está vazio! Adicione itens antes de finalizar a compra.',
@@ -36,8 +39,37 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Carrega os dados do carrinho para o orderData
-        orderData.items = JSON.parse(cartFromStorage);
+        // Parse do carrinho para verificar se está no formato correto
+        let cartData;
+        try {
+            cartData = JSON.parse(cartFromStorage);
+        } catch (error) {
+            console.error('Erro ao fazer parse do carrinho:', error);
+            clearCartAndRedirect();
+            return;
+        }
+        
+        // Verifica se é o formato novo (objeto com partnerId e items) ou antigo (array direto)
+        if (Array.isArray(cartData)) {
+            // Formato antigo - verifica se tem itens
+            if (cartData.length === 0) {
+                clearCartAndRedirect();
+                return;
+            }
+            orderData.items = cartData;
+        } else if (cartData && cartData.items) {
+            // Formato novo - verifica se tem itens
+            if (!cartData.items || cartData.items.length === 0) {
+                clearCartAndRedirect();
+                return;
+            }
+            orderData.items = cartData.items;
+        } else {
+            clearCartAndRedirect();
+            return;
+        }
+        
+        // Calcula o total
         orderData.total = calculateCartTotalPrice(orderData.items);
         
         // Obtém o partnerId da URL
@@ -46,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Se não tiver partnerId, redireciona para a página principal
         if (!orderData.partnerId) {
+            console.log('partnerId não encontrado na URL');
             Swal.fire({
                 title: 'Erro',
                 text: 'Erro ao identificar o restaurante!',
@@ -60,19 +93,21 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Verifica se o usuário já está autenticado
     if (isAuthenticatedClient()) {
+        console.log('Cliente autenticado detectado');
         // Se estiver logado, pula a etapa de login e vai direto para a etapa de endereço
         const userData = getAuthenticatedClient();
         
         // Preenche os dados do cliente com as informações da sessão
         orderData.customer = {
-            name: userData.username,
-            email: userData.email,
+            name: userData.username || userData.name || '',
+            email: userData.email || '',
             phone: userData.phone || ""
         };
         
         // Vai direto para a seção de endereço
         goToSection('address');
     } else {
+        console.log('Cliente não autenticado, mostrando opções de login');
         // Se não estiver logado, mostra as opções de login ou compra como convidado
         goToSection('login');
     }
@@ -87,13 +122,38 @@ document.addEventListener('DOMContentLoaded', function() {
     updateDeliveryOption('delivery');
 });
 
+// Função para limpar carrinho e redirecionar
+function clearCartAndRedirect() {
+    sessionStorage.removeItem('cart');
+    Swal.fire({
+        title: 'Carrinho vazio',
+        text: 'Seu carrinho está vazio! Adicione itens antes de finalizar a compra.',
+        icon: 'warning',
+        confirmButtonColor: '#06CF90'
+    }).then(() => {
+        window.location.href = '../index.html';
+    });
+}
+
 // Função para carregar o resumo do pedido na tela de pagamento
 function loadOrderSummary() {
     const orderItemsContainer = document.getElementById('order-items');
     const orderTotalValue = document.getElementById('order-total-value');
     
+    if (!orderItemsContainer || !orderTotalValue) {
+        console.warn('Elementos do resumo do pedido não encontrados');
+        return;
+    }
+    
     // Limpa o container de itens
     orderItemsContainer.innerHTML = '';
+    
+    // Verifica se há itens no pedido
+    if (!orderData.items || orderData.items.length === 0) {
+        orderItemsContainer.innerHTML = '<p>Nenhum item no carrinho</p>';
+        orderTotalValue.textContent = 'R$ 0,00';
+        return;
+    }
     
     // Adiciona cada item do pedido
     orderData.items.forEach(item => {
@@ -121,32 +181,51 @@ function loadOrderSummary() {
 
 // Função para inicializar todos os eventos
 function initializeEvents() {
+    console.log('Inicializando eventos do checkout...');
+    
     // Botões da seção de identificação
-    document.getElementById('btn-login').addEventListener('click', handleLoginOption);
-    document.getElementById('btn-guest').addEventListener('click', showGuestForm);
-    document.getElementById('continue-guest').addEventListener('click', processGuestInfo);
+    const btnLogin = document.getElementById('btn-login');
+    const btnGuest = document.getElementById('btn-guest');
+    const continueGuest = document.getElementById('continue-guest');
+    
+    if (btnLogin) btnLogin.addEventListener('click', handleLoginOption);
+    if (btnGuest) btnGuest.addEventListener('click', showGuestForm);
+    if (continueGuest) continueGuest.addEventListener('click', processGuestInfo);
     
     // Botões da seção de endereço
-    document.getElementById('search-cep').addEventListener('click', searchCepAddress);
-    document.getElementById('back-to-login').addEventListener('click', () => goToSection('login'));
-    document.getElementById('continue-to-payment').addEventListener('click', validateAddressAndContinue);
+    const searchCep = document.getElementById('search-cep');
+    const backToLogin = document.getElementById('back-to-login');
+    const continueToPayment = document.getElementById('continue-to-payment');
+    
+    if (searchCep) searchCep.addEventListener('click', searchCepAddress);
+    if (backToLogin) backToLogin.addEventListener('click', () => goToSection('login'));
+    if (continueToPayment) continueToPayment.addEventListener('click', validateAddressAndContinue);
     
     // Eventos para opções de entrega ou retirada
+    const deliveryRadio = document.getElementById('delivery');
+    const pickupRadio = document.getElementById('pickup');
+    
+    if (deliveryRadio) deliveryRadio.addEventListener('change', () => updateDeliveryOption('delivery'));
+    if (pickupRadio) pickupRadio.addEventListener('change', () => updateDeliveryOption('pickup'));
+    
+    // Eventos para os delivery options (cliques nos containers)
     const deliveryOptions = document.querySelectorAll('.delivery-option');
     deliveryOptions.forEach(option => {
         option.addEventListener('click', function() {
             const input = this.querySelector('input[type="radio"]');
-            input.checked = true;
-            updateDeliveryOption(input.value);
+            if (input) {
+                input.checked = true;
+                updateDeliveryOption(input.value);
+            }
         });
     });
     
-    document.getElementById('delivery').addEventListener('change', () => updateDeliveryOption('delivery'));
-    document.getElementById('pickup').addEventListener('change', () => updateDeliveryOption('pickup'));
-    
     // Botões da seção de pagamento
-    document.getElementById('back-to-address').addEventListener('click', () => goToSection('address'));
-    document.getElementById('place-order').addEventListener('click', processOrder);
+    const backToAddress = document.getElementById('back-to-address');
+    const placeOrder = document.getElementById('place-order');
+    
+    if (backToAddress) backToAddress.addEventListener('click', () => goToSection('address'));
+    if (placeOrder) placeOrder.addEventListener('click', processOrder);
     
     // Eventos dos métodos de pagamento
     const paymentOptions = document.querySelectorAll('.payment-option');
@@ -154,36 +233,59 @@ function initializeEvents() {
         option.addEventListener('click', function() {
             const method = this.getAttribute('data-method');
             const input = this.querySelector('input[type="radio"]');
-            input.checked = true;
-            selectPaymentMethod(method);
+            if (input) {
+                input.checked = true;
+                selectPaymentMethod(method);
+            }
         });
     });
     
-    document.getElementById('online').addEventListener('change', () => selectPaymentMethod('online'));
-    document.getElementById('on-delivery').addEventListener('change', () => selectPaymentMethod('on-delivery'));
+    // Eventos para radio buttons de pagamento
+    const onlineRadio = document.getElementById('online');
+    const onDeliveryRadio = document.getElementById('on-delivery');
+    
+    if (onlineRadio) onlineRadio.addEventListener('change', () => selectPaymentMethod('online'));
+    if (onDeliveryRadio) onDeliveryRadio.addEventListener('change', () => selectPaymentMethod('on-delivery'));
     
     // Eventos para os submétodos de pagamento na entrega
-    document.getElementById('on-delivery-cash').addEventListener('change', function() {
-        document.getElementById('change-form').style.display = 'block';
-    });
+    const onDeliveryCash = document.getElementById('on-delivery-cash');
+    if (onDeliveryCash) {
+        onDeliveryCash.addEventListener('change', function() {
+            const changeForm = document.getElementById('change-form');
+            if (changeForm) {
+                changeForm.style.display = 'block';
+            }
+        });
+    }
     
-    document.querySelectorAll('input[name="on-delivery-method"]').forEach(input => {
+    // Outros submétodos que escondem o formulário de troco
+    const otherOnDeliveryMethods = document.querySelectorAll('input[name="on-delivery-method"]');
+    otherOnDeliveryMethods.forEach(input => {
         if (input.id !== 'on-delivery-cash') {
             input.addEventListener('change', function() {
-                document.getElementById('change-form').style.display = 'none';
+                const changeForm = document.getElementById('change-form');
+                if (changeForm) {
+                    changeForm.style.display = 'none';
+                }
             });
         }
     });
     
     // Botão para voltar à loja após confirmação
-    document.getElementById('back-to-store').addEventListener('click', returnToStore);
+    const backToStore = document.getElementById('back-to-store');
+    if (backToStore) backToStore.addEventListener('click', returnToStore);
     
     // Botão para salvar novo endereço
-    document.getElementById('save-new-address').addEventListener('click', saveNewAddress);
+    const saveNewAddress = document.getElementById('save-new-address');
+    if (saveNewAddress) saveNewAddress.addEventListener('click', saveNewAddress);
+    
+    console.log('Eventos inicializados com sucesso');
 }
 
 // Função para navegar entre as seções
 function goToSection(section) {
+    console.log('Navegando para seção:', section);
+    
     // Esconder todas as seções
     const sections = document.querySelectorAll('.checkout-section');
     sections.forEach(s => {
@@ -191,7 +293,13 @@ function goToSection(section) {
     });
 
     // Mostrar a seção selecionada
-    document.getElementById(`${section}-section`).classList.add('active');
+    const targetSection = document.getElementById(`${section}-section`);
+    if (targetSection) {
+        targetSection.classList.add('active');
+    } else {
+        console.error('Seção não encontrada:', `${section}-section`);
+        return;
+    }
 
     // Atualizar os steps
     updateSteps(section);
@@ -201,15 +309,24 @@ function goToSection(section) {
         // Se o cliente estiver autenticado, carrega seus endereços
         if (isAuthenticatedClient()) {
             const clientData = getAuthenticatedClient();
-            loadClientAddresses(clientData.id);
+            if (clientData && clientData.id && typeof loadClientAddresses === 'function') {
+                loadClientAddresses(clientData.id);
+            }
 
             // Mostrar botão para salvar endereço no formulário
-            document.getElementById('save-new-address').style.display = 'block';
+            const saveNewAddressBtn = document.getElementById('save-new-address');
+            if (saveNewAddressBtn) {
+                saveNewAddressBtn.style.display = 'block';
+            }
         } else {
             // Se não estiver autenticado, mostra apenas o formulário normal
-            document.getElementById('address-list-container').style.display = 'none';
-            document.getElementById('delivery-form').style.display = 'block';
-            document.getElementById('save-new-address').style.display = 'none';
+            const addressListContainer = document.getElementById('address-list-container');
+            const deliveryForm = document.getElementById('delivery-form');
+            const saveNewAddressBtn = document.getElementById('save-new-address');
+            
+            if (addressListContainer) addressListContainer.style.display = 'none';
+            if (deliveryForm) deliveryForm.style.display = 'block';
+            if (saveNewAddressBtn) saveNewAddressBtn.style.display = 'none';
         }
     }
 
@@ -219,5 +336,9 @@ function goToSection(section) {
 
 // Função para voltar para a loja
 function returnToStore() {
-    window.location.href = `index.html?partnerId=${orderData.partnerId}`;
+    if (orderData.partnerId) {
+        window.location.href = `index.html?partnerId=${orderData.partnerId}`;
+    } else {
+        window.location.href = 'index.html';
+    }
 }

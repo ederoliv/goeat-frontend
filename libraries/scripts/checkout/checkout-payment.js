@@ -4,10 +4,56 @@
 let currentOrderId = null;
 let statusPollingInterval = null;
 
-// Função para processar o pedido
+// Função para selecionar método de pagamento - CORRIGIDA
+function selectPaymentMethod(method) {
+    console.log('Selecionando método de pagamento:', method);
+    
+    // Atualizar interface
+    const options = document.querySelectorAll('.payment-option');
+    options.forEach(option => {
+        option.classList.remove('selected');
+    });
+
+    const selectedOption = document.querySelector(`.payment-option[data-method="${method}"]`);
+    if (selectedOption) {
+        selectedOption.classList.add('selected');
+    }
+
+    // Se for pagamento online, mostrar aviso
+    if (method === 'online') {
+        Swal.fire({
+            title: 'Pagamento online',
+            text: 'O pagamento online ainda não está implementado. Por favor, use a opção "Pagar na entrega/retirada".',
+            icon: 'info',
+            confirmButtonColor: '#06CF90'
+        }).then(() => {
+            // Voltar para opção "Pagar na entrega/retirada"
+            const onDeliveryRadio = document.getElementById('on-delivery');
+            const onDeliveryOption = document.querySelector('.payment-option[data-method="on-delivery"]');
+            const onlineOption = document.querySelector('.payment-option[data-method="online"]');
+            
+            if (onDeliveryRadio) onDeliveryRadio.checked = true;
+            if (onDeliveryOption) onDeliveryOption.classList.add('selected');
+            if (onlineOption) onlineOption.classList.remove('selected');
+            
+            method = 'on-delivery';
+            orderData.payment.method = method;
+        });
+        return;
+    }
+
+    // Atualizar método no orderData
+    orderData.payment.method = method;
+    console.log('Método de pagamento atualizado:', orderData.payment);
+}
+
+// Função para processar o pedido - CORRIGIDA
 function processOrder() {
+    console.log('Iniciando processamento do pedido...');
+    
     // Validar método de pagamento
     if (!orderData.payment.method) {
+        console.error('Método de pagamento não selecionado');
         Swal.fire({
             title: 'Selecione o pagamento',
             text: 'Por favor, selecione um método de pagamento!',
@@ -28,16 +74,26 @@ function processOrder() {
             }
         });
 
+        if (!selectedSubmethod) {
+            // Se nenhum submétodo foi selecionado, usar o padrão
+            selectedSubmethod = 'card';
+            const cardRadio = document.getElementById('on-delivery-card');
+            if (cardRadio) cardRadio.checked = true;
+        }
+
         orderData.payment.submethod = selectedSubmethod;
 
         // Se for dinheiro, verificar troco
         if (selectedSubmethod === 'cash') {
-            const changeAmount = document.getElementById('change-amount').value;
+            const changeAmountInput = document.getElementById('change-amount');
+            const changeAmount = changeAmountInput ? changeAmountInput.value : '';
             orderData.payment.details = {
                 changeAmount: changeAmount || 0
             };
         }
     }
+
+    console.log('Dados do pedido antes do envio:', orderData);
 
     // Mostrar loading
     showLoadingModal();
@@ -68,12 +124,11 @@ function processOrder() {
     }
 
     // Construir o objeto para enviar à API
-    // Usando apenas os campos que o backend espera
     let apiOrderData = {
         clientId: null,
         items: orderItems,
-        name: orderData.customer.name,
-        email: orderData.customer.email,
+        name: orderData.customer.name || 'Cliente',
+        email: orderData.customer.email || 'cliente@email.com',
         phone: orderData.customer.phone || "(99) 99999-9999",
         deliveryAddress: deliveryAddressStr
     };
@@ -81,13 +136,17 @@ function processOrder() {
     // Se for cliente autenticado, usar ID do cliente
     if (isAuthenticatedClient()) {
         const clientData = getAuthenticatedClient();
-        apiOrderData.clientId = clientData.id;
-        
-        // Garantir que o email seja preenchido
-        if (!apiOrderData.email) {
-            apiOrderData.email = `${clientData.username}@gmail.com`;
+        if (clientData && clientData.id) {
+            apiOrderData.clientId = clientData.id;
+            
+            // Garantir que o email seja preenchido
+            if (!apiOrderData.email || apiOrderData.email === 'cliente@email.com') {
+                apiOrderData.email = clientData.email || `${clientData.username}@example.com`;
+            }
         }
     }
+
+    console.log('Dados da API a serem enviados:', apiOrderData);
 
     // Enviar para a API
     fetch(`${API_BASE_URL}/partners/${orderData.partnerId}/orders`, {
@@ -98,6 +157,7 @@ function processOrder() {
         body: JSON.stringify(apiOrderData)
     })
     .then(response => {
+        console.log('Resposta da API recebida:', response.status);
         hideLoadingModal();
         
         if (!response.ok) {
@@ -136,8 +196,13 @@ function processOrder() {
 
 // Função para mostrar sucesso no pedido com tracking de status
 function orderSuccessWithTracking(orderId) {
+    console.log('Mostrando sucesso do pedido com tracking:', orderId);
+    
     // Preencher número do pedido
-    document.getElementById('order-number').textContent = orderId;
+    const orderNumberElement = document.getElementById('order-number');
+    if (orderNumberElement) {
+        orderNumberElement.textContent = orderId;
+    }
     
     // Adicionar elementos de status na seção de confirmação
     updateConfirmationSectionWithTracking();
@@ -152,10 +217,25 @@ function orderSuccessWithTracking(orderId) {
 // Função para atualizar a seção de confirmação com elementos de tracking
 function updateConfirmationSectionWithTracking() {
     const confirmationContent = document.querySelector('.confirmation-content');
+    if (!confirmationContent) {
+        console.warn('Seção de confirmação não encontrada');
+        return;
+    }
     
     // Localiza os elementos existentes
     const orderDetails = confirmationContent.querySelector('.order-details');
     const backToStoreButton = document.getElementById('back-to-store');
+    
+    if (!orderDetails || !backToStoreButton) {
+        console.warn('Elementos da confirmação não encontrados');
+        return;
+    }
+    
+    // Verifica se já existe um container de status para evitar duplicação
+    const existingStatusContainer = confirmationContent.querySelector('.order-status-container');
+    if (existingStatusContainer) {
+        existingStatusContainer.remove();
+    }
     
     // Cria o elemento de status
     const statusContainer = document.createElement('div');
@@ -213,6 +293,10 @@ function startOrderStatusTracking(orderId) {
     checkOrderStatus(orderId);
     
     // Configurar verificação a cada 30 segundos
+    if (statusPollingInterval) {
+        clearInterval(statusPollingInterval);
+    }
+    
     statusPollingInterval = setInterval(() => {
         checkOrderStatus(orderId);
     }, 30000); // 30 segundos
@@ -248,7 +332,8 @@ async function checkOrderStatus(orderId) {
     } catch (error) {
         console.error('Erro ao verificar status do pedido:', error);
         
-        // Em caso de erro, mostrar status de erro mas não parar o polling
+        // Em caso de erro, mostrar status de erro mas não parar o polling imediatamente
+        // Após algumas tentativas falhadas consecutivas, poderia parar
         updateStatusDisplay('ERROR');
     }
 }
@@ -386,7 +471,11 @@ function returnToStore() {
     // Para o tracking antes de sair da página
     stopOrderStatusTracking();
     
-    window.location.href = `index.html?partnerId=${orderData.partnerId}`;
+    if (orderData.partnerId) {
+        window.location.href = `index.html?partnerId=${orderData.partnerId}`;
+    } else {
+        window.location.href = 'index.html';
+    }
 }
 
 // Limpar o interval quando a página for fechada
