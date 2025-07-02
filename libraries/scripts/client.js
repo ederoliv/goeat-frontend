@@ -6,19 +6,139 @@ document.addEventListener('DOMContentLoaded', function() {
         // Se o usuário estiver autenticado, atualiza o navbar
         setAuthenticatedNavbar();
     }
-    // Carrega os parceiros
-    loadPartners()
-        .finally(() => {
-            // Esconde o loading quando tudo estiver carregado
-            hideLoadingModal();
-        });
     
     // Inicializa o campo de busca
     setupSearch();
     
-    // Inicializa os filtros de categoria
-    setupCategoryFilters();
+    // Primeiro carregamos todas as categorias disponíveis da API
+    loadAllCategories()
+        .then(() => {
+            // Depois carregamos os parceiros
+            return loadPartners();
+        })
+        .finally(() => {
+            // Esconde o loading quando tudo estiver carregado
+            hideLoadingModal();
+        });
 });
+
+// Função para carregar todas as categorias de restaurante da API
+async function loadAllCategories() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/restaurant-categories`);
+        
+        if (!response.ok) {
+            throw new Error('Erro ao carregar categorias de restaurantes');
+        }
+        
+        const categories = await response.json();
+        
+        // Configura as categorias na interface
+        setupCategoriesFromAPI(categories);
+        
+        // Armazena as categorias para uso posterior
+        window.allRestaurantCategories = categories;
+        
+        return categories;
+    } catch (error) {
+        console.error('Erro ao carregar categorias:', error);
+        // Em caso de erro, use as categorias estáticas fallback
+        setupCategoryFilters();
+        return [];
+    }
+}
+
+// Função para extrair categorias únicas dos parceiros
+function extractUniqueCategories(partners) {
+    const categoriesMap = new Map(); // Usamos Map para evitar duplicatas
+    
+    // Percorre todos os parceiros
+    partners.forEach(partner => {
+        // Verifica se o parceiro tem categorias
+        if (partner.categories && Array.isArray(partner.categories) && partner.categories.length > 0) {
+            // Adiciona cada categoria ao Map
+            partner.categories.forEach(category => {
+                // Usamos o ID como chave para garantir unicidade
+                categoriesMap.set(category.id, category);
+            });
+        }
+    });
+    
+    // Converte o Map para um array de categorias
+    return Array.from(categoriesMap.values());
+}
+
+// Não precisamos mais fazer uma requisição separada para categorias
+// já que elas estão incluídas na resposta dos parceiros
+
+// Função para configurar as categorias a partir da API
+function setupCategoriesFromAPI(apiCategories) {
+    // Cria os filtros de categoria se não existirem
+    const container = document.getElementById('container');
+    const searchContainer = container.querySelector('.search-container');
+    
+    // Verifica se os filtros já existem
+    if (container.querySelector('.categories')) {
+        container.querySelector('.categories').remove();
+    }
+    
+    // Cria os filtros
+    const categoriesContainer = document.createElement('div');
+    categoriesContainer.className = 'categories';
+    
+    // Adiciona a categoria "Todos" primeiro
+    const allPill = document.createElement('span');
+    allPill.className = 'category-pill active';
+    allPill.textContent = 'Todos';
+    allPill.dataset.category = 'Todos';
+    
+    allPill.addEventListener('click', () => {
+        // Remove a classe active de todos os pills
+        document.querySelectorAll('.category-pill').forEach(p => {
+            p.classList.remove('active');
+        });
+        
+        // Adiciona a classe active ao pill clicado
+        allPill.classList.add('active');
+        
+        // Mostra todos os parceiros
+        filterByCategory('Todos');
+    });
+    
+    categoriesContainer.appendChild(allPill);
+    
+    // Adiciona as categorias da API
+    apiCategories.forEach(category => {
+        const pill = document.createElement('span');
+        pill.className = 'category-pill';
+        pill.textContent = category.name;
+        pill.dataset.category = category.name;
+        pill.dataset.categoryId = category.id;
+        
+        pill.addEventListener('click', () => {
+            // Remove a classe active de todos os pills
+            document.querySelectorAll('.category-pill').forEach(p => {
+                p.classList.remove('active');
+            });
+            
+            // Adiciona a classe active ao pill clicado
+            pill.classList.add('active');
+            
+            // Filtra os parceiros pela categoria
+            filterByCategory(category.name);
+        });
+        
+        categoriesContainer.appendChild(pill);
+    });
+    
+    // Insere após o campo de busca
+    if (searchContainer) {
+        searchContainer.parentNode.insertBefore(categoriesContainer, searchContainer.nextSibling);
+    } else {
+        const h1 = container.querySelector('h1');
+        h1.parentNode.insertBefore(categoriesContainer, h1.nextSibling);
+    }
+}
 
 // Função para carregar os parceiros
 async function loadPartners() {
@@ -43,6 +163,9 @@ async function loadPartners() {
     } catch (error) {
         console.error('Erro ao carregar parceiros:', error);
         showErrorMessage();
+        
+        // Em caso de erro, pelo menos tentar configurar os filtros de categoria padrão
+        setupCategoryFilters();
     }
 }
 
@@ -63,7 +186,7 @@ function renderPartners(partners) {
     });
 }
 
-// Função para criar o card de parceiro - MODIFICADA (removido taxa de entrega, avaliação e tempo)
+// Função para criar o card de parceiro - MODIFICADA para trabalhar com o novo formato
 function createPartnerCard(partner, container) {
     // Primeiro, remova qualquer card existente com o mesmo ID para evitar duplicação
     const existingCard = document.querySelector(`.partner-card[data-partner-id="${partner.id}"]`);
@@ -75,19 +198,41 @@ function createPartnerCard(partner, container) {
     const card = document.createElement('div');
     card.className = 'partner-card';
     card.dataset.partnerId = partner.id;
-    card.dataset.category = partner.category || '';
+    
+    // Armazena as categorias como atributos data para facilitar a filtragem
+    if (partner.categories && Array.isArray(partner.categories) && partner.categories.length > 0) {
+        // Armazena os IDs de categoria como uma lista separada por vírgulas
+        const categoryIds = partner.categories.map(cat => cat.id).join(',');
+        card.dataset.categoryIds = categoryIds;
+        
+        // Armazena os nomes de categoria para exibição e filtragem por texto
+        const categoryNames = partner.categories.map(cat => cat.name).join(',');
+        card.dataset.categoryNames = categoryNames;
+        
+        // Para compatibilidade com código existente
+        card.dataset.category = partner.categories[0]?.name || '';
+    } else {
+        card.dataset.categoryIds = '';
+        card.dataset.categoryNames = '';
+        card.dataset.category = '';
+    }
     
     // Usa a imagem do parceiro ou fallback para partner.png
     const partnerImage = partner.imageUrl || partner.logo || `${root}${routes.assets}partner.png`;
     
-    // Estrutura HTML do card modificada (removido avaliação, taxa de entrega e tempo)
+    // Obter a primeira categoria para exibição (se existir)
+    const displayCategory = partner.categories && partner.categories.length > 0 
+        ? partner.categories[0].name 
+        : 'Restaurante';
+    
+    // Estrutura HTML do card
     card.innerHTML = `
         <img class="partner-logo" src="${partnerImage}" alt="${partner.name} logo">
         <div class="partner-card-content">
             <div class="partner-card-header">
                 <div>
                     <h3 class="partner-card-title">${partner.name}</h3>
-                    <p class="partner-card-category">${partner.category || 'Restaurante'}</p>
+                    <p class="partner-card-category">${displayCategory}</p>
                 </div>
             </div>
             <div class="partner-card-info">
@@ -236,8 +381,9 @@ function performSearch(query) {
     
     // Se a query estiver vazia, mostra todos os parceiros
     if (query === '') {
-        showLoadingModal();
-        loadPartners().finally(() => hideLoadingModal());
+        document.querySelectorAll('.partner-card').forEach(card => {
+            card.style.display = 'block';
+        });
         return;
     }
     
@@ -247,9 +393,9 @@ function performSearch(query) {
     
     partnerCards.forEach(card => {
         const name = card.querySelector('.partner-card-title').textContent.toLowerCase();
-        const category = card.querySelector('.partner-card-category').textContent.toLowerCase();
+        const categories = card.dataset.categoryNames?.toLowerCase() || '';
         
-        if (name.includes(query) || category.includes(query)) {
+        if (name.includes(query) || categories.includes(query)) {
             card.style.display = 'block';
             hasResults = true;
         } else {
@@ -263,7 +409,7 @@ function performSearch(query) {
     }
 }
 
-// Função para configurar os filtros de categoria
+// Função para configurar os filtros de categoria (versão original como fallback)
 function setupCategoryFilters() {
     // Cria os filtros de categoria se não existirem
     const container = document.getElementById('container');
@@ -328,9 +474,18 @@ function filterByCategory(category) {
     let hasResults = false;
     
     partnerCards.forEach(card => {
-        const cardCategory = card.dataset.category.toLowerCase();
+        // Verifica se o card tem as categorias no dataset
+        const categoryNames = card.dataset.categoryNames || '';
         
-        if (cardCategory === category.toLowerCase()) {
+        // Se o restaurante não tem categoria ou a categoria é vazia, 
+        // NÃO mostraremos ele nas pesquisas filtradas por categoria específica
+        if (!categoryNames || categoryNames === '') {
+            card.style.display = 'none';
+            return;
+        }
+        
+        // Verifica se a categoria selecionada está na lista de categorias do restaurante
+        if (categoryNames.toLowerCase().includes(category.toLowerCase())) {
             card.style.display = 'block';
             hasResults = true;
         } else {
@@ -342,9 +497,4 @@ function filterByCategory(category) {
     if (!hasResults) {
         showNoResultsMessage();
     }
-}
-
-// Função para formatar preço (se não estiver definida em utilities.js)
-function formatPrice(price) {
-    return (price / 100).toFixed(2).replace('.', ',');
 }
