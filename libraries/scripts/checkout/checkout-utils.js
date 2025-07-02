@@ -51,8 +51,8 @@ function showLoadingModal() {
 
     // Adicionar a logo
     const logo = document.createElement('img');
-    // Usar um caminho que funcione tanto no checkout quanto em outras páginas
-    logo.src = '../../../libraries/assets/goeat-logo.svg';
+   
+    logo.src = '../../../libraries/assets/goeat-pg-logo.svg';
     logo.style.cssText = `
         height: 80px;
         margin-bottom: 20px;
